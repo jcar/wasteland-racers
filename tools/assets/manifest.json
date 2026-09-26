@@ -1,0 +1,89 @@
+{
+  "style": "Bright, bold Saturday-morning cartoon for kids ages 5-7, about goofy desert racers in a sunny junkyard wasteland. Chunky rounded shapes, thick dark outlines, saturated warm colors (sunny orange, rusty red, turquoise, lime green, golden yellow), flat cel shading with a little grit texture. Vehicles are built from junk: bolts, patches, big tires, exhaust pipes. Characters are silly and friendly with big grins. Nothing scary: no weapons, no blood, no fire hurting anyone, no real brands, no words or letters anywhere.",
+  "rules": {
+    "sprite": "Single character or object only, centered, whole thing visible with a little margin. Background must be one flat solid pure magenta color (#FF00FF) with no gradient, no shadow, no ground, no text, no border. Do not use magenta or hot pink anywhere on the subject.",
+    "backdrop": "Full-bleed painting that fills the whole frame, no text, no letters, no border.",
+    "texture": "Seamless tileable surface texture seen from DIRECTLY ABOVE (flat top-down, orthographic), evenly lit with no strong shadows, no horizon, no objects sticking up, no characters, no text. Fills the whole frame edge to edge."
+  },
+  "images": [
+    {"id": "title-bg", "kind": "backdrop", "w": 1600, "h": 900, "prompt": "Epic but friendly title screen for a kids' racing game: four goofy junk-built race cars (a rusty dune buggy, a spiky pickup truck, a giant monster truck, a huge rig with a funny horn) roaring toward the viewer across orange desert dunes, big dust clouds, a giant cartoon sun, mesas and a far-off volcano. Leave the upper-middle third fairly empty sky for a logo."},
+    {"id": "garage-bg", "kind": "backdrop", "w": 1600, "h": 900, "prompt": "Inside a cozy cartoon wasteland garage made of corrugated metal and junk: tool walls with giant wrenches, stacked tires, oil cans, hanging string lights, a big open door showing the orange desert. A round empty turntable platform in the center foreground. Warm, inviting, fun."},
+    {"id": "map-bg", "kind": "backdrop", "w": 1600, "h": 900, "prompt": "A treasure-map style overworld of a cartoon wasteland seen from above at an angle: orange sand dunes on the left, a canyon full of junk piles, a bright green goo swamp with giant mushrooms, a volcano with glowing orange lava roads on the right, and a big round stadium dome in the middle. Dirt roads connect them. Parchment-edged, colorful and fun."},
+    {"id": "podium-bg", "kind": "backdrop", "w": 1600, "h": 900, "prompt": "A celebration scene in a junkyard stadium: a three-step winners' podium made of crates and tires in the center (empty), confetti, balloons, cheering silly cartoon crowd in the stands, fireworks of stars in a sunset sky."},
+
+    {"id": "world-dunes", "kind": "backdrop", "w": 640, "h": 360, "prompt": "Dusty Dunes: rolling orange sand dunes, a dirt race track with a ramp, cactus with happy faces, a cow-skull shaped rock that looks friendly, blue sky with puffy clouds."},
+    {"id": "world-junkyard", "kind": "backdrop", "w": 640, "h": 360, "prompt": "Junkyard Canyon: a red rock canyon full of stacked tire towers, crushed cars, a tall crane with a magnet, a dirt race track winding through, sunny."},
+    {"id": "world-swamp", "kind": "backdrop", "w": 640, "h": 360, "prompt": "Goo Swamp: a silly swamp with bright lime-green bubbling goo puddles, giant bouncy spotted mushrooms, crooked trees, a muddy race track, purple sky with fireflies."},
+    {"id": "world-volcano", "kind": "backdrop", "w": 640, "h": 360, "prompt": "Volcano Highway: a dark rocky road curling around a cartoon volcano with glowing orange lava rivers far below the road (safe and cute), boost arrows on the road, smoke puffs shaped like clouds."},
+    {"id": "world-dome", "kind": "backdrop", "w": 640, "h": 360, "prompt": "Thunder Dome Stadium: a huge round arena made of scrap metal with a lattice dome roof, spotlights, colorful flags, packed stands of cheering cartoon fans, a race track inside."},
+
+    {"id": "driver-kid", "kind": "sprite", "w": 256, "h": 256, "prompt": "Portrait (head and shoulders) of a brave little kid racer about 6 years old with messy hair, big aviator goggles pushed up on a leather cap, a scarf, a huge grin and a thumbs up. Facing the viewer."},
+    {"id": "driver-dog", "kind": "sprite", "w": 256, "h": 256, "prompt": "Portrait (head and shoulders) of Sprocket, a scruffy happy mutt dog racer wearing tiny round goggles and a red bandana, tongue out, one ear flopped. Facing the viewer."},
+    {"id": "driver-robot", "kind": "sprite", "w": 256, "h": 256, "prompt": "Portrait (head and shoulders) of Bolt, a cute boxy robot racer built from rusty scrap and a tin can, one antenna with a light, big round glowing turquoise eyes, smiling speaker mouth. Facing the viewer."},
+    {"id": "driver-lizard", "kind": "sprite", "w": 256, "h": 256, "prompt": "Portrait (head and shoulders) of Lizzy, a cheerful green desert lizard racer with a racing helmet with a stripe, big friendly eyes, a toothy smile (no sharp teeth), a scarf. Facing the viewer."},
+    {"id": "rival-rex", "kind": "sprite", "w": 256, "h": 256, "prompt": "Portrait (head and shoulders) of Rusty Rex, a goofy friendly dinosaur (T-rex) racer with tiny arms, an orange racing jacket with patches, driving goggles, a cheeky grin. Facing the viewer."},
+    {"id": "rival-muffler", "kind": "sprite", "w": 256, "h": 256, "prompt": "Portrait (head and shoulders) of Captain Muffler, a silly pirate-style junk captain with a giant curly moustache, a hat made from a car exhaust pipe, a friendly wink. Facing the viewer."},
+    {"id": "rival-bertha", "kind": "sprite", "w": 256, "h": 256, "prompt": "Portrait (head and shoulders) of Big Bertha, a big cheerful swamp-mechanic lady with a wrench, overalls splattered with green goo, a bandana and a big laugh. Facing the viewer."},
+    {"id": "rival-warlord", "kind": "sprite", "w": 256, "h": 256, "prompt": "Portrait (head and shoulders) of The Warlord, a big goofy wrestler-style racer with a silly spiky shoulder pad made of hubcaps, a toy-looking chrome mask pushed up on his forehead, a huge friendly grin and a funny bike horn. Silly, not scary. Facing the viewer."},
+    {"id": "announcer", "kind": "sprite", "w": 256, "h": 256, "prompt": "Portrait (head and shoulders) of a loud, goofy race announcer with a giant pompadour hairdo, big sunglasses, a sparkly jacket and a huge old microphone, mouth wide open shouting with joy. Facing the viewer."},
+
+    {"id": "icon-engine", "kind": "sprite", "w": 128, "h": 128, "prompt": "Game icon: a chunky shiny cartoon car engine with big chrome exhaust pipes and a puff of smoke."},
+    {"id": "icon-tires", "kind": "sprite", "w": 128, "h": 128, "prompt": "Game icon: one big chunky knobby off-road tire with a shiny rim."},
+    {"id": "icon-armor", "kind": "sprite", "w": 128, "h": 128, "prompt": "Game icon: a round riveted metal shield made from a hubcap and scrap plates."},
+    {"id": "icon-gadget", "kind": "sprite", "w": 128, "h": 128, "prompt": "Game icon: a glowing golden gadget crate with a lightning bolt symbol and bolts around it."},
+    {"id": "icon-scrap", "kind": "sprite", "w": 128, "h": 128, "prompt": "Game icon: a small shiny pile of golden nuts, bolts and gears, like treasure coins."},
+    {"id": "icon-goo", "kind": "sprite", "w": 128, "h": 128, "prompt": "Game icon: a bright lime green bubbling goo splat with a silly face."},
+    {"id": "icon-boing", "kind": "sprite", "w": 128, "h": 128, "prompt": "Game icon: a big springy boxing-glove bumper on a coiled spring, bouncing, with motion lines. Soft and silly, like a toy."},
+    {"id": "icon-boost", "kind": "sprite", "w": 128, "h": 128, "prompt": "Game icon: a chunky cartoon rocket booster with a big swirly orange and yellow flame out the back."},
+    {"id": "icon-trophy", "kind": "sprite", "w": 128, "h": 128, "prompt": "Game icon: a golden trophy cup made from a shiny car piston and a gear, with sparkles."},
+    {"id": "icon-lock", "kind": "sprite", "w": 128, "h": 128, "prompt": "Game icon: a chunky rusty padlock with a bolt on it."},
+
+    {"id": "decal-flames", "kind": "sprite", "w": 256, "h": 256, "prompt": "A flat vinyl car hood decal seen straight on: classic hot-rod flames in yellow, orange and red, pointing upward. Flat graphic, no car."},
+    {"id": "decal-lightning", "kind": "sprite", "w": 256, "h": 256, "prompt": "A flat vinyl car hood decal seen straight on: a big bold yellow lightning bolt with a black outline. Flat graphic, no car."},
+    {"id": "decal-shark", "kind": "sprite", "w": 256, "h": 256, "prompt": "A flat vinyl car hood decal seen straight on: a big goofy shark mouth with rounded white cartoon teeth and a red mouth, smiling, like old airplane nose art. Flat graphic, no car."},
+    {"id": "decal-checker", "kind": "sprite", "w": 256, "h": 256, "prompt": "A flat vinyl car hood decal seen straight on: a waving black and white checkered racing flag. Flat graphic, no car."},
+    {"id": "decal-skull", "kind": "sprite", "w": 256, "h": 256, "prompt": "A flat vinyl car hood decal seen straight on: a silly smiling cartoon skull wearing racing goggles, with crossed wrenches behind it. Friendly and goofy, not scary. Flat graphic, no car."},
+    {"id": "decal-star", "kind": "sprite", "w": 256, "h": 256, "prompt": "A flat vinyl car hood decal seen straight on: a big bold star with speed stripes, turquoise and white. Flat graphic, no car."},
+
+    {"id": "ground-dunes", "kind": "texture", "w": 512, "h": 512, "prompt": "Warm orange desert sand with soft wind ripples and a few small pebbles."},
+    {"id": "ground-junk", "kind": "texture", "w": 512, "h": 512, "prompt": "Reddish-brown canyon dirt ground with scattered little bolts, bottle caps, gravel and cracks."},
+    {"id": "ground-swamp", "kind": "texture", "w": 512, "h": 512, "prompt": "Dark olive swamp mud ground with small lime green goo spots, moss patches and tiny pebbles."},
+    {"id": "ground-volcano", "kind": "texture", "w": 512, "h": 512, "prompt": "Dark charcoal volcanic rock ground with thin glowing orange cracks and bits of black gravel."},
+    {"id": "ground-dome", "kind": "texture", "w": 512, "h": 512, "prompt": "Riveted steel arena floor plates, slightly rusty, with painted faded yellow and turquoise stripes."},
+    {"id": "road-dirt", "kind": "texture", "w": 512, "h": 512, "prompt": "Packed light tan dirt race track surface with faint tire tread marks running vertically."},
+    {"id": "road-junk", "kind": "texture", "w": 512, "h": 512, "prompt": "Patched gray asphalt road made of different pieces welded and bolted together, with faint vertical tire marks."},
+    {"id": "road-swamp", "kind": "texture", "w": 512, "h": 512, "prompt": "Wooden plank road made of old boards running horizontally, nailed together, a bit muddy."},
+    {"id": "road-volcano", "kind": "texture", "w": 512, "h": 512, "prompt": "Dark smooth black-gray basalt stone road with faint vertical tire marks."},
+    {"id": "road-dome", "kind": "texture", "w": 512, "h": 512, "prompt": "Smooth gray arena track concrete with faint vertical tire marks and small painted chevrons."},
+
+    {"id": "prop-cactus", "kind": "sprite", "w": 192, "h": 256, "prompt": "A tall happy cartoon saguaro cactus with two arms raised like it's cheering, a small flower on top. Side view."},
+    {"id": "prop-rock", "kind": "sprite", "w": 256, "h": 192, "prompt": "A chunky orange desert boulder with a smaller rock beside it and a little tuft of dry grass. Side view."},
+    {"id": "prop-skull", "kind": "sprite", "w": 256, "h": 192, "prompt": "A big friendly cartoon cow skull lying in the sand, with a flower growing out of one eye socket and a silly grin. Side view."},
+    {"id": "prop-tires", "kind": "sprite", "w": 192, "h": 256, "prompt": "A wobbly tall stack of old tires, some painted in bright colors. Side view."},
+    {"id": "prop-junkcar", "kind": "sprite", "w": 256, "h": 192, "prompt": "A crushed rusty old cartoon car with flat tires and a plant growing out of the window, sitting on the ground. Side view."},
+    {"id": "prop-barrel", "kind": "sprite", "w": 160, "h": 192, "prompt": "Two dented oil barrels, one blue and one yellow, one lying on its side. Side view."},
+    {"id": "prop-mushroom", "kind": "sprite", "w": 192, "h": 256, "prompt": "A giant bouncy swamp mushroom with a purple cap with lime green spots and a cute face on the stem. Side view."},
+    {"id": "prop-deadtree", "kind": "sprite", "w": 192, "h": 256, "prompt": "A crooked goofy swamp tree with droopy moss and one eye-like knot hole, friendly looking. Side view."},
+    {"id": "prop-lavarock", "kind": "sprite", "w": 256, "h": 192, "prompt": "A dark volcanic rock pile with little glowing orange cracks and a puff of smoke. Side view."},
+    {"id": "prop-crowd", "kind": "sprite", "w": 320, "h": 192, "prompt": "A small bleacher made of crates with five silly cheering cartoon wasteland fans waving flags and foam fingers. Side view."},
+    {"id": "prop-flag", "kind": "sprite", "w": 128, "h": 256, "prompt": "A tall wooden pole with a waving orange and turquoise pennant flag on top. Side view."},
+    {"id": "prop-sign", "kind": "sprite", "w": 192, "h": 192, "prompt": "A hand-painted wooden arrow sign on a post pointing right, painted bright yellow with a black arrow shape only. Side view."}
+  ],
+  "voices": {
+    "announcer": {"voice": "Fenrir", "style": "like a super excited, goofy monster-truck show announcer"},
+    "rex": {"voice": "Puck", "style": "like a cheeky, silly dinosaur"},
+    "muffler": {"voice": "Algenib", "style": "like a jolly, gravelly pirate"},
+    "bertha": {"voice": "Kore", "style": "with a big hearty laugh, like a jolly swamp mechanic"},
+    "warlord": {"voice": "Charon", "style": "in a deep, booming, goofy wrestler voice"}
+  },
+  "music": [
+    {"id": "music-title", "prompt": "Fun upbeat surf-rock theme for a kids' cartoon racing game, twangy electric guitar, driving drums, a catchy riff, energetic and happy, 140 bpm, E major, instrumental, no vocals."},
+    {"id": "music-garage", "prompt": "Laid-back funky garage groove for a kids' game shop, slap bass, clavinet, light drums, wrench-clink percussion, cheerful, 100 bpm, G major, instrumental, no vocals."},
+    {"id": "music-dunes", "prompt": "Galloping desert rock for a kids' racing game, twangy western guitar, fast drums, whistles, sunny and adventurous, 150 bpm, A minor, instrumental, no vocals."},
+    {"id": "music-junkyard", "prompt": "Clanky junkyard rock for a kids' racing game, crunchy guitar, trash-can and metal percussion, stomping beat, playful, 145 bpm, D major, instrumental, no vocals."},
+    {"id": "music-swamp", "prompt": "Silly swampy rockabilly for a kids' racing game, banjo, upright bass slaps, bubbly synth goo sounds, bouncy drums, 150 bpm, C major, instrumental, no vocals."},
+    {"id": "music-volcano", "prompt": "Big exciting heavy-ish rock for a kids' racing game, chunky power chords, pounding toms, triumphant but not scary, 160 bpm, E minor, instrumental, no vocals."},
+    {"id": "music-dome", "prompt": "Epic stadium rock finale for a kids' racing game, huge drums, crowd-clap rhythm, heroic guitar melody, super exciting, 150 bpm, D major, instrumental, no vocals."},
+    {"id": "music-podium", "prompt": "Short triumphant victory fanfare for a kids' racing game, brass and rock guitar, cheering energy, 120 bpm, C major, instrumental, no vocals."}
+  ]
+}

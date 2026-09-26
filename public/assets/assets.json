@@ -1,0 +1,446 @@
+{
+  "images": [
+    {
+      "key": "announcer",
+      "url": "assets/images/announcer.png"
+    },
+    {
+      "key": "decal-checker",
+      "url": "assets/images/decal-checker.png"
+    },
+    {
+      "key": "decal-flames",
+      "url": "assets/images/decal-flames.png"
+    },
+    {
+      "key": "decal-lightning",
+      "url": "assets/images/decal-lightning.png"
+    },
+    {
+      "key": "decal-shark",
+      "url": "assets/images/decal-shark.png"
+    },
+    {
+      "key": "decal-skull",
+      "url": "assets/images/decal-skull.png"
+    },
+    {
+      "key": "decal-star",
+      "url": "assets/images/decal-star.png"
+    },
+    {
+      "key": "driver-dog",
+      "url": "assets/images/driver-dog.png"
+    },
+    {
+      "key": "driver-kid",
+      "url": "assets/images/driver-kid.png"
+    },
+    {
+      "key": "driver-lizard",
+      "url": "assets/images/driver-lizard.png"
+    },
+    {
+      "key": "driver-robot",
+      "url": "assets/images/driver-robot.png"
+    },
+    {
+      "key": "garage-bg",
+      "url": "assets/images/garage-bg.jpg"
+    },
+    {
+      "key": "ground-dome",
+      "url": "assets/images/ground-dome.png"
+    },
+    {
+      "key": "ground-dunes",
+      "url": "assets/images/ground-dunes.png"
+    },
+    {
+      "key": "ground-junk",
+      "url": "assets/images/ground-junk.png"
+    },
+    {
+      "key": "ground-swamp",
+      "url": "assets/images/ground-swamp.png"
+    },
+    {
+      "key": "ground-volcano",
+      "url": "assets/images/ground-volcano.png"
+    },
+    {
+      "key": "icon-armor",
+      "url": "assets/images/icon-armor.png"
+    },
+    {
+      "key": "icon-boing",
+      "url": "assets/images/icon-boing.png"
+    },
+    {
+      "key": "icon-boost",
+      "url": "assets/images/icon-boost.png"
+    },
+    {
+      "key": "icon-engine",
+      "url": "assets/images/icon-engine.png"
+    },
+    {
+      "key": "icon-gadget",
+      "url": "assets/images/icon-gadget.png"
+    },
+    {
+      "key": "icon-goo",
+      "url": "assets/images/icon-goo.png"
+    },
+    {
+      "key": "icon-lock",
+      "url": "assets/images/icon-lock.png"
+    },
+    {
+      "key": "icon-scrap",
+      "url": "assets/images/icon-scrap.png"
+    },
+    {
+      "key": "icon-tires",
+      "url": "assets/images/icon-tires.png"
+    },
+    {
+      "key": "icon-trophy",
+      "url": "assets/images/icon-trophy.png"
+    },
+    {
+      "key": "map-bg",
+      "url": "assets/images/map-bg.jpg"
+    },
+    {
+      "key": "podium-bg",
+      "url": "assets/images/podium-bg.jpg"
+    },
+    {
+      "key": "prop-barrel",
+      "url": "assets/images/prop-barrel.png"
+    },
+    {
+      "key": "prop-cactus",
+      "url": "assets/images/prop-cactus.png"
+    },
+    {
+      "key": "prop-crowd",
+      "url": "assets/images/prop-crowd.png"
+    },
+    {
+      "key": "prop-deadtree",
+      "url": "assets/images/prop-deadtree.png"
+    },
+    {
+      "key": "prop-flag",
+      "url": "assets/images/prop-flag.png"
+    },
+    {
+      "key": "prop-junkcar",
+      "url": "assets/images/prop-junkcar.png"
+    },
+    {
+      "key": "prop-lavarock",
+      "url": "assets/images/prop-lavarock.png"
+    },
+    {
+      "key": "prop-mushroom",
+      "url": "assets/images/prop-mushroom.png"
+    },
+    {
+      "key": "prop-rock",
+      "url": "assets/images/prop-rock.png"
+    },
+    {
+      "key": "prop-sign",
+      "url": "assets/images/prop-sign.png"
+    },
+    {
+      "key": "prop-skull",
+      "url": "assets/images/prop-skull.png"
+    },
+    {
+      "key": "prop-tires",
+      "url": "assets/images/prop-tires.png"
+    },
+    {
+      "key": "rival-bertha",
+      "url": "assets/images/rival-bertha.png"
+    },
+    {
+      "key": "rival-muffler",
+      "url": "assets/images/rival-muffler.png"
+    },
+    {
+      "key": "rival-rex",
+      "url": "assets/images/rival-rex.png"
+    },
+    {
+      "key": "rival-warlord",
+      "url": "assets/images/rival-warlord.png"
+    },
+    {
+      "key": "road-dirt",
+      "url": "assets/images/road-dirt.png"
+    },
+    {
+      "key": "road-dome",
+      "url": "assets/images/road-dome.png"
+    },
+    {
+      "key": "road-junk",
+      "url": "assets/images/road-junk.png"
+    },
+    {
+      "key": "road-swamp",
+      "url": "assets/images/road-swamp.png"
+    },
+    {
+      "key": "road-volcano",
+      "url": "assets/images/road-volcano.png"
+    },
+    {
+      "key": "title-bg",
+      "url": "assets/images/title-bg.jpg"
+    },
+    {
+      "key": "world-dome",
+      "url": "assets/images/world-dome.jpg"
+    },
+    {
+      "key": "world-dunes",
+      "url": "assets/images/world-dunes.jpg"
+    },
+    {
+      "key": "world-junkyard",
+      "url": "assets/images/world-junkyard.jpg"
+    },
+    {
+      "key": "world-swamp",
+      "url": "assets/images/world-swamp.jpg"
+    },
+    {
+      "key": "world-volcano",
+      "url": "assets/images/world-volcano.jpg"
+    }
+  ],
+  "audio": [
+    {
+      "key": "music-dome",
+      "url": "assets/audio/music-dome.mp3"
+    },
+    {
+      "key": "music-dunes",
+      "url": "assets/audio/music-dunes.mp3"
+    },
+    {
+      "key": "music-garage",
+      "url": "assets/audio/music-garage.mp3"
+    },
+    {
+      "key": "music-junkyard",
+      "url": "assets/audio/music-junkyard.mp3"
+    },
+    {
+      "key": "music-podium",
+      "url": "assets/audio/music-podium.mp3"
+    },
+    {
+      "key": "music-swamp",
+      "url": "assets/audio/music-swamp.mp3"
+    },
+    {
+      "key": "music-title",
+      "url": "assets/audio/music-title.mp3"
+    },
+    {
+      "key": "music-volcano",
+      "url": "assets/audio/music-volcano.mp3"
+    },
+    {
+      "key": "vo-bertha-intro",
+      "url": "assets/audio/vo-bertha-intro.mp3"
+    },
+    {
+      "key": "vo-bertha-lose",
+      "url": "assets/audio/vo-bertha-lose.mp3"
+    },
+    {
+      "key": "vo-boing",
+      "url": "assets/audio/vo-boing.mp3"
+    },
+    {
+      "key": "vo-boost",
+      "url": "assets/audio/vo-boost.mp3"
+    },
+    {
+      "key": "vo-champion",
+      "url": "assets/audio/vo-champion.mp3"
+    },
+    {
+      "key": "vo-decal-locked",
+      "url": "assets/audio/vo-decal-locked.mp3"
+    },
+    {
+      "key": "vo-dome-intro",
+      "url": "assets/audio/vo-dome-intro.mp3"
+    },
+    {
+      "key": "vo-final-lap",
+      "url": "assets/audio/vo-final-lap.mp3"
+    },
+    {
+      "key": "vo-gadget-hint",
+      "url": "assets/audio/vo-gadget-hint.mp3"
+    },
+    {
+      "key": "vo-garage-hello",
+      "url": "assets/audio/vo-garage-hello.mp3"
+    },
+    {
+      "key": "vo-go",
+      "url": "assets/audio/vo-go.mp3"
+    },
+    {
+      "key": "vo-goo",
+      "url": "assets/audio/vo-goo.mp3"
+    },
+    {
+      "key": "vo-got-spun",
+      "url": "assets/audio/vo-got-spun.mp3"
+    },
+    {
+      "key": "vo-lead",
+      "url": "assets/audio/vo-lead.mp3"
+    },
+    {
+      "key": "vo-locked",
+      "url": "assets/audio/vo-locked.mp3"
+    },
+    {
+      "key": "vo-maxed",
+      "url": "assets/audio/vo-maxed.mp3"
+    },
+    {
+      "key": "vo-muffler-intro",
+      "url": "assets/audio/vo-muffler-intro.mp3"
+    },
+    {
+      "key": "vo-muffler-lose",
+      "url": "assets/audio/vo-muffler-lose.mp3"
+    },
+    {
+      "key": "vo-new-car",
+      "url": "assets/audio/vo-new-car.mp3"
+    },
+    {
+      "key": "vo-new-gadget",
+      "url": "assets/audio/vo-new-gadget.mp3"
+    },
+    {
+      "key": "vo-new-track",
+      "url": "assets/audio/vo-new-track.mp3"
+    },
+    {
+      "key": "vo-new-world",
+      "url": "assets/audio/vo-new-world.mp3"
+    },
+    {
+      "key": "vo-not-enough",
+      "url": "assets/audio/vo-not-enough.mp3"
+    },
+    {
+      "key": "vo-one",
+      "url": "assets/audio/vo-one.mp3"
+    },
+    {
+      "key": "vo-paint",
+      "url": "assets/audio/vo-paint.mp3"
+    },
+    {
+      "key": "vo-passed",
+      "url": "assets/audio/vo-passed.mp3"
+    },
+    {
+      "key": "vo-pick-driver",
+      "url": "assets/audio/vo-pick-driver.mp3"
+    },
+    {
+      "key": "vo-place2",
+      "url": "assets/audio/vo-place2.mp3"
+    },
+    {
+      "key": "vo-place3",
+      "url": "assets/audio/vo-place3.mp3"
+    },
+    {
+      "key": "vo-place4",
+      "url": "assets/audio/vo-place4.mp3"
+    },
+    {
+      "key": "vo-race-intro",
+      "url": "assets/audio/vo-race-intro.mp3"
+    },
+    {
+      "key": "vo-rex-intro",
+      "url": "assets/audio/vo-rex-intro.mp3"
+    },
+    {
+      "key": "vo-rex-lose",
+      "url": "assets/audio/vo-rex-lose.mp3"
+    },
+    {
+      "key": "vo-scrap",
+      "url": "assets/audio/vo-scrap.mp3"
+    },
+    {
+      "key": "vo-three",
+      "url": "assets/audio/vo-three.mp3"
+    },
+    {
+      "key": "vo-title",
+      "url": "assets/audio/vo-title.mp3"
+    },
+    {
+      "key": "vo-tow",
+      "url": "assets/audio/vo-tow.mp3"
+    },
+    {
+      "key": "vo-track-select",
+      "url": "assets/audio/vo-track-select.mp3"
+    },
+    {
+      "key": "vo-two",
+      "url": "assets/audio/vo-two.mp3"
+    },
+    {
+      "key": "vo-upgrade-armor",
+      "url": "assets/audio/vo-upgrade-armor.mp3"
+    },
+    {
+      "key": "vo-upgrade-engine",
+      "url": "assets/audio/vo-upgrade-engine.mp3"
+    },
+    {
+      "key": "vo-upgrade-gadget",
+      "url": "assets/audio/vo-upgrade-gadget.mp3"
+    },
+    {
+      "key": "vo-upgrade-tires",
+      "url": "assets/audio/vo-upgrade-tires.mp3"
+    },
+    {
+      "key": "vo-warlord-intro",
+      "url": "assets/audio/vo-warlord-intro.mp3"
+    },
+    {
+      "key": "vo-warlord-lose",
+      "url": "assets/audio/vo-warlord-lose.mp3"
+    },
+    {
+      "key": "vo-win",
+      "url": "assets/audio/vo-win.mp3"
+    }
+  ]
+}

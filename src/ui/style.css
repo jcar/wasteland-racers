@@ -1,0 +1,156 @@
+:root {
+  --ink: #2a1a10;
+  --sand: #fff1d6;
+  --orange: #f28c28;
+  --rust: #b8471f;
+  --teal: #1fb5ad;
+  --lime: #7bcf3c;
+  --gold: #ffc93c;
+  --metal: #4a4e57;
+  --focus: #ffe14d;
+}
+
+html, body { margin: 0; height: 100%; background: #1d1410; overflow: hidden; user-select: none; }
+#game { position: fixed; inset: 0; background: #2a1d16 center / cover no-repeat; }
+#view { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+#ui { position: absolute; inset: 0; font-family: 'Baloo 2', system-ui, sans-serif; color: var(--sand); pointer-events: none; }
+#ui > * { pointer-events: auto; }
+#ui .passthrough { pointer-events: none; }
+
+.screen { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; background: center / cover no-repeat; }
+.shade::before { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(20, 10, 5, 0.1), rgba(20, 10, 5, 0.55)); pointer-events: none; }
+.screen > * { position: relative; }
+
+h1, h2, h3, .big { font-family: 'Bungee', 'Baloo 2', sans-serif; font-weight: 400; margin: 0; letter-spacing: 0.02em; }
+.outlined { color: var(--gold); -webkit-text-stroke: 3px var(--ink); paint-order: stroke fill; text-shadow: 0 6px 0 var(--ink), 0 10px 18px rgba(0, 0, 0, 0.5); }
+
+.logo { font-size: clamp(40px, 8.5vw, 120px); line-height: 0.9; text-align: center; margin-top: 4vh; transform: rotate(-3deg); }
+.logo small { display: block; font-size: 0.45em; color: var(--orange); }
+.pulse { animation: pulse 1.1s ease-in-out infinite; }
+@keyframes pulse { 50% { transform: scale(1.08); } }
+
+.btn {
+  font-family: 'Bungee', sans-serif; font-size: clamp(16px, 2vw, 26px); color: var(--ink);
+  background: linear-gradient(180deg, #ffd66b, #f28c28); border: 4px solid var(--ink); border-radius: 18px;
+  padding: 10px 22px; box-shadow: 0 6px 0 var(--ink); cursor: pointer; transition: transform 0.08s;
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px; position: relative;
+}
+.btn:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--ink); }
+.btn.green { background: linear-gradient(180deg, #b6f06a, #56a82a); }
+.btn.teal { background: linear-gradient(180deg, #7ff0e6, #1fb5ad); }
+.btn.gray, .btn.locked { background: linear-gradient(180deg, #c9c3b8, #8f877b); }
+.btn.cant { filter: saturate(0.4) brightness(0.9); }
+.btn .emoji, .btn .art { width: 1.6em; height: 1.6em; font-size: 1.3em; display: inline-flex; align-items: center; justify-content: center; object-fit: contain; }
+[data-nav].focused { outline: 5px solid var(--focus); outline-offset: 3px; transform: scale(1.06); z-index: 2; }
+.btn.focused { box-shadow: 0 6px 0 var(--ink), 0 0 24px 6px rgba(255, 225, 77, 0.8); }
+.shake { animation: shake 0.35s; }
+@keyframes shake { 20%, 60% { translate: -8px 0; } 40%, 80% { translate: 8px 0; } }
+.pop { animation: pop 0.4s cubic-bezier(0.3, 1.8, 0.5, 1); }
+@keyframes pop { from { transform: scale(0.6); } }
+
+.panel {
+  background: linear-gradient(180deg, #6b5446, #4a382e); border: 5px solid var(--ink); border-radius: 22px;
+  box-shadow: inset 0 3px 0 rgba(255, 255, 255, 0.15), 0 10px 0 rgba(0, 0, 0, 0.35); padding: 16px;
+}
+
+.emoji { font-family: 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI Emoji', sans-serif; line-height: 1; }
+img.art { object-fit: contain; }
+
+.hint { position: absolute; bottom: 12px; left: 0; right: 0; text-align: center; font-size: 15px; opacity: 0.8; text-shadow: 0 2px 3px #000; }
+.keycap { display: inline-block; border: 2px solid var(--sand); border-radius: 6px; padding: 0 6px; margin: 0 2px; font-weight: 800; }
+
+.scrap { font-family: 'Bungee', sans-serif; font-size: clamp(20px, 3vw, 38px); display: inline-flex; align-items: center; gap: 8px; }
+.scrap .art, .scrap .emoji { width: 1.4em; height: 1.4em; font-size: 1em; }
+
+/* ---------- modal ---------- */
+.modal-back { position: absolute; inset: 0; background: rgba(15, 8, 4, 0.7); display: flex; align-items: center; justify-content: center; z-index: 20; }
+.modal { min-width: min(560px, 92vw); display: flex; flex-direction: column; gap: 12px; align-items: stretch; }
+.modal h2 { text-align: center; font-size: 34px; }
+.setting { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 20px; font-weight: 800; }
+.setting .opts { display: flex; gap: 8px; }
+.setting .btn { font-size: 15px; padding: 6px 12px; }
+.setting .btn.on { background: linear-gradient(180deg, #b6f06a, #56a82a); }
+
+/* ---------- race HUD ---------- */
+.hud { position: absolute; inset: 0; pointer-events: none; font-family: 'Bungee', sans-serif; }
+.hud .order { position: absolute; top: 14px; left: 14px; display: flex; flex-direction: column; gap: 6px; }
+.hud .racer { display: flex; align-items: center; gap: 8px; background: rgba(30, 18, 10, 0.75); border: 3px solid var(--ink); border-radius: 14px; padding: 3px 12px 3px 4px; font-size: 20px; transition: transform 0.3s; }
+.hud .racer.me { background: linear-gradient(90deg, #f28c28, #ffc93c); color: var(--ink); transform: scale(1.12); transform-origin: left; }
+.hud .racer .face { width: 42px; height: 42px; border-radius: 50%; background: #fff1d6; display: flex; align-items: center; justify-content: center; overflow: hidden; font-size: 28px; }
+.hud .racer .face img { width: 100%; height: 100%; object-fit: cover; }
+.hud .lap { position: absolute; top: 14px; right: 18px; font-size: clamp(22px, 3vw, 40px); text-align: right; }
+.hud .minimap { position: absolute; top: 70px; right: 14px; width: 190px; height: 190px; }
+.hud .gadget { position: absolute; right: 22px; bottom: 22px; width: 130px; height: 130px; border-radius: 50%; background: rgba(30, 18, 10, 0.8); border: 5px solid var(--ink); display: flex; align-items: center; justify-content: center; }
+.hud .gadget .art, .hud .gadget .emoji { width: 90px; height: 90px; font-size: 64px; display: flex; align-items: center; justify-content: center; }
+.hud .gadget.empty .art, .hud .gadget.empty .emoji { filter: grayscale(1) opacity(0.35); }
+.hud .gadget.ready { border-color: var(--focus); box-shadow: 0 0 30px 8px rgba(255, 225, 77, 0.75); animation: pulse 0.8s infinite; }
+.hud .gadget .count { position: absolute; top: -8px; left: -8px; background: var(--gold); color: var(--ink); border: 4px solid var(--ink); border-radius: 50%; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+.hud .gadget .key { position: absolute; bottom: -16px; background: var(--sand); color: var(--ink); border: 3px solid var(--ink); border-radius: 8px; padding: 0 8px; font-size: 14px; }
+.hud .bolts { position: absolute; left: 18px; bottom: 18px; }
+.hud .banner { position: absolute; left: 0; right: 0; top: 30%; text-align: center; font-size: clamp(50px, 11vw, 150px); }
+.hud .banner.small { font-size: clamp(34px, 6vw, 80px); }
+.hud .callout { position: absolute; top: 18%; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 14px; }
+.hud .callout .face { width: 120px; height: 120px; }
+.hud .bubble { background: var(--sand); color: var(--ink); font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: clamp(18px, 2.2vw, 28px); padding: 10px 18px; border: 4px solid var(--ink); border-radius: 20px; max-width: 50vw; }
+.hud .tip { position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%); font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 22px; background: rgba(30, 18, 10, 0.8); padding: 6px 18px; border-radius: 14px; border: 3px solid var(--ink); }
+
+/* ---------- garage ---------- */
+.garage { flex-direction: row; align-items: stretch; }
+.garage .left { flex: 1.1; display: flex; flex-direction: column; justify-content: space-between; padding: 18px; pointer-events: none; }
+.garage .left > * { pointer-events: auto; }
+.garage .carname { font-size: clamp(22px, 3vw, 40px); }
+.garage .right { flex: 1; display: flex; flex-direction: column; gap: 12px; padding: 18px 18px 18px 0; min-width: 0; }
+.tabs { display: flex; gap: 8px; }
+.tabs .btn { flex: 1; padding: 6px; font-size: 14px; flex-direction: column; gap: 0; }
+.tabs .btn .emoji, .tabs .btn .art { width: 44px; height: 44px; font-size: 32px; }
+.tabs .btn.active { background: linear-gradient(180deg, #7ff0e6, #1fb5ad); }
+.shop { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding: 6px; }
+.row { display: flex; align-items: center; gap: 12px; background: rgba(0, 0, 0, 0.25); border-radius: 16px; padding: 8px 12px; }
+.row .icon { width: 64px; height: 64px; font-size: 46px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.row .name { font-family: 'Bungee', sans-serif; font-size: 20px; flex: 1; }
+.pips { display: flex; gap: 5px; margin-top: 4px; }
+.pips i { width: 26px; height: 16px; border-radius: 5px; border: 3px solid var(--ink); background: #3a2d25; }
+.pips i.on { background: var(--lime); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; }
+.card { flex-direction: column; padding: 10px; font-size: 15px; gap: 4px; min-height: 120px; }
+.card .emoji, .card .art { width: 72px; height: 72px; font-size: 52px; }
+.card .price { font-size: 14px; }
+.swatch { width: 100%; aspect-ratio: 1; border-radius: 50%; border: 4px solid var(--ink); }
+.race-btn { font-size: clamp(30px, 4.5vw, 60px); padding: 14px 40px; align-self: flex-start; }
+
+/* ---------- track select ---------- */
+.worlds { display: flex; gap: 12px; margin-top: 16px; flex-wrap: wrap; justify-content: center; padding: 0 12px; }
+.world { width: clamp(120px, 16vw, 220px); padding: 0; overflow: hidden; flex-direction: column; gap: 0; }
+.world img, .world .ph { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; display: flex; align-items: center; justify-content: center; font-size: 48px; background: #6b5446; }
+.world .label { padding: 4px 6px; font-size: clamp(11px, 1.2vw, 16px); }
+.world.locked img { filter: grayscale(1) brightness(0.6); }
+.tracks { display: flex; gap: 18px; margin-top: 3vh; flex-wrap: wrap; justify-content: center; }
+.trackcard { width: clamp(180px, 22vw, 290px); flex-direction: column; padding: 12px; gap: 6px; }
+.trackcard svg { width: 100%; aspect-ratio: 1.3; background: rgba(0, 0, 0, 0.2); border-radius: 12px; }
+.trackcard .medal { font-size: 34px; height: 40px; }
+.lock { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 60px; background: rgba(0, 0, 0, 0.35); border-radius: 14px; }
+.lock .art { width: 80px; height: 80px; }
+
+/* ---------- podium ---------- */
+.results { display: flex; flex-direction: column; gap: 6px; margin-top: 1.5vh; min-width: min(520px, 92vw); }
+.result { display: flex; align-items: center; gap: 14px; font-family: 'Bungee', sans-serif; font-size: clamp(16px, 3.2vh, 28px); }
+.result.me { background: linear-gradient(90deg, #f28c28, #ffc93c); color: var(--ink); }
+.result .place { width: 70px; text-align: center; font-size: 1.4em; }
+.result .face { width: clamp(40px, 6vh, 60px); height: clamp(40px, 6vh, 60px); border-radius: 50%; background: var(--sand); overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 40px; }
+.result .face img { width: 100%; height: 100%; object-fit: cover; }
+.payout { display: flex; gap: 18px; align-items: center; margin-top: 2vh; font-family: 'Bungee', sans-serif; font-size: clamp(18px, 2.4vw, 30px); flex-wrap: wrap; justify-content: center; }
+.celebrate { display: flex; align-items: center; gap: 16px; margin-top: 1.5vh; min-height: 90px; font-family: 'Bungee', sans-serif; font-size: clamp(18px, 2.6vw, 34px); }
+.celebrate img, .celebrate .emoji { width: 120px; height: 90px; object-fit: cover; border-radius: 12px; font-size: 70px; }
+.actions { display: flex; gap: 16px; margin-top: auto; margin-bottom: 3vh; flex-wrap: wrap; justify-content: center; }
+
+/* ---------- driver pick ---------- */
+.drivers { display: flex; gap: 20px; margin-top: 5vh; flex-wrap: wrap; justify-content: center; }
+.driver { flex-direction: column; width: clamp(150px, 18vw, 240px); padding: 12px; }
+.driver .art, .driver .emoji { width: 100%; aspect-ratio: 1; font-size: 110px; display: flex; align-items: center; justify-content: center; }
+
+.confetti { position: absolute; top: -20px; width: 12px; height: 18px; pointer-events: none; animation: fall linear forwards; z-index: 30; }
+@keyframes fall { to { transform: translateY(110vh) rotate(720deg); } }
+.row .icon .art, .row .icon .emoji { width: 100%; height: 100%; }
+.card .art { object-fit: contain; }
+.driver .art { width: 100%; height: auto; }
+.coin { width: 1.3em !important; height: 1.3em !important; vertical-align: middle; }
