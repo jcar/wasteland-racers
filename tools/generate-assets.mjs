@@ -35,6 +35,8 @@ const MODELS = {
   image: process.env.GEMINI_IMAGE_MODEL || 'gemini-3-pro-image',
   tts: process.env.GEMINI_TTS_MODEL || 'gemini-3.8-flash-tts',
   music: process.env.GEMINI_MUSIC_MODEL || 'lyria-3.5',
+  /** Listens to each voice clip to make sure only the line was spoken. */
+  check: process.env.GEMINI_CHECK_MODEL || 'gemini-2.5-flash',
 };
 
 // ------------------------------------------------------------------ cli
@@ -78,7 +80,7 @@ async function withRetry(label, fn, tries = 4) {
       return await fn();
     } catch (e) {
       const msg = String(e?.message ?? e);
-      const retryable = /429|500|503|RESOURCE_EXHAUSTED|UNAVAILABLE|overloaded|deadline/i.test(msg);
+      const retryable = /429|500|503|RESOURCE_EXHAUSTED|UNAVAILABLE|overloaded|deadline|fetch failed|ECONNRESET|ETIMEDOUT|socket/i.test(msg);
       if (!retryable || i >= tries) throw e;
       const wait = 2000 * 2 ** i;
       console.warn(`  ${label}: busy, retrying in ${wait / 1000}s (${msg.slice(0, 80)})`);
@@ -249,16 +251,41 @@ async function processImage(asset, raw) {
   await writeFile(imagePath(asset), out);
 }
 
-async function generateVoice(id, line, manifest) {
-  const v = manifest.voices[line.speaker] ?? manifest.voices.narrator;
-  const res = await withRetry(id, () =>
+const words = (t) => t.toLowerCase().replace(/[^a-z0-9' ]+/g, ' ').split(/\s+/).filter(Boolean);
+
+/**
+ * How many spoken words aren't in the line. The TTS model sometimes reads
+ * its style notes out loud ("Say like a silly dinosaur..."), which shows up
+ * here as extra words. A word or two of slack covers "rawr" vs "rarr".
+ */
+async function extraWords(wav, line) {
+  const res = await withRetry('check', () =>
+    client().models.generateContent({
+      model: MODELS.check,
+      contents: [{ role: 'user', parts: [
+        { inlineData: { mimeType: 'audio/wav', data: wav.toString('base64') } },
+        { text: 'Transcribe exactly every word spoken in this audio. Output only the words.' },
+      ] }],
+    }),
+  );
+  const heard = res.text ?? '';
+  const expected = new Set(words(line));
+  let extra = words(heard).filter((w) => !expected.has(w)).length;
+  // Words from the style notes are a sure sign they were read out.
+  if (/director|notes|style|transcript/i.test(heard) && !/director|notes|style|transcript/i.test(line)) extra += 10;
+  return { extra, heard };
+}
+
+async function speakOnce(text, voice, style) {
+  // Style goes in separate notes, never glued onto the line, or it gets read aloud.
+  const prompt = style ? `### DIRECTOR'S NOTES\nStyle: ${style}.\n\n### TRANSCRIPT\n${text}` : text;
+  const res = await withRetry('voice', () =>
     client().models.generateContent({
       model: MODELS.tts,
-      // Keep the style short ("Say sweetly: ..."): long descriptions make clips drag on.
-      contents: [{ role: 'user', parts: [{ text: `Say ${v.style}: "${line.text}"` }] }],
+      contents: [{ role: 'user', parts: [{ text: prompt }] }],
       config: {
         responseModalities: ['AUDIO'],
-        speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: v.voice } } },
+        speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: voice } } },
       },
     }),
   );
@@ -267,9 +294,24 @@ async function generateVoice(id, line, manifest) {
   const data = Buffer.from(a.inlineData.data, 'base64');
   const mime = a.inlineData.mimeType ?? '';
   const rate = Number(/rate=(\d+)/.exec(mime)?.[1] ?? 24000);
-  const wav = /L16|pcm/i.test(mime) || !mime ? pcmToWav(data, rate) : data;
+  return trimWav(/L16|pcm/i.test(mime) || !mime ? pcmToWav(data, rate) : data);
+}
+
+async function generateVoice(id, line, manifest) {
+  const v = manifest.voices[line.speaker] ?? manifest.voices.announcer;
+  // A few tries in character, then plain (no style) as a last resort.
+  const attempts = [v.style, v.style, v.style, v.style, null, null];
+  let wav, last = '';
+  for (const style of attempts) {
+    const clip = await speakOnce(line.text, v.voice, style);
+    const { extra, heard } = await extraWords(clip, line.text);
+    if (extra <= 2) { wav = clip; break; }
+    last = heard;
+    console.warn(`\n  ${id}: heard extra words, retrying ("${heard.slice(0, 90)}")`);
+  }
+  if (!wav) throw new Error(`every take had extra words (last: "${last.slice(0, 120)}")`);
   const wavPath = path.join(AUDIO_DIR, `vo-${id}.wav`);
-  await writeFile(wavPath, trimWav(wav));
+  await writeFile(wavPath, wav);
   // Voice clips are much smaller as MP3 (matters for the web build). Keep the WAV if ffmpeg isn't installed.
   const mp3 = spawnSync('ffmpeg', ['-loglevel', 'error', '-y', '-i', wavPath, '-ac', '1', '-b:a', '64k', wavPath.replace(/\.wav$/, '.mp3')]);
   if (mp3.status === 0) await unlink(wavPath);
