@@ -43,6 +43,31 @@ Start on Strong + Chill and move up as he gets the hang of it.
 - **Kid-proofing:** the walls are rubbery and bounce you back. If you're stuck or facing the wrong way for 2 seconds, the **tow drone** lifts you back onto the road. The pack rubber-bands so races stay close.
 - Progress saves automatically in the browser (localStorage).
 
+## Season 2: Fury Road (in progress)
+
+Phase 1, the **Lore Garage**, is in:
+- **Chrome** is a second currency, earned by winning: 2 for a win, 1 for second place, and 3 more the first time you win a track. It buys:
+  - the **Wasteland Legends**: the Buzzard, Nux Car, Interceptor, Big Foot, Doof Wagon, Peacemaker, Dementus's Chariot and the Gigahorse
+  - **chrome upgrade levels 5–6**
+  - **Shiny Chrome** paint
+  - **hood ornaments** (Immortan's skull, the V8 wheel shrine, Dementus's teddy, bull horns)
+- **Special moves:** each legend has its own, on Space:
+  - the Interceptor's Blower
+  - Nux's "Witness Me!" chrome star power
+  - Big Foot's Stomp
+  - the Doof Wagon's Flame Guitar
+  - the Peacemaker's Thunder Shot
+  - the Gigahorse's Double V8
+  - the Chariot's Bike Swarm
+  - the Buzzard's Spike Ram
+- **War Boy weapons** for any car, bought with scrap: Thunder Sticks, Caltrops, Harpoon and Flamethrower. The War Rig comes with Thunder Sticks.
+- **Wrecks:** lore weapons do damage. A car that takes enough hits explodes, tumbles and respawns 2 s later with a short shield. Armor adds hit points, shown as red pips above the gadget button. Season 1 gadgets (boost, goo, boing) still just spin cars out.
+- **The Fury Road world:** opens after the Thunder Dome. It has three tracks: Citadel Circuit, Gas Town Gauntlet (rival: Slit) and Bullet Farm Blitz (rival: Rictus in Big Foot). War Boy racers fill out the grid.
+- **New drivers:** Max, Furiosa, Nux, War Pup, the Doof Warrior and Toast.
+- **The Valhalla Book** (from the garage): a card album of every character, car and place. Locked cards show a silhouette and how to get them. Opening a new card plays its voice line.
+
+Coming next (see the plan): the drive-around Wasteland, Chase/Escort/Arena modes, boss battles, and the Fury Road and Dementus chapters.
+
 ## Art, voice and music (Gemini)
 
 Everything has a placeholder drawn in code, so the game always works. Generated assets replace the placeholders as they're made.
@@ -58,7 +83,7 @@ npm run assets -- --rekey        # redo cut-outs and seamless tiling from saved 
 npm run assets -- --list-models  # which models your key can use
 ```
 
-- Prompts live in `tools/assets/manifest.json`. They share one style block so the art looks consistent. Images use Nano Banana Pro (`gemini-3-pro-image`), voices use Gemini TTS, and music uses Lyria.
+- Prompts live in `tools/assets/manifest.json`. They share one style block so the art looks consistent; Season 2 lore art opts into a grittier `"style": "lore"` block. Sprites whose background doesn't cut out cleanly are retried automatically. Images use Nano Banana Pro (`gemini-3-pro-image`), voices use Gemini TTS, and music uses Lyria.
 - Sprites are generated on magenta, which is then cut out. Ground and road textures are blended so they tile without seams. The untouched originals are kept in `tools/assets/raw/`.
 - Voice lines come from `src/data/dialogue.json`. If a voice file is missing, the browser's built-in speech reads the line instead.
 - Only prompts and dialogue text are sent to Google.

@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { game, type Scene } from '../Game';
 import { carById, PAINTS, DECALS, type BodyKind } from '../data/cars';
-import { driverById, EXTRAS, RIVALS, rivalById, type Racer } from '../data/characters';
+import { driverById, EXTRAS, RIVALS, WAR_BOYS, rivalById, type Racer } from '../data/characters';
 import { trackById, trackIndex } from '../data/tracks';
 import { worldById } from '../data/worlds';
 import { buildCar, type CarModel } from '../art/carBuilder';
@@ -10,6 +10,7 @@ import { emojiArt } from '../art/placeholders';
 import { AIDriver } from '../race/AIDriver';
 import { CarBody, collideCars, type DriveInput } from '../race/CarBody';
 import { Effects } from '../race/effects';
+import { Weapons, type Arena, type Fighter } from '../race/weapons';
 import { TrackGeometry } from '../race/trackGeometry';
 import { buildTrackVisuals, type TrackVisuals } from '../race/trackMesh';
 import { EngineSound } from '../audio/engine';
@@ -17,7 +18,7 @@ import { playMusic, stopMusic } from '../audio/music';
 import { sfx } from '../audio/sfx';
 import { lineText, speak, stopVoice } from '../audio/voice';
 import { texture } from '../systems/assets';
-import { aiSpeed, carStats } from '../systems/Economy';
+import { aiSpeed, carStats, raceGadget } from '../systems/Economy';
 import { state } from '../systems/GameState';
 import { Hud, type HudRacer } from '../ui/hud';
 import { Nav, html } from '../ui/nav';
@@ -26,17 +27,18 @@ import { GarageScene } from './GarageScene';
 import { PodiumScene, type RaceResult } from './PodiumScene';
 
 const ASSIST = { strong: 2.2, medium: 1.1, off: 0 };
-const AI_GADGET: Record<string, string> = { rex: 'boost', muffler: 'boing', bertha: 'goo', warlord: 'boing', dusty: 'boost', nutsy: 'goo', sparky: 'boost', rattles: 'boing' };
+const AI_GADGET: Record<string, string> = {
+  rex: 'boost', muffler: 'boing', bertha: 'goo', warlord: 'boing', dusty: 'boost', nutsy: 'goo', sparky: 'boost', rattles: 'boing',
+  slit: 'harpoon', rictus: 'stomp', morsov: 'thunder', ace: 'caltrops', corpus: 'thunder',
+};
 const AI_COOLDOWN = { chill: 12, normal: 7, tough: 4 };
 const VIEW_HEIGHT = 38;
 const CAM_DIR = new THREE.Vector3(1, 1.2, 1).normalize();
 
-interface Entry {
+interface Entry extends Fighter {
   racer: HudRacer;
-  body: CarBody;
   model: CarModel;
   ai?: AIDriver;
-  gadget: string;
   maxCharges: number;
   steer: number;
   input: DriveInput;
@@ -45,19 +47,21 @@ interface Entry {
 
 interface Crate { mesh: THREE.Mesh; x: number; z: number; h: number; away: number }
 interface Bolt { mesh: THREE.Mesh; x: number; z: number; h: number; taken: boolean }
-interface Slick { mesh: THREE.Mesh; x: number; z: number; owner: Entry; age: number }
 interface Zone { s0: number; s1: number; lat: number; half: number }
 
 let gadgetHintGiven = false;
 
-export class RaceScene implements Scene {
+export class RaceScene implements Scene, Arena {
   view: { scene: THREE.Scene; camera: THREE.OrthographicCamera };
   private trackId: string;
-  private geo: TrackGeometry;
+  readonly geo: TrackGeometry;
   private visuals!: TrackVisuals;
-  private effects = new Effects();
+  readonly effects = new Effects();
+  private weapons = new Weapons(this);
+  /** Cars the player wrecked this race (shown on the podium). */
+  private wrecks = 0;
   private entries: Entry[] = [];
-  private player!: Entry;
+  player!: Entry;
   private hud!: Hud;
   private phase: 'intro' | 'countdown' | 'race' | 'finish' = 'intro';
   private t = 0;
@@ -65,7 +69,6 @@ export class RaceScene implements Scene {
   private laps: number;
   private crates: Crate[] = [];
   private bolts: Bolt[] = [];
-  private slicks: Slick[] = [];
   private pads: Zone[] = [];
   private goo: Zone[] = [];
   private finishOrder: Entry[] = [];
@@ -77,8 +80,8 @@ export class RaceScene implements Scene {
   private pause?: { update(): void };
   private introTime = 1.2;
   private dustColor: string;
-  /** Screen shake after a big landing; fades out. */
-  private shake = 0;
+  /** Screen shake after a big landing or explosion; fades out. */
+  private shakeAmount = 0;
 
   constructor(trackId: string) {
     this.trackId = trackId;
@@ -91,6 +94,41 @@ export class RaceScene implements Scene {
     scene.background = new THREE.Color(world.sky);
     const camera = new THREE.OrthographicCamera(-10, 10, 10, -10, 1, 600);
     this.view = { scene, camera };
+  }
+
+  // Arena (what weapons need to know about the race).
+  get fighters() {
+    return this.entries;
+  }
+  get scene() {
+    return this.view.scene;
+  }
+  progress(f: Fighter) {
+    return f.body.progress(this.geo);
+  }
+  shake(amount: number) {
+    this.shakeAmount = Math.max(this.shakeAmount, amount);
+  }
+  hurt(target: Fighter, by: Fighter | undefined, damage: number, spin: number) {
+    const b = target.body;
+    const result = b.hit(damage, spin);
+    if (result === 'none') return;
+    const mine = target === this.player, byMe = by === this.player;
+    if (result === 'hit') {
+      this.effects.sparkle(b.x, b.y, b.z, '#ffb347', 6);
+      if (mine || byMe) sfx.bump();
+      return;
+    }
+    this.effects.explosion(b.x, b.y, b.z, true);
+    if (mine || byMe || this.near(target as Entry)) sfx.explosion(true);
+    if (mine) {
+      this.shake(0.9);
+      speak('got-wrecked', { priority: 1, cooldown: 10 });
+    } else if (byMe) {
+      this.wrecks++;
+      this.shake(0.4);
+      speak('wrecked-them', { priority: 1, cooldown: 6 });
+    }
   }
 
   enter() {
@@ -127,6 +165,10 @@ export class RaceScene implements Scene {
       this.introTime = 3.4;
       this.hud.say(rival.portrait, rival.emoji, lineText(`${rival.id}-intro`));
       speak(`${rival.id}-intro`, { priority: 2 });
+    } else if (def.world === 'fury') {
+      this.introTime = 3.4;
+      this.hud.say('driver-furiosa', '🦾', lineText('fury-intro'));
+      speak('fury-intro', { priority: 2 });
     } else if (def.world === 'dome') {
       this.introTime = 3.4;
       this.hud.say('announcer', '🎤', lineText('dome-intro'));
@@ -138,6 +180,8 @@ export class RaceScene implements Scene {
     playMusic(world.music);
     this.engine.start();
     this.snapCamera();
+    // Dev only: lets test scripts poke the race (e.g. hand out gadget charges).
+    if (import.meta.env.DEV) (window as unknown as { race?: RaceScene }).race = this;
   }
 
   private buildRacers() {
@@ -149,7 +193,8 @@ export class RaceScene implements Scene {
     if (def.world === 'dome') opponents = [...RIVALS];
     else {
       const rival = def.rival ? rivalById(def.rival) : undefined;
-      const extras = [...EXTRAS.slice(idx % EXTRAS.length), ...EXTRAS.slice(0, idx % EXTRAS.length)];
+      const pool = def.world === 'fury' ? WAR_BOYS : EXTRAS;
+      const extras = [...pool.slice(idx % pool.length), ...pool.slice(0, idx % pool.length)];
       opponents = rival ? [rival, ...extras.slice(0, 2)] : extras.slice(0, 3);
     }
 
@@ -159,7 +204,7 @@ export class RaceScene implements Scene {
     const decal = DECALS.find((d) => d.id === s.decal)?.image || undefined;
     const playerEntry = this.addEntry(
       { id: 'player', name: driver.name, portrait: driver.portrait, emoji: driver.emoji, color: paint, isPlayer: true },
-      car.body, paint, decal, s.upgrades, driver.head, s.gadget, carStats(s),
+      car.body, paint, decal, s.upgrades, driver.head, raceGadget(s), carStats(s), s.ornament,
     );
     this.player = playerEntry;
 
@@ -175,7 +220,7 @@ export class RaceScene implements Scene {
       );
       e.maxCharges = 2;
       e.ai = new AIDriver(e.body, base + r.skill, [0.5, -0.5, 0.2, -0.2][i % 4]);
-      e.ai.gadgetCooldown = AI_COOLDOWN[s.settings.difficulty] * (0.5 + Math.random());
+      e.cooldown = AI_COOLDOWN[s.settings.difficulty] * (0.5 + Math.random());
     }
 
     // Starting grid, two by two behind the line. The player starts in the second row.
@@ -187,10 +232,10 @@ export class RaceScene implements Scene {
     });
   }
 
-  private addEntry(racer: HudRacer, body: BodyKind, paint: string, decal: string | undefined, upgrades: Record<'engine' | 'tires' | 'armor' | 'gadget', number>, head: Racer['head'], gadget: string, stats: ReturnType<typeof carStats>) {
-    const model = buildCar({ body, paint, decal, upgrades, head });
+  private addEntry(racer: HudRacer, body: BodyKind, paint: string, decal: string | undefined, upgrades: Record<'engine' | 'tires' | 'armor' | 'gadget', number>, head: Racer['head'], gadget: string, stats: ReturnType<typeof carStats>, ornament?: string) {
+    const model = buildCar({ body, paint, decal, upgrades, head, ornament });
     this.view.scene.add(model.root);
-    const e: Entry = { racer, body: new CarBody(stats, racer.id), model, gadget, maxCharges: stats.maxCharges, steer: 0, input: { steer: 0, gas: 0, brake: false } };
+    const e: Entry = { racer, body: new CarBody(stats, racer.id), model, gadget, cooldown: 0, isPlayer: racer.isPlayer, maxCharges: stats.maxCharges, steer: 0, input: { steer: 0, gas: 0, brake: false } };
     this.entries.push(e);
     return e;
   }
@@ -291,7 +336,7 @@ export class RaceScene implements Scene {
       if (e.ai) {
         e.input = e.ai.think(dt, this.geo, e.racer.isPlayer ? undefined : playerProgress);
         e.steer = e.input.steer;
-        if (!e.racer.isPlayer) this.aiGadgets(e, dt);
+        if (!e.racer.isPlayer && this.phase === 'race' && this.weapons.aiWants(e, dt, AI_COOLDOWN[s.difficulty] * (0.7 + Math.random() * 0.6))) this.weapons.fire(e);
       }
     }
     const steps = Math.ceil(dt / (1 / 60));
@@ -318,10 +363,10 @@ export class RaceScene implements Scene {
         for (let j = i + 1; j < this.entries.length; j++) this.bump(this.entries[i], this.entries[j]);
     }
 
-    if (this.phase === 'race' && c.just('space')) this.useGadget(this.player);
+    if (this.phase === 'race' && c.just('space') && this.weapons.fire(this.player)) gadgetHintGiven = true;
 
     this.updatePickups(dt);
-    this.updateSlicks(dt);
+    this.weapons.update(dt);
     for (const e of this.entries) this.handleEvents(e);
     this.updatePlaces();
   }
@@ -336,75 +381,13 @@ export class RaceScene implements Scene {
   }
 
   private bump(a: Entry, b: Entry) {
-    // A boing bumper sends whoever is in front flying.
-    for (const [hitter, target] of [[a, b], [b, a]] as const) {
-      if (hitter.body.boing <= 0 || target.body.spin > 0) continue;
-      const dx = target.body.x - hitter.body.x, dz = target.body.z - hitter.body.z;
-      const d = Math.hypot(dx, dz);
-      const fx = Math.cos(hitter.body.heading), fz = Math.sin(hitter.body.heading);
-      if (d < 4.2 && (dx * fx + dz * fz) / d > 0.3) {
-        target.body.vx += (dx / d) * 14 + fx * 4;
-        target.body.vz += (dz / d) * 14 + fz * 4;
-        target.body.startSpin(target.body.stats.spinTime * 0.7);
-        hitter.body.boing = 0;
-        sfx.boing();
-        this.effects.sparkle(target.body.x, target.body.y, target.body.z, '#ffffff', 12);
-        if (hitter === this.player || target === this.player) speak('boing', { priority: 0, cooldown: 10 });
-      }
-    }
     const impact = collideCars(a.body, b.body);
+    this.weapons.contact(a, b);
     if (impact > 5 && (a === this.player || b === this.player)) sfx.bump();
   }
 
-  private useGadget(e: Entry) {
-    const b = e.body;
-    if (b.charges <= 0 || b.towing > 0 || b.spin > 0) return;
-    b.charges--;
-    const mine = e === this.player;
-    gadgetHintGiven ||= mine;
-    switch (e.gadget) {
-      case 'boost':
-        b.boost = 1.6;
-        if (mine || this.near(e)) sfx.boost();
-        if (mine) speak('boost', { priority: 0, cooldown: 15 });
-        break;
-      case 'goo': {
-        const x = b.x - Math.cos(b.heading) * 3.4, z = b.z - Math.sin(b.heading) * 3.4;
-        const pos = this.geo.locate(x, z, b.pos.i);
-        const mesh = new THREE.Mesh(new THREE.CircleGeometry(2.3, 20), toon('#ffffff', { map: texture('goo-puddle', emojiArt('🟢')), transparent: true }));
-        mesh.geometry.rotateX(-Math.PI / 2);
-        mesh.position.set(x, pos.h + 0.12, z);
-        this.view.scene.add(mesh);
-        this.slicks.push({ mesh, x, z, owner: e, age: 0 });
-        if (mine || this.near(e)) sfx.splat();
-        break;
-      }
-      case 'boing':
-        b.boing = 2.2;
-        if (mine || this.near(e)) sfx.boing();
-        break;
-    }
-  }
-
-  private near(e: Entry) {
+  near(e: Fighter) {
     return Math.hypot(e.body.x - this.player.body.x, e.body.z - this.player.body.z) < 35;
-  }
-
-  private aiGadgets(e: Entry, dt: number) {
-    const ai = e.ai!;
-    const b = e.body;
-    ai.gadgetCooldown -= dt;
-    if (b.charges <= 0 || ai.gadgetCooldown > 0 || this.phase !== 'race') return;
-    const gap = b.progress(this.geo) - this.player.body.progress(this.geo);
-    const sameLane = Math.abs(b.pos.lateral - this.player.body.pos.lateral) < 4;
-    let use = false;
-    if (e.gadget === 'boost') use = this.geo.maxCurveAhead(b.pos.s, 40) < 0.025 && gap < 30;
-    else if (e.gadget === 'goo') use = gap > 4 && gap < 22;
-    else if (e.gadget === 'boing') use = gap < -1 && gap > -7 && sameLane;
-    if (ai.gadgetCooldown < -15) use = true; // don't hoard forever
-    if (!use) return;
-    this.useGadget(e);
-    ai.gadgetCooldown = AI_COOLDOWN[state.data.settings.difficulty] * (0.7 + Math.random() * 0.6);
   }
 
   private updatePickups(dt: number) {
@@ -455,31 +438,6 @@ export class RaceScene implements Scene {
     }
   }
 
-  private updateSlicks(dt: number) {
-    for (let i = this.slicks.length - 1; i >= 0; i--) {
-      const sl = this.slicks[i];
-      sl.age += dt;
-      let hit: Entry | undefined;
-      for (const e of this.entries) {
-        if (e === sl.owner && sl.age < 1.5) continue;
-        const b = e.body;
-        if (!b.airborne && b.towing <= 0 && Math.hypot(b.x - sl.x, b.z - sl.z) < 2.4) hit = e;
-      }
-      if (hit) {
-        hit.body.startSpin(hit.body.stats.spinTime);
-        this.effects.splat(sl.x, hit.body.y, sl.z);
-        if (hit === this.player) speak('got-spun', { priority: 0, cooldown: 20 });
-        else if (sl.owner === this.player) speak('goo', { priority: 0, cooldown: 12 });
-        if (hit === this.player || this.near(hit)) sfx.splat();
-      }
-      if (hit || sl.age > 14) {
-        this.view.scene.remove(sl.mesh);
-        sl.mesh.geometry.dispose();
-        this.slicks.splice(i, 1);
-      } else sl.mesh.scale.setScalar(Math.min(1, sl.age * 4));
-    }
-  }
-
   private handleEvents(e: Entry) {
     const b = e.body;
     const mine = e === this.player;
@@ -501,7 +459,7 @@ export class RaceScene implements Scene {
           this.effects.dust(b.x, b.y, b.z, this.dustColor, big ? 18 : 6);
           if (big && mine) {
             this.effects.sparkle(b.x, b.y, b.z, '#ffe14d', 14);
-            this.shake = 0.7;
+            this.shake(0.7);
           }
           break;
         }
@@ -513,6 +471,9 @@ export class RaceScene implements Scene {
           break;
         case 'spin':
           if (mine) sfx.spin();
+          break;
+        case 'respawn':
+          this.effects.sparkle(b.x, b.y, b.z, '#ffffff', 10);
           break;
         case 'boostpad':
           if (mine) sfx.boost();
@@ -567,6 +528,7 @@ export class RaceScene implements Scene {
     this.hud.setLap(pb.lap, this.laps);
     this.hud.setGadget(pb.charges);
     this.hud.setBolts(pb.bolts);
+    this.hud.setHp(pb.wrecked > 0 ? 0 : pb.hp, pb.stats.maxHp, pb.shield > 0 || pb.star > 0);
     for (const e of this.entries) this.hud.setDot(e.racer.id, e.body.x, e.body.z);
   }
 
@@ -600,6 +562,14 @@ export class RaceScene implements Scene {
       if (!b.airborne && b.towing <= 0 && Math.abs(fwd) > 6 && Math.random() < (e === this.player ? 0.5 : 0.25))
         this.effects.dust(b.x - Math.cos(b.heading) * 1.6, b.y, b.z - Math.sin(b.heading) * 1.6, b.slowed ? '#9be15d' : this.dustColor);
       if (b.spin > 0 && Math.random() < 0.15) this.effects.sparkle(b.x, b.y + 1.5, b.z, '#ffffff', 2);
+      // Wrecks tumble; respawned cars blink while their shield is up.
+      if (b.wrecked > 0) {
+        m.root.rotation.x += dt * 7;
+        m.root.rotation.z += dt * 4;
+        if (Math.random() < 0.3) this.effects.smoke(b.x, b.y + 0.5, b.z);
+      } else m.root.rotation.x = m.root.rotation.z = 0;
+      m.root.visible = !(b.shield > 0 && Math.floor(b.shield * 10) % 2 === 0);
+      this.weapons.decorate(e);
       this.updateDrone(e, dt);
     }
     if (this.phase !== 'intro' && this.phase !== 'countdown') {
@@ -652,10 +622,10 @@ export class RaceScene implements Scene {
     const want = new THREE.Vector3(pb.x + pb.vx * 0.45, pb.y, pb.z + pb.vz * 0.45);
     this.camTarget.lerp(want, dt ? 1 - Math.exp(-4 * dt) : 1);
     const look = this.camTarget.clone();
-    if (this.shake > 0) {
-      look.x += (Math.random() - 0.5) * this.shake;
-      look.y += (Math.random() - 0.5) * this.shake;
-      this.shake = Math.max(0, this.shake - dt * 1.8);
+    if (this.shakeAmount > 0) {
+      look.x += (Math.random() - 0.5) * this.shakeAmount;
+      look.y += (Math.random() - 0.5) * this.shakeAmount;
+      this.shakeAmount = Math.max(0, this.shakeAmount - dt * 1.8);
     }
     cam.position.copy(look).addScaledVector(CAM_DIR, 150);
     cam.lookAt(look);
@@ -715,11 +685,13 @@ export class RaceScene implements Scene {
       order: order.map((e) => e.racer),
       place: this.finishOrder.indexOf(this.player) + 1,
       bolts: this.player.body.bolts,
+      wrecks: this.wrecks,
     };
     game.go(new PodiumScene(result));
   }
 
   exit() {
+    this.weapons.clear();
     this.engine.stop();
     stopVoice();
     stopMusic();
@@ -729,7 +701,8 @@ export class RaceScene implements Scene {
   }
 }
 
+/** The car whose stats an AI racer with this body uses. Legends' ids match their body. */
 function bodyToCar(body: BodyKind): string {
-  return { buggy: 'buggy', hopper: 'hopper', truck: 'spike', monster: 'monster', rig: 'rig' }[body];
+  return body === 'truck' ? 'spike' : body;
 }
 

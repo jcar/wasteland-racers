@@ -19,6 +19,8 @@ export interface RaceResult {
   order: HudRacer[];
   place: number;
   bolts: number;
+  /** Cars the player wrecked. */
+  wrecks?: number;
 }
 
 const HEADLINE = ['YOU WIN!', '2nd PLACE!', '3rd PLACE!', 'FINISHED!', 'FINISHED!'];
@@ -73,9 +75,12 @@ export class PodiumScene implements Scene {
           <span>${['🥇', '🥈', '🥉'][r.place - 1] ?? '🏁'} +${o.placeReward}</span>
           ${o.boltReward ? `<span>🔩 +${o.boltReward}</span>` : ''}
           ${o.bonus ? `<span>⭐ +${o.bonus}</span>` : ''}
-          <span class="scrap outlined">= ${artHtml('icon-scrap', '🔩')}<b>0</b></span>`;
+          <span class="scrap outlined">= ${artHtml('icon-scrap', '🔩')}<b>0</b></span>
+          ${o.chrome ? `<span class="scrap outlined">+ ${artHtml('icon-chrome', '💎')}${o.chrome}</span>` : ''}
+          ${r.wrecks ? `<span>💥 ${r.wrecks} wrecked</span>` : ''}`;
         pay.classList.add('pop');
         this.countUp(pay.querySelector('b')!, o.total);
+        if (o.chrome) setTimeout(() => speak('shiny', { priority: 1 }), 1400);
       },
     });
     speak(VOICE[r.place - 1], { priority: 2 });

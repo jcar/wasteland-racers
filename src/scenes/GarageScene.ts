@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { game, type Scene } from '../Game';
-import { CARS, DECALS, GADGETS, MAX_LEVEL, PAINTS, UPGRADE_STATS, carById, type UpgradeStat } from '../data/cars';
+import { CARS, DECALS, GADGETS, MAX_LEVEL, ORNAMENTS, PAINTS, SCRAP_LEVELS, UPGRADE_STATS, carById, type Gadget, type UpgradeStat } from '../data/cars';
 import { DRIVERS, driverById } from '../data/characters';
 import { buildCar, type CarLook } from '../art/carBuilder';
 import { toon } from '../art/materials';
@@ -8,22 +8,24 @@ import { playMusic } from '../audio/music';
 import { sfx } from '../audio/sfx';
 import { speak } from '../audio/voice';
 import { artHtml, assetUrl } from '../systems/assets';
-import { buyCar, buyGadget, buyUpgrade, upgradeCost } from '../systems/Economy';
+import { buyCar, buyGadget, buyOrnament, buyPaint, buyUpgrade, carPrice, raceGadget, upgradeCost, type Price } from '../systems/Economy';
 import { state } from '../systems/GameState';
 import { Nav, confetti, html, shake } from '../ui/nav';
 import { TitleScene } from './TitleScene';
 import { TrackSelectScene } from './TrackSelectScene';
+import { ValhallaScene } from './ValhallaScene';
 
 type Tab = 'upgrades' | 'cars' | 'paint' | 'gadgets' | 'driver';
 const TABS: { id: Tab; label: string; icon: string; emoji: string }[] = [
   { id: 'upgrades', label: 'Fix Up', icon: 'icon-engine', emoji: '🔧' },
   { id: 'cars', label: 'Cars', icon: '', emoji: '🚙' },
   { id: 'paint', label: 'Paint', icon: '', emoji: '🎨' },
-  { id: 'gadgets', label: 'Gadgets', icon: 'icon-gadget', emoji: '⚡' },
+  { id: 'gadgets', label: 'Weapons', icon: 'icon-thunder', emoji: '⚡' },
   { id: 'driver', label: 'Driver', icon: '', emoji: '🙂' },
 ];
 
-const price = (n: number) => `<span class="price">${artHtml('icon-scrap', '🔩', 'coin')} ${n}</span>`;
+const price = (p: Price) =>
+  `<span class="price">${p.currency === 'chrome' ? artHtml('icon-chrome', '💎', 'coin') : artHtml('icon-scrap', '🔩', 'coin')} ${p.amount}</span>`;
 
 /** The hub: spend scrap on upgrades, cars, paint and gadgets, then RACE! */
 export class GarageScene implements Scene {
@@ -63,8 +65,11 @@ export class GarageScene implements Scene {
     if (bg) game.root.style.backgroundImage = `url(${bg})`;
     this.el = html(`<div class="screen garage">
       <div class="left">
-        <div><div class="scrap outlined"></div><div class="carname outlined"></div></div>
-        <button class="btn green race-btn" data-nav data-id="race">🏁 RACE!</button>
+        <div><div class="wallet"><span class="scrap outlined"></span><span class="scrap chrome-count outlined"></span></div><div class="carname outlined"></div></div>
+        <div class="left-actions">
+          <button class="btn teal book-btn" data-nav data-id="book">📖 Valhalla Book</button>
+          <button class="btn green race-btn" data-nav data-id="race">🏁 RACE!</button>
+        </div>
       </div>
       <div class="right">
         <div class="tabs"></div>
@@ -79,6 +84,10 @@ export class GarageScene implements Scene {
       sfx.confirm();
       game.go(new TrackSelectScene());
     };
+    this.el.querySelector<HTMLElement>('[data-id="book"]')!.onclick = () => {
+      sfx.confirm();
+      game.go(new ValhallaScene());
+    };
     this.render();
     this.nav.refocus('[data-id="race"]');
     playMusic('music-garage');
@@ -91,19 +100,27 @@ export class GarageScene implements Scene {
     const s = state.data;
     const p = this.preview ?? {};
     const car = carById(p.car ?? s.car);
+    // Previewing a legend you don't own yet shows it in its own colors.
+    const paintId = p.car && p.car !== s.car && car.paint && !s.ownedCars.includes(car.id) ? car.paint : s.paint;
     return {
       body: car.body,
-      paint: p.paint ?? PAINTS.find((x) => x.id === s.paint)?.color ?? PAINTS[0].color,
+      paint: p.paint ?? PAINTS.find((x) => x.id === paintId)?.color ?? PAINTS[0].color,
       decal: 'decal' in p ? p.decal : DECALS.find((d) => d.id === s.decal)?.image || undefined,
       upgrades: s.upgrades,
       head: p.head ?? driverById(s.driver).head,
+      ornament: 'ornament' in p ? p.ornament : s.ornament,
     };
   }
 
   private rebuildCar(pop = true) {
     if (this.car) this.turntable.remove(this.car);
     const model = buildCar(this.look());
+    // Fit big rigs (Gigahorse, Big Foot) on the turntable.
+    const size = new THREE.Box3().setFromObject(model.root).getSize(new THREE.Vector3());
+    const fit = Math.min(1, 5.2 / Math.max(size.x, size.z), 3.6 / size.y);
+    model.root.userData.fit = fit;
     this.car = model.root;
+    this.car.scale.setScalar(fit);
     this.turntable.add(this.car);
     this.popT = pop ? 0 : 1;
   }
@@ -122,6 +139,7 @@ export class GarageScene implements Scene {
     else if (kind === 'paint') this.setPreview({ paint: PAINTS.find((p) => p.id === value)!.color });
     else if (kind === 'decal') this.setPreview({ decal: DECALS.find((d) => d.id === value)!.image || undefined });
     else if (kind === 'driver') this.setPreview({ head: driverById(value).head });
+    else if (kind === 'orn') this.setPreview({ ornament: value });
     else this.setPreview(undefined);
   }
 
@@ -130,6 +148,7 @@ export class GarageScene implements Scene {
   private render() {
     const s = state.data;
     this.el.querySelector('.scrap')!.innerHTML = `${artHtml('icon-scrap', '🔩')} ${s.scrap}`;
+    this.el.querySelector('.chrome-count')!.innerHTML = `${artHtml('icon-chrome', '💎')} ${s.chrome}`;
     this.el.querySelector('.carname')!.textContent = carById(s.car).name;
 
     const tabs = this.el.querySelector('.tabs')!;
@@ -158,38 +177,45 @@ export class GarageScene implements Scene {
       for (const st of UPGRADE_STATS) {
         const lvl = s.upgrades[st.id];
         const cost = upgradeCost(lvl);
-        const pips = Array.from({ length: MAX_LEVEL }, (_, i) => `<i class="${i < lvl ? 'on' : ''}"></i>`).join('');
+        const pips = Array.from({ length: MAX_LEVEL }, (_, i) => `<i class="${i < lvl ? 'on' : ''} ${i >= SCRAP_LEVELS ? 'chrome' : ''}"></i>`).join('');
         const row = html(`<div class="row"><div class="icon">${artHtml(st.icon, st.emoji)}</div><div class="name">${st.name}<div class="pips">${pips}</div></div></div>`);
         add(
-          `<button class="btn ${cost === undefined ? 'gray' : cost > s.scrap ? 'cant' : 'green'}" data-nav data-id="up:${st.id}">${cost === undefined ? 'FULL!' : price(cost)}</button>`,
+          `<button class="btn ${cost === undefined ? 'gray' : cost.amount > s[cost.currency] ? 'cant' : cost.currency === 'chrome' ? 'chrome' : 'green'}" data-nav data-id="up:${st.id}">${cost === undefined ? 'FULL!' : price(cost)}</button>`,
           (el) => this.buyUpgrade(st.id, el),
           row,
         );
         shop.appendChild(row);
       }
     } else if (this.tab === 'cars') {
-      const grid = html(`<div class="grid"></div>`);
-      shop.appendChild(grid);
-      for (const c of CARS) {
-        const owned = s.ownedCars.includes(c.id);
-        const label = s.car === c.id ? 'DRIVING' : owned ? 'DRIVE' : price(c.price);
-        add(
-          `<button class="btn card ${owned ? 'teal' : c.price > s.scrap ? 'cant' : ''}" data-nav data-id="car:${c.id}"><span class="emoji">${c.emoji}</span>${c.name}<span class="price">${label}</span></button>`,
-          (el) => this.buyCar(c.id, el),
-          grid,
-        );
+      for (const [title, list] of [['Garage', CARS.filter((c) => !c.lore)], ['Wasteland Legends', CARS.filter((c) => c.lore)]] as const) {
+        shop.appendChild(html(`<h3>${title}</h3>`));
+        const grid = html(`<div class="grid"></div>`);
+        shop.appendChild(grid);
+        for (const c of list) {
+          const owned = s.ownedCars.includes(c.id);
+          const cost = carPrice(c.id);
+          const label = s.car === c.id ? 'DRIVING' : owned ? 'DRIVE' : price(cost);
+          add(
+            `<button class="btn card ${owned ? 'teal' : cost.amount > s[cost.currency] ? 'cant' : c.lore ? 'chrome' : ''}" data-nav data-id="car:${c.id}">${artHtml(c.card ?? '', c.emoji, 'wide')}${c.name}<span class="price">${label}</span></button>`,
+            (el) => this.buyCar(c.id, el),
+            grid,
+          );
+        }
       }
     } else if (this.tab === 'paint') {
       const grid = html(`<div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(70px,1fr))"></div>`);
       shop.appendChild(grid);
       for (const p of PAINTS) {
         const locked = p.unlock && !s.rewards.includes(p.unlock);
+        const forSale = p.chrome && !s.ownedPaints.includes(p.id);
         add(
-          `<button class="btn card ${s.paint === p.id ? 'teal' : ''}" style="min-height:0" data-nav data-id="paint:${p.id}"><div class="swatch" style="background:${locked ? '#777' : p.color}"></div>${locked ? '🔒' : ''}</button>`,
+          `<button class="btn card ${s.paint === p.id ? 'teal' : ''}" style="min-height:0" data-nav data-id="paint:${p.id}"><div class="swatch" style="background:${locked ? '#777' : p.color}"></div>${locked ? '🔒' : forSale ? price({ amount: p.chrome!, currency: 'chrome' }) : ''}</button>`,
           (el) => {
-            if (locked) return this.nope(el, 'decal-locked');
-            s.paint = p.id;
-            this.saved('paint', `paint:${p.id}`);
+            const r = buyPaint(s, p.id);
+            if (r === 'locked') return this.nope(el, 'decal-locked');
+            if (r === 'broke') return this.nope(el, 'not-enough-chrome');
+            if (r === 'ok') { sfx.buy(); speak('shiny', { priority: 2 }); confetti(game.ui, 40); }
+            this.saved(r === 'ok' ? undefined : 'paint', `paint:${p.id}`);
           },
           grid,
         );
@@ -209,26 +235,57 @@ export class GarageScene implements Scene {
           decals,
         );
       }
-    } else if (this.tab === 'gadgets') {
-      const grid = html(`<div class="grid"></div>`);
-      shop.appendChild(grid);
-      for (const g of GADGETS) {
-        const owned = s.ownedGadgets.includes(g.id);
-        const label = s.gadget === g.id ? 'USING' : owned ? 'USE' : price(g.price);
+      shop.appendChild(html(`<h3 style="margin-top:8px">Hood Ornaments</h3>`));
+      const orns = html(`<div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(90px,1fr))"></div>`);
+      shop.appendChild(orns);
+      for (const o of ORNAMENTS) {
+        const owned = s.ownedOrnaments.includes(o.id);
         add(
-          `<button class="btn card ${owned ? 'teal' : g.price > s.scrap ? 'cant' : ''}" data-nav data-id="gadget:${g.id}">${artHtml(g.icon, g.emoji)}${g.name}<span class="price">${label}</span></button>`,
+          `<button class="btn card ${s.ornament === o.id ? 'teal' : owned ? '' : o.chrome > s.chrome ? 'cant' : 'chrome'}" style="min-height:0" data-nav data-id="orn:${o.id}"><span class="emoji">${o.emoji}</span>${owned ? '' : price({ amount: o.chrome, currency: 'chrome' })}</button>`,
           (el) => {
-            const r = buyGadget(s, g.id);
-            if (r === 'broke') return this.nope(el, 'not-enough');
-            if (r === 'ok') {
-              sfx.buy();
-              speak('new-gadget', { priority: 2 });
-              confetti(game.ui, 30);
-            } else sfx.confirm();
-            this.saved(undefined, `gadget:${g.id}`);
+            const r = buyOrnament(s, o.id);
+            if (r === 'broke') return this.nope(el, 'not-enough-chrome');
+            if (r === 'ok') { sfx.buy(); speak('ornament', { priority: 2 }); confetti(game.ui, 30); } else sfx.confirm();
+            this.saved(undefined, `orn:${o.id}`);
           },
-          grid,
+          orns,
         );
+      }
+    } else if (this.tab === 'gadgets') {
+      const car = carById(s.car);
+      const sections: [string, Gadget[]][] = [
+        ['Special Move', GADGETS.filter((g) => g.car === car.id)],
+        ['Gadgets', GADGETS.filter((g) => !g.car && !g.lore)],
+        ['War Boy Weapons', GADGETS.filter((g) => !g.car && g.lore)],
+        ['Legends’ Specials', GADGETS.filter((g) => g.car && g.car !== car.id)],
+      ];
+      const using = raceGadget(s);
+      for (const [title, list] of sections) {
+        if (!list.length) continue;
+        shop.appendChild(html(`<h3>${title}</h3>`));
+        const grid = html(`<div class="grid"></div>`);
+        shop.appendChild(grid);
+        for (const g of list) {
+          const otherCar = g.car && g.car !== car.id ? carById(g.car) : undefined;
+          const owned = s.ownedGadgets.includes(g.id) || g.car === car.id;
+          const label = otherCar ? `Drive the ${otherCar.name}` : using === g.id ? 'USING' : owned ? 'USE' : price({ amount: g.price, currency: 'scrap' });
+          add(
+            `<button class="btn card ${otherCar ? 'locked' : owned ? 'teal' : g.price > s.scrap ? 'cant' : ''}" data-nav data-id="gadget:${g.id}">${artHtml(g.icon, g.emoji)}${g.name}<span class="price">${label}</span></button>`,
+            (el) => {
+              if (otherCar) return this.nope(el, 'card-locked');
+              if (g.car === car.id) { s.gadget = g.id; sfx.confirm(); return this.saved(undefined, `gadget:${g.id}`); }
+              const r = buyGadget(s, g.id);
+              if (r === 'broke') return this.nope(el, 'not-enough');
+              if (r === 'ok') {
+                sfx.buy();
+                speak('new-gadget', { priority: 2 });
+                confetti(game.ui, 30);
+              } else sfx.confirm();
+              this.saved(undefined, `gadget:${g.id}`);
+            },
+            grid,
+          );
+        }
       }
     } else if (this.tab === 'driver') {
       const grid = html(`<div class="grid"></div>`);
@@ -267,22 +324,24 @@ export class GarageScene implements Scene {
   }
 
   private buyUpgrade(stat: UpgradeStat, el: HTMLElement) {
+    const chrome = upgradeCost(state.data.upgrades[stat])?.currency === 'chrome';
     const r = buyUpgrade(state.data, stat);
-    if (r === 'broke') return this.nope(el, 'not-enough');
+    if (r === 'broke') return this.nope(el, chrome ? 'not-enough-chrome' : 'not-enough');
     if (r === 'maxed') return speak('maxed', { priority: 1, cooldown: 4 });
     sfx.buy();
     sfx.wrench();
-    speak(UPGRADE_STATS.find((s) => s.id === stat)!.voice, { priority: 2 });
+    speak(chrome ? 'chrome-upgrade' : UPGRADE_STATS.find((s) => s.id === stat)!.voice, { priority: 2 });
     confetti(game.ui, 30);
     this.saved(undefined, `up:${stat}`);
   }
 
   private buyCar(id: string, el: HTMLElement) {
+    const lore = carById(id).lore;
     const r = buyCar(state.data, id);
-    if (r === 'broke') return this.nope(el, 'not-enough');
+    if (r === 'broke') return this.nope(el, lore ? 'not-enough-chrome' : 'not-enough');
     if (r === 'ok') {
       sfx.buy();
-      speak('new-car', { priority: 2 });
+      speak(lore ? 'new-lore-car' : 'new-car', { priority: 2 });
       confetti(game.ui, 80);
     } else sfx.confirm();
     this.saved(undefined, `car:${id}`);
@@ -305,7 +364,7 @@ export class GarageScene implements Scene {
       this.popT = Math.min(1, this.popT + dt * 2.5);
       const t = this.popT;
       const s = 1 + Math.sin(t * Math.PI) * 0.25 * (1 - t);
-      this.car.scale.setScalar(s);
+      this.car.scale.setScalar(s * (this.car.userData.fit ?? 1));
       this.car.position.y = Math.sin(t * Math.PI) * 0.8;
     }
     if (game.controls.back()) return game.go(new TitleScene());

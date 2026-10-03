@@ -188,7 +188,7 @@ const AUDIO_EXT = { 'audio/mpeg': 'mp3', 'audio/mp3': 'mp3', 'audio/wav': 'wav',
 
 // ------------------------------------------------------------------ generators
 
-async function generateImage(asset, manifest) {
+async function generateImageOnce(asset, manifest) {
   const parts = [];
   if (asset.ref) {
     const refPath = path.join(IMG_DIR, `${asset.ref}.png`);
@@ -198,7 +198,9 @@ async function generateImage(asset, manifest) {
     parts.push({ inlineData: { mimeType: 'image/png', data: ref.toString('base64') } });
   }
   const rules = manifest.rules[asset.kind] ?? manifest.rules.backdrop;
-  parts.push({ text: `${asset.prompt}\n\nStyle: ${manifest.style}\n\n${rules}` });
+  // Assets can pick a named style (e.g. the grittier Fury Road look); the default keeps Season 1 consistent.
+  const style = (asset.style && manifest.styles?.[asset.style]) || manifest.style;
+  parts.push({ text: `${asset.prompt}\n\nStyle: ${style}\n\n${rules}` });
 
   const res = await withRetry(asset.id, () =>
     client().models.generateContent({
@@ -215,6 +217,24 @@ async function generateImage(asset, manifest) {
   await writeFile(path.join(ROOT, 'tools/assets/raw', `${asset.id}.png`), raw);
 
   await processImage(asset, raw);
+}
+
+/** Did the cut-out work? If the corners are still solid, the model ignored the magenta backdrop. */
+async function cutOutOk(asset) {
+  if (asset.kind !== 'sprite') return true;
+  const { data, info } = await sharp(imagePath(asset)).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+  const a = (x, y) => data[(y * info.width + x) * 4 + 3];
+  const w = info.width - 1, h = info.height - 1;
+  return [a(0, 0), a(w, 0), a(0, h), a(w, h)].filter((v) => v > 200).length < 2;
+}
+
+async function generateImage(asset, manifest) {
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    await generateImageOnce(asset, manifest);
+    if (await cutOutOk(asset)) return;
+    console.warn(`\n  ${asset.id}: background wasn't magenta, trying again (${attempt}/3)`);
+  }
+  throw new Error('kept getting a non-magenta background (the image was saved anyway)');
 }
 
 /**

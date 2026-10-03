@@ -3,15 +3,16 @@ import { CARS, UPGRADE_STATS } from '../src/data/cars';
 import { TRACKS, TRACK_ORDER } from '../src/data/tracks';
 import { WORLDS } from '../src/data/worlds';
 import { freshSave, type SaveData } from '../src/systems/SaveManager';
-import { aiSpeed, buyCar, buyUpgrade, carStats, isTrackUnlocked, recordResult, upgradeCost, PLACE_REWARD } from '../src/systems/Economy';
+import { aiSpeed, buyCar, buyGadget, buyOrnament, buyPaint, buyUpgrade, carStats, isTrackUnlocked, raceGadget, recordResult, upgradeCost, PLACE_REWARD } from '../src/systems/Economy';
 
 /** Spend like a kid who always wants to go faster: cheapest speed gain first. */
 function shopForSpeed(s: SaveData) {
   for (;;) {
     const options: { cost: number; gain: number; buy: () => void }[] = [];
     const c = upgradeCost(s.upgrades.engine);
-    if (c !== undefined) options.push({ cost: c, gain: 2, buy: () => buyUpgrade(s, 'engine') });
-    for (const car of CARS) if (!s.ownedCars.includes(car.id)) {
+    if (c?.currency === 'scrap') options.push({ cost: c.amount, gain: 2, buy: () => buyUpgrade(s, 'engine') });
+    // Scrap only: the grinder never wins, so never earns chrome.
+    for (const car of CARS) if (!s.ownedCars.includes(car.id) && !car.chrome) {
       const gain = car.speed - CARS.find((x) => x.id === s.car)!.speed;
       if (gain > 0) options.push({ cost: car.price, gain, buy: () => buyCar(s, car.id) });
     }
@@ -76,8 +77,15 @@ describe('economy', () => {
     expect(buyUpgrade(s, 'engine')).toBe('broke');
     s.scrap = 10_000;
     for (const st of UPGRADE_STATS) for (let i = 0; i < 4; i++) expect(buyUpgrade(s, st.id)).toBe('ok');
-    expect(buyUpgrade(s, 'engine')).toBe('maxed');
     expect(carStats(s).maxSpeed).toBe(28);
+    // Levels 5 and 6 cost chrome, not scrap.
+    expect(buyUpgrade(s, 'engine')).toBe('broke');
+    s.chrome = 10;
+    expect(buyUpgrade(s, 'engine')).toBe('ok');
+    expect(buyUpgrade(s, 'engine')).toBe('ok');
+    expect(s.chrome).toBe(0);
+    expect(buyUpgrade(s, 'engine')).toBe('maxed');
+    expect(carStats(s).maxSpeed).toBe(32);
   });
 
   it('buying a car gives you its gadget', () => {
@@ -88,5 +96,53 @@ describe('economy', () => {
     expect(s.gadget).toBe('goo');
     expect(buyCar(s, 'buggy')).toBe('owned');
     expect(s.car).toBe('buggy');
+  });
+
+  it('winning earns chrome, more the first time', () => {
+    const s = freshSave();
+    expect(recordResult(s, 'dunes-1', 1, 0).chrome).toBe(5);
+    expect(recordResult(s, 'dunes-1', 1, 0).chrome).toBe(2);
+    expect(recordResult(s, 'dunes-1', 2, 0).chrome).toBe(1);
+    expect(recordResult(s, 'dunes-1', 4, 0).chrome).toBe(0);
+    expect(s.chrome).toBe(8);
+  });
+
+  it('legends cost chrome, come in their own paint, and bring their special', () => {
+    const s = freshSave();
+    s.scrap = 99_999;
+    expect(buyCar(s, 'interceptor')).toBe('broke');
+    s.chrome = 10;
+    expect(buyCar(s, 'interceptor')).toBe('ok');
+    expect(s.chrome).toBe(0);
+    expect(s.paint).toBe('black');
+    expect(raceGadget(s)).toBe('blower');
+    // Specials only work on their own car: back in the buggy, you race with what fits.
+    buyCar(s, 'buggy');
+    expect(raceGadget(s)).toBe('boost');
+    expect(buyGadget(s, 'witness')).toBe('locked');
+  });
+
+  it('chrome paint and hood ornaments are bought once, then free to switch', () => {
+    const s = freshSave();
+    expect(buyPaint(s, 'chrome')).toBe('broke');
+    expect(buyOrnament(s, 'skull')).toBe('broke');
+    s.chrome = 9;
+    expect(buyPaint(s, 'chrome')).toBe('ok');
+    expect(buyOrnament(s, 'skull')).toBe('ok');
+    expect(s.chrome).toBe(0);
+    expect(buyPaint(s, 'red')).toBe('owned');
+    expect(buyPaint(s, 'chrome')).toBe('owned');
+    expect(buyOrnament(s, 'none')).toBe('owned');
+    expect(buyOrnament(s, 'skull')).toBe('owned');
+    expect(buyPaint(s, 'gold')).toBe('locked');
+  });
+
+  it('beating the Thunder Dome crowns you champion and opens the Fury Road', () => {
+    const s = freshSave();
+    for (const id of TRACK_ORDER.slice(0, TRACK_ORDER.indexOf('dome-1'))) recordResult(s, id, 1, 0);
+    const out = recordResult(s, 'dome-1', 1, 0);
+    expect(out.unlocked).toContain('champion');
+    expect(out.unlocked).toContain('world:fury');
+    expect(isTrackUnlocked(s, 'fury-1')).toBe(true);
   });
 });

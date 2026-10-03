@@ -130,6 +130,39 @@ export const sfx = {
     noise(big ? 0.4 : 0.2, 'lowpass', big ? 600 : 400, 50, big ? 0.5 : 0.3);
     if (big) sweep(110, 45, 0.3, 'sine', 0.35);
   },
+  explosion(big = true) {
+    noise(big ? 1.1 : 0.6, 'lowpass', big ? 1400 : 1000, 40, big ? 0.6 : 0.4);
+    sweep(140, 30, big ? 0.9 : 0.5, 'sine', 0.45);
+  },
+  flame() {
+    noise(0.7, 'bandpass', 500, 1600, 0.3);
+    noise(0.7, 'lowpass', 300, 120, 0.2);
+  },
+  /** The Doof Warrior's guitar: a distorted power-chord riff. */
+  guitar() {
+    [40, 40, 43, 45, 40].forEach((n, i) => {
+      tone(n, i * 0.11, 0.2, 'sawtooth', 0.09);
+      tone(n + 7, i * 0.11, 0.2, 'sawtooth', 0.07);
+    });
+  },
+  harpoon() {
+    sweep(1800, 400, 0.3, 'square', 0.06);
+    noise(0.15, 'highpass', 3000, 6000, 0.15, 0.25);
+  },
+  stomp() {
+    sweep(90, 30, 0.6, 'sine', 0.6);
+    noise(0.6, 'lowpass', 600, 50, 0.5);
+  },
+  spray() {
+    noise(0.8, 'highpass', 4000, 7000, 0.18);
+  },
+  whistle() {
+    sweep(1600, 500, 0.85, 'sine', 0.08);
+  },
+  clang() {
+    tone(88, 0, 0.3, 'triangle', 0.1);
+    tone(95, 0, 0.25, 'square', 0.04);
+  },
   /** Taking off from a jump. */
   whoosh() {
     noise(0.5, 'bandpass', 600, 2400, 0.2);

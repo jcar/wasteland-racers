@@ -72,6 +72,45 @@ export class Effects {
     }
   }
 
+  /** Fireball, black smoke and flying debris. */
+  explosion(x: number, y: number, z: number, big = true) {
+    const n = big ? 1 : 0.5;
+    for (let i = 0; i < 14 * n; i++) {
+      const a = Math.random() * Math.PI * 2, s = 2 + Math.random() * 6 * n;
+      this.spawn(x, y + 1, z, i % 3 ? '#ff8a1f' : '#ffd23f', { size: 1.6 * n + Math.random(), vx: Math.cos(a) * s, vz: Math.sin(a) * s, vy: 2 + Math.random() * 4, life: 0.5, grow: 5 * n });
+    }
+    for (let i = 0; i < 10 * n; i++)
+      this.spawn(x + (Math.random() - 0.5) * 2, y + 1.5, z + (Math.random() - 0.5) * 2, i % 2 ? '#2b2522' : '#4a403a', { size: 1.4 * n, vy: 3 + Math.random() * 3, life: 1.4, grow: 3 });
+    for (let i = 0; i < 12 * n; i++) {
+      const a = Math.random() * Math.PI * 2, s = 6 + Math.random() * 8;
+      this.spawn(x, y + 1, z, '#3a3330', { size: 0.6, vx: Math.cos(a) * s, vz: Math.sin(a) * s, vy: 8 + Math.random() * 8, gravity: 25, life: 1, grow: -0.2, star: true });
+    }
+  }
+
+  /** A burst of flame going out along `heading`. */
+  flame(x: number, y: number, z: number, heading: number, length: number) {
+    for (let i = 0; i < 4; i++) {
+      const a = heading + (Math.random() - 0.5) * 0.5, s = length * (2 + Math.random());
+      this.spawn(x, y + 1.2, z, Math.random() < 0.5 ? '#ff7a1a' : '#ffd23f', { size: 1, vx: Math.cos(a) * s, vz: Math.sin(a) * s, vy: 1 + Math.random(), life: 0.35, grow: 6 });
+    }
+  }
+
+  /** A shockwave ring of dust. */
+  ring(x: number, y: number, z: number, radius: number, color: string) {
+    for (let i = 0; i < 28; i++) {
+      const a = (i / 28) * Math.PI * 2;
+      this.spawn(x, y + 0.4, z, color, { size: 1.4, vx: Math.cos(a) * radius * 2, vz: Math.sin(a) * radius * 2, vy: 1, life: 0.5, grow: 3 });
+    }
+  }
+
+  /** Silver sparkles for chrome spray and star power. */
+  chrome(x: number, y: number, z: number, count = 3) {
+    for (let i = 0; i < count; i++) {
+      const a = Math.random() * Math.PI * 2;
+      this.spawn(x + Math.cos(a), y + 1 + Math.random() * 1.5, z + Math.sin(a), Math.random() < 0.5 ? '#ffffff' : '#c9d0d8', { size: 0.8, vy: 2, life: 0.5, grow: -1, star: true });
+    }
+  }
+
   update(dt: number) {
     for (let i = this.live.length - 1; i >= 0; i--) {
       const p = this.live[i];

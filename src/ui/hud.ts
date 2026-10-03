@@ -28,7 +28,8 @@ export class Hud {
   private tip: HTMLElement;
   private dots = new Map<string, SVGCircleElement>();
   private toSvg: (x: number, z: number) => [number, number];
-  private last = { order: '', lap: '', charges: -1, bolts: -1 };
+  private hp: HTMLElement;
+  private last = { order: '', lap: '', charges: -1, bolts: -1, hp: '' };
   private bannerTimer = 0;
   private racers: HudRacer[];
 
@@ -42,6 +43,7 @@ export class Hud {
         <div class="order"></div>
         <div class="lap outlined"></div>
         <svg class="minimap" viewBox="0 0 190 190">${map.svg}</svg>
+        <div class="hp"></div>
         <div class="gadget empty">${artHtml(g.icon, g.emoji)}<div class="count">0</div><div class="key">SPACE</div></div>
         <div class="bolts scrap outlined">${artHtml('icon-scrap', '🔩')}<span class="n">0</span></div>
         <div class="banner outlined"></div>
@@ -51,6 +53,7 @@ export class Hud {
     this.order = this.el.querySelector('.order')!;
     this.lap = this.el.querySelector('.lap')!;
     this.gadget = this.el.querySelector('.gadget')!;
+    this.hp = this.el.querySelector('.hp')!;
     this.bolts = this.el.querySelector('.bolts .n')!;
     this.banner = this.el.querySelector('.banner')!;
     this.callout = this.el.querySelector('.callout')!;
@@ -100,6 +103,15 @@ export class Hud {
     this.gadget.querySelector('.count')!.textContent = String(charges);
     this.gadget.classList.toggle('ready', charges > 0);
     this.gadget.classList.toggle('empty', charges === 0);
+  }
+
+  /** Hits left before a wreck. Silver while the respawn shield or star power is on. */
+  setHp(hp: number, max: number, safe: boolean) {
+    const key = `${hp}/${max}/${safe}`;
+    if (key === this.last.hp) return;
+    this.last.hp = key;
+    this.hp.classList.toggle('shield', safe);
+    this.hp.innerHTML = Array.from({ length: max }, (_, i) => `<i class="${i < hp ? 'on' : ''}"></i>`).join('');
   }
 
   setBolts(n: number) {

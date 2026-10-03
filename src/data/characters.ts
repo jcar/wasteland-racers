@@ -1,5 +1,7 @@
 import type { BodyKind } from './cars';
 
+export type HeadKind = 'kid' | 'dog' | 'robot' | 'lizard' | 'max' | 'furiosa' | 'warboy' | 'doof' | 'toast' | 'joe' | 'dementus' | 'rictus';
+
 /** Drivers the player can pick. Looks only: they all drive the same. */
 export interface DriverDef {
   id: string;
@@ -7,7 +9,7 @@ export interface DriverDef {
   portrait: string;
   emoji: string;
   /** Colors for the little 3D head in the car. */
-  head: { skin: string; hat: string; kind: 'kid' | 'dog' | 'robot' | 'lizard' };
+  head: { skin: string; hat: string; kind: HeadKind };
 }
 
 export const DRIVERS: DriverDef[] = [
@@ -15,6 +17,13 @@ export const DRIVERS: DriverDef[] = [
   { id: 'dog', name: 'Sprocket', portrait: 'driver-dog', emoji: '🐶', head: { skin: '#d9a04a', hat: '#d2442c', kind: 'dog' } },
   { id: 'robot', name: 'Bolt', portrait: 'driver-robot', emoji: '🤖', head: { skin: '#9aa7b0', hat: '#1fb5ad', kind: 'robot' } },
   { id: 'lizard', name: 'Lizzy', portrait: 'driver-lizard', emoji: '🦎', head: { skin: '#6cc24a', hat: '#f5c518', kind: 'lizard' } },
+  // Wasteland legends.
+  { id: 'max', name: 'Max', portrait: 'driver-max', emoji: '🧔', head: { skin: '#e2b48c', hat: '#3a2a1e', kind: 'max' } },
+  { id: 'furiosa', name: 'Furiosa', portrait: 'driver-furiosa', emoji: '🦾', head: { skin: '#e8c0a0', hat: '#1c1c1c', kind: 'furiosa' } },
+  { id: 'nux', name: 'Nux', portrait: 'driver-nux', emoji: '💀', head: { skin: '#f4f1ea', hat: '#1c1c1c', kind: 'warboy' } },
+  { id: 'warpup', name: 'War Pup', portrait: 'driver-warpup', emoji: '👦', head: { skin: '#f4f1ea', hat: '#5a3a1e', kind: 'warboy' } },
+  { id: 'doofwarrior', name: 'Doof Warrior', portrait: 'driver-doof', emoji: '🎸', head: { skin: '#d22b2b', hat: '#1c1c1c', kind: 'doof' } },
+  { id: 'toast', name: 'Toast', portrait: 'driver-toast', emoji: '🧕', head: { skin: '#d9a77e', hat: '#2b1d14', kind: 'toast' } },
 ];
 export const driverById = (id: string) => DRIVERS.find((d) => d.id === id) ?? DRIVERS[0];
 
@@ -46,4 +55,17 @@ export const EXTRAS: Racer[] = [
   { id: 'rattles', name: 'Rattles', portrait: '', emoji: '🐍', color: '#ff6fa8', body: 'truck', head: { skin: '#6cc24a', hat: '#ff6fa8', kind: 'lizard' }, skill: 0.2 },
 ];
 
-export const rivalById = (id: string) => RIVALS.find((r) => r.id === id);
+/** Fury Road rivals (lap races in the Fury Road world). Bosses come later. */
+export const LORE_RIVALS: Racer[] = [
+  { id: 'slit', name: 'Slit', portrait: 'char-slit', emoji: '😬', color: '#4a4a4a', body: 'buzzard', head: { skin: '#f4f1ea', hat: '#1c1c1c', kind: 'warboy' }, skill: 1, rival: true },
+  { id: 'rictus', name: 'Rictus', portrait: 'char-rictus', emoji: '💪', color: '#7a3b1e', body: 'bigfoot', head: { skin: '#e8b890', hat: '#3a2a1e', kind: 'rictus' }, skill: 1.2, rival: true },
+];
+
+/** War Boys who fill out the grid on the Fury Road. */
+export const WAR_BOYS: Racer[] = [
+  { id: 'morsov', name: 'Morsov', portrait: 'driver-warpup', emoji: '💀', color: '#8a3a1a', body: 'buzzard', head: { skin: '#f4f1ea', hat: '#1c1c1c', kind: 'warboy' }, skill: 0.2 },
+  { id: 'ace', name: 'Ace', portrait: 'driver-nux', emoji: '☠️', color: '#2b2b2b', body: 'nuxcar', head: { skin: '#f4f1ea', hat: '#1c1c1c', kind: 'warboy' }, skill: 0.4 },
+  { id: 'corpus', name: 'Lancer', portrait: 'driver-warpup', emoji: '🧨', color: '#6b6b3a', body: 'interceptor', head: { skin: '#f4f1ea', hat: '#1c1c1c', kind: 'warboy' }, skill: 0 },
+];
+
+export const rivalById = (id: string) => [...RIVALS, ...LORE_RIVALS].find((r) => r.id === id);

@@ -1,4 +1,4 @@
-import { CARS, GADGETS, MAX_LEVEL, carById, type UpgradeStat } from '../data/cars';
+import { CARS, GADGETS, MAX_LEVEL, ORNAMENTS, PAINTS, SCRAP_LEVELS, carById, type UpgradeStat } from '../data/cars';
 import { TRACKS, TRACK_ORDER, trackById, trackIndex, tracksInWorld } from '../data/tracks';
 import { WORLDS } from '../data/worlds';
 import type { Difficulty, SaveData } from './SaveManager';
@@ -10,8 +10,13 @@ import type { Difficulty, SaveData } from './SaveManager';
 export const PLACE_REWARD = [100, 70, 50, 40];
 export const BOLT_VALUE = 3;
 export const FIRST_WIN_BONUS = 50;
-/** Cost to go from level i to level i+1. */
+/** Scrap cost to go from level i to level i+1 (levels 1-4). */
 export const UPGRADE_COST = [50, 90, 140, 200];
+/** Chrome cost of levels 5 and 6. */
+export const CHROME_UPGRADE_COST = [4, 6];
+/** Chrome for 1st and 2nd place, plus a bonus the first time you win a track. */
+export const CHROME_REWARD = [2, 1];
+export const FIRST_WIN_CHROME = 3;
 
 export interface CarStats {
   maxSpeed: number;
@@ -22,6 +27,8 @@ export interface CarStats {
   /** Seconds spent spinning after goo or a boing. */
   spinTime: number;
   maxCharges: number;
+  /** Hits from lore weapons before the car wrecks. */
+  maxHp: number;
 }
 
 export function carStats(save: Pick<SaveData, 'car' | 'upgrades'>): CarStats {
@@ -35,6 +42,7 @@ export function carStats(save: Pick<SaveData, 'car' | 'upgrades'>): CarStats {
     mass: c.mass + 0.15 * u.armor,
     spinTime: 1.2 * (1 - 0.13 * u.armor),
     maxCharges: 2 + u.gadget,
+    maxHp: 3 + Math.floor(u.armor / 2),
   };
 }
 
@@ -42,18 +50,42 @@ const DIFFICULTY_SPEED: Record<Difficulty, number> = { chill: -1.2, normal: 0, t
 
 /** Top speed of an ordinary AI car on this track. Later tracks are faster. */
 export function aiSpeed(trackId: string, difficulty: Difficulty): number {
-  return 18.5 + trackIndex(trackId) * 1.15 + DIFFICULTY_SPEED[difficulty];
+  const i = trackIndex(trackId);
+  const dome = TRACK_ORDER.indexOf('dome-1');
+  // After the Thunder Dome the pack only gets a little faster: Fury Road's challenge is the War Boys' weapons.
+  const step = i <= dome ? i * 1.15 : dome * 1.15 + (i - dome) * 0.6;
+  return 18.5 + step + DIFFICULTY_SPEED[difficulty];
 }
 
-export const upgradeCost = (level: number): number | undefined => (level < MAX_LEVEL ? UPGRADE_COST[level] : undefined);
+export type Currency = 'scrap' | 'chrome';
+export interface Price { amount: number; currency: Currency }
+
+/** What the next level costs: scrap for 1-4, chrome for 5-6. */
+export function upgradeCost(level: number): Price | undefined {
+  if (level >= MAX_LEVEL) return undefined;
+  return level < SCRAP_LEVELS
+    ? { amount: UPGRADE_COST[level], currency: 'scrap' }
+    : { amount: CHROME_UPGRADE_COST[level - SCRAP_LEVELS], currency: 'chrome' };
+}
 
 export type BuyResult = 'ok' | 'owned' | 'maxed' | 'broke' | 'locked';
+
+/** Take the price out of the save, if there's enough. */
+function pay(save: SaveData, price: Price): boolean {
+  if (save[price.currency] < price.amount) return false;
+  save[price.currency] -= price.amount;
+  return true;
+}
+
+export const carPrice = (id: string): Price => {
+  const c = carById(id);
+  return c.chrome ? { amount: c.chrome, currency: 'chrome' } : { amount: c.price, currency: 'scrap' };
+};
 
 export function buyUpgrade(save: SaveData, stat: UpgradeStat): BuyResult {
   const cost = upgradeCost(save.upgrades[stat]);
   if (cost === undefined) return 'maxed';
-  if (save.scrap < cost) return 'broke';
-  save.scrap -= cost;
+  if (!pay(save, cost)) return 'broke';
   save.upgrades[stat]++;
   return 'ok';
 }
@@ -66,14 +98,53 @@ export function buyCar(save: SaveData, id: string): BuyResult {
     save.car = id;
     return 'owned';
   }
-  if (save.scrap < car.price) return 'broke';
-  save.scrap -= car.price;
+  if (!pay(save, carPrice(id))) return 'broke';
   save.ownedCars.push(id);
   save.car = id;
   if (!save.ownedGadgets.includes(car.gadget)) {
     save.ownedGadgets.push(car.gadget);
     save.gadget = car.gadget;
   }
+  // Legends come in their own colors.
+  if (car.paint) save.paint = car.paint;
+  return 'ok';
+}
+
+/** Can this gadget be used with the car you're driving? Specials only work on their car. */
+export const gadgetFits = (gadgetId: string, carId: string) => {
+  const g = GADGETS.find((x) => x.id === gadgetId);
+  return !!g && (!g.car || g.car === carId);
+};
+
+/** The gadget to actually race with: the equipped one, or the car's own if that doesn't fit. */
+export function raceGadget(save: Pick<SaveData, 'gadget' | 'car'>): string {
+  return gadgetFits(save.gadget, save.car) ? save.gadget : carById(save.car).gadget;
+}
+
+export function buyPaint(save: SaveData, id: string): BuyResult {
+  const p = PAINTS.find((x) => x.id === id);
+  if (!p) return 'locked';
+  if (p.unlock && !save.rewards.includes(p.unlock)) return 'locked';
+  if (p.chrome && !save.ownedPaints.includes(id)) {
+    if (!pay(save, { amount: p.chrome, currency: 'chrome' })) return 'broke';
+    save.ownedPaints.push(id);
+    save.paint = id;
+    return 'ok';
+  }
+  save.paint = id;
+  return 'owned';
+}
+
+export function buyOrnament(save: SaveData, id: string): BuyResult {
+  const o = ORNAMENTS.find((x) => x.id === id);
+  if (!o) return 'locked';
+  if (save.ownedOrnaments.includes(id)) {
+    save.ornament = id;
+    return 'owned';
+  }
+  if (!pay(save, { amount: o.chrome, currency: 'chrome' })) return 'broke';
+  save.ownedOrnaments.push(id);
+  save.ornament = id;
   return 'ok';
 }
 
@@ -84,8 +155,8 @@ export function buyGadget(save: SaveData, id: string): BuyResult {
     save.gadget = id;
     return 'owned';
   }
-  if (save.scrap < g.price) return 'broke';
-  save.scrap -= g.price;
+  if (g.car) return 'locked'; // specials come with their car
+  if (!pay(save, { amount: g.price, currency: 'scrap' })) return 'broke';
   save.ownedGadgets.push(id);
   save.gadget = id;
   return 'ok';
@@ -111,6 +182,7 @@ export interface RaceOutcome {
   boltReward: number;
   bonus: number;
   total: number;
+  chrome: number;
   /** Celebrations earned this race, in the order to show them. */
   unlocked: string[];
 }
@@ -127,11 +199,14 @@ export function recordResult(save: SaveData, trackId: string, place: number, bol
     boltReward: bolts * BOLT_VALUE,
     bonus: firstWin ? FIRST_WIN_BONUS : 0,
     total: 0,
+    chrome: (CHROME_REWARD[place - 1] ?? 0) + (firstWin ? FIRST_WIN_CHROME : 0),
     unlocked: [],
   };
   out.total = out.placeReward + out.boltReward + out.bonus;
   save.scrap += out.total;
   save.totalScrap += out.total;
+  save.chrome += out.chrome;
+  save.totalChrome += out.chrome;
   save.best[trackId] = Math.min(save.best[trackId] ?? 4, place, 4);
 
   if (firstWin) {
@@ -145,8 +220,8 @@ export function recordResult(save: SaveData, trackId: string, place: number, bol
         out.unlocked.push(`reward:${world.reward}`);
       }
       if (track.rival) out.unlocked.push(`rival:${track.rival}`);
+      if (track.world === 'dome') out.unlocked.push('champion');
       if (next) out.unlocked.push(`world:${trackById(next).world}`);
-      else out.unlocked.push('champion');
     } else if (next) {
       out.unlocked.push(`track:${next}`);
     }

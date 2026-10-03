@@ -154,3 +154,32 @@ img.art { object-fit: contain; }
 .card .art { object-fit: contain; }
 .driver .art { width: 100%; height: auto; }
 .coin { width: 1.3em !important; height: 1.3em !important; vertical-align: middle; }
+
+/* ---------- Season 2: chrome, legends, Valhalla ---------- */
+.btn.chrome { background: linear-gradient(180deg, #ffffff, #b9c2cc 55%, #8e98a3); }
+.pips i.chrome { border-style: dashed; }
+.pips i.chrome.on { background: linear-gradient(180deg, #ffffff, #b9c2cc); }
+.wallet { display: flex; gap: 22px; flex-wrap: wrap; }
+.left-actions { display: flex; flex-direction: column; gap: 12px; align-items: flex-start; }
+.book-btn { font-size: clamp(16px, 2vw, 24px); }
+.card .art.wide { width: 120px; height: 75px; }
+.shop h3 { margin: 6px 0 2px; font-size: 18px; color: var(--gold); }
+
+.valhalla .book { display: flex; gap: 16px; width: min(1400px, 96vw); flex: 1; min-height: 0; margin: 1.5vh 0 6vh; }
+.valhalla .pages { flex: 1.6; overflow-y: auto; padding: 6px; }
+.valhalla .pages h3 { color: var(--gold); margin: 8px 0 4px; }
+.valhalla .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; }
+.vcard { flex-direction: column; padding: 6px; font-size: 13px; gap: 2px; min-height: 130px; }
+.vcard .art, .vcard .emoji { width: 84px; height: 84px; font-size: 56px; }
+.vcard.locked .art, .vcard.locked .emoji, .big-art.locked .art, .big-art.locked .emoji { filter: brightness(0) opacity(0.55); }
+.vcard .new { position: absolute; top: -8px; right: -8px; background: #e8322a; color: #fff; border: 3px solid var(--ink); border-radius: 10px; padding: 0 6px; font-size: 12px; }
+.valhalla .detail { flex: 1; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; overflow-y: auto; }
+.valhalla .detail .big-art .art, .valhalla .detail .big-art .emoji { width: min(300px, 30vw); height: min(300px, 30vw); font-size: 160px; }
+.valhalla .detail p { font-size: 20px; font-weight: 800; margin: 0; }
+.valhalla .detail .quote { color: var(--gold); font-style: italic; }
+.valhalla .count { font-size: 0.5em; color: var(--sand); }
+
+.hud .hp { position: absolute; right: 26px; bottom: 168px; display: flex; gap: 5px; }
+.hud .hp i { width: 22px; height: 22px; border-radius: 6px; border: 3px solid var(--ink); background: #3a2d25; }
+.hud .hp i.on { background: #e8322a; }
+.hud .hp.shield i.on { background: #c9d0d8; }

@@ -14,12 +14,15 @@ export interface DriveInput {
   brake: boolean;
 }
 
-export type CarEvent = 'wall' | 'takeoff' | 'land' | 'tow' | 'lap' | 'finish' | 'spin' | 'boostpad';
+export type CarEvent = 'wall' | 'takeoff' | 'land' | 'tow' | 'lap' | 'finish' | 'spin' | 'boostpad' | 'hit' | 'wreck' | 'respawn';
 
 const RADIUS = 1.25;
 const GRAVITY = 30;
 const WALL_BOUNCE = 0.35;
 const TOW_TIME = 1.4;
+const WRECK_TIME = 1.8;
+const SHIELD_TIME = 2.2;
+const BOOST_POWER = 1.45;
 
 export class CarBody {
   x = 0;
@@ -39,6 +42,20 @@ export class CarBody {
   boost = 0;
   /** Seconds the boing bumper stays out. */
   boing = 0;
+  /** How much faster than top speed a boost goes (specials push it higher). */
+  boostPower = BOOST_POWER;
+  /** Hits left before wrecking (lore weapons only). */
+  hp: number;
+  /** Seconds left of tumbling after a wreck. */
+  wrecked = 0;
+  /** Seconds of not being hurt after respawning. */
+  shield = 0;
+  /** Seconds of chrome star power: can't be hurt, and ramming wrecks others. */
+  star = 0;
+  /** Seconds of spiked ramming (contact hurts others). */
+  ram = 0;
+  /** Short grace period after a hit, so one ram can't hit three times in three frames. */
+  private recentHit = 0;
   /** Slowed by goo this frame. */
   slowed = false;
   towing = 0;
@@ -62,6 +79,39 @@ export class CarBody {
   constructor(stats: CarStats, id: string) {
     this.stats = stats;
     this.id = id;
+    this.hp = stats.maxHp;
+  }
+
+  /** Can't be hurt right now (respawn shield, star power, or busy being towed/wrecked). */
+  get safe() {
+    return this.shield > 0 || this.star > 0 || this.towing > 0 || this.wrecked > 0;
+  }
+
+  /**
+   * A hit from a lore weapon: lose hit points and spin, or wreck at zero.
+   * Returns what happened so the race can play the right effects.
+   */
+  hit(damage: number, spinTime: number): 'none' | 'hit' | 'wreck' {
+    if (this.safe || this.recentHit > 0) return 'none';
+    this.recentHit = 0.8;
+    this.hp -= damage;
+    if (this.hp <= 0) {
+      this.wreck();
+      return 'wreck';
+    }
+    this.startSpin(spinTime);
+    this.events.push('hit');
+    return 'hit';
+  }
+
+  wreck() {
+    if (this.wrecked > 0 || this.towing > 0) return;
+    this.wrecked = WRECK_TIME;
+    this.spin = 0;
+    this.boost = this.boing = this.ram = 0;
+    this.vy = 9;
+    this.airborne = true;
+    this.events.push('wreck');
   }
 
   get speed() {
@@ -87,7 +137,7 @@ export class CarBody {
   }
 
   startSpin(time: number) {
-    if (this.towing > 0) return;
+    if (this.towing > 0 || this.wrecked > 0 || this.star > 0 || this.shield > 0) return;
     this.spin = Math.max(this.spin, time);
     this.spinDir = Math.random() < 0.5 ? -1 : 1;
     this.events.push('spin');
@@ -95,6 +145,11 @@ export class CarBody {
 
   step(dt: number, input: DriveInput, track: TrackGeometry, assist: number, laps: number) {
     if (this.towing > 0) return this.stepTow(dt, track);
+    if (this.shield > 0) this.shield -= dt;
+    if (this.star > 0) this.star -= dt;
+    if (this.ram > 0) this.ram -= dt;
+    if (this.recentHit > 0) this.recentHit -= dt;
+    if (this.wrecked > 0) return this.stepWreck(dt, track, laps);
     const st = this.stats;
     const fx = Math.cos(this.heading), fz = Math.sin(this.heading);
     // Left of travel is (fz, -fx); we keep the sideways part as "side".
@@ -118,7 +173,7 @@ export class CarBody {
     }
 
     // Engine.
-    const top = st.maxSpeed * (this.boost > 0 ? 1.45 : 1) * (this.slowed ? 0.55 : 1);
+    const top = st.maxSpeed * (this.boost > 0 ? this.boostPower : 1) * (this.slowed ? 0.55 : 1);
     if (!this.airborne) {
       if (gas > 0 && fwd < top) fwd += st.accel * (this.boost > 0 ? 2.5 : 1) * gas * dt * (1 - Math.max(0, fwd) / (top * 1.05));
       else if (fwd > top) fwd += (top - fwd) * Math.min(1, 2.5 * dt);
@@ -126,7 +181,10 @@ export class CarBody {
       if (input.brake) fwd -= Math.sign(fwd) * Math.min(Math.abs(fwd), 28 * dt);
       side *= Math.exp(-st.grip * dt);
     }
-    if (this.boost > 0) this.boost -= dt;
+    if (this.boost > 0) {
+      this.boost -= dt;
+      if (this.boost <= 0) this.boostPower = BOOST_POWER;
+    }
     if (this.boing > 0) this.boing -= dt;
 
     const nfx = Math.cos(this.heading), nfz = Math.sin(this.heading);
@@ -234,6 +292,33 @@ export class CarBody {
     if (this.stuck > 2 || this.wrongWay > 2.5) this.startTow(track);
   }
 
+  /** Tumbling after a wreck, then back on the road with a shield. */
+  private stepWreck(dt: number, track: TrackGeometry, laps: number) {
+    this.wrecked -= dt;
+    this.vx *= 1 - 2 * dt;
+    this.vz *= 1 - 2 * dt;
+    this.x += this.vx * dt;
+    this.z += this.vz * dt;
+    this.collideWalls(track);
+    this.updateHeight(dt);
+    this.updateLap(track, laps);
+    if (this.wrecked > 0) return;
+    this.wrecked = 0;
+    const p = track.pointAt(this.pos.s, Math.max(-2, Math.min(2, this.pos.lateral)));
+    this.x = p.x;
+    this.z = p.z;
+    this.y = p.h;
+    this.vy = 0;
+    this.airborne = false;
+    this.heading = Math.atan2(p.tz, p.tx);
+    this.vx = p.tx * 6;
+    this.vz = p.tz * 6;
+    this.hp = this.stats.maxHp;
+    this.shield = SHIELD_TIME;
+    this.pos = track.locate(this.x, this.z, this.pos.i);
+    this.events.push('respawn');
+  }
+
   startTow(track: TrackGeometry) {
     this.stuck = this.wrongWay = 0;
     this.towing = TOW_TIME;
@@ -274,7 +359,7 @@ export class CarBody {
 export function collideCars(a: CarBody, b: CarBody): number {
   const dx = b.x - a.x, dz = b.z - a.z;
   const d = Math.hypot(dx, dz);
-  if (d >= RADIUS * 2 || d === 0 || a.towing > 0 || b.towing > 0 || Math.abs(a.y - b.y) > 2) return 0;
+  if (d >= RADIUS * 2 || d === 0 || a.towing > 0 || b.towing > 0 || a.wrecked > 0 || b.wrecked > 0 || Math.abs(a.y - b.y) > 2) return 0;
   const nx = dx / d, nz = dz / d;
   const ma = a.stats.mass, mb = b.stats.mass;
   const overlap = RADIUS * 2 - d;

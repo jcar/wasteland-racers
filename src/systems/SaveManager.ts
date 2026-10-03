@@ -1,7 +1,7 @@
 import type { UpgradeStat } from '../data/cars';
 
 export const SAVE_KEY = 'wasteland-racers-save';
-export const SAVE_VERSION = 1;
+export const SAVE_VERSION = 2;
 
 export type SteerHelp = 'strong' | 'medium' | 'off';
 export type Difficulty = 'chill' | 'normal' | 'tough';
@@ -20,6 +20,17 @@ export interface SaveData {
   scrap: number;
   /** All scrap ever earned. Never goes down (for bragging). */
   totalScrap: number;
+  /** Chrome: won by winning races, spent on Wasteland legends and chrome upgrades. */
+  chrome: number;
+  totalChrome: number;
+  /** Season 2 overworld currency (used from the Wasteland phase on). */
+  guzzoline: number;
+  ornament: string;
+  ownedOrnaments: string[];
+  /** Chrome-priced paints bought. */
+  ownedPaints: string[];
+  /** Valhalla Book cards already looked at (new ones get a badge). */
+  cardsSeen: string[];
   driver: string;
   car: string;
   ownedCars: string[];
@@ -44,6 +55,13 @@ export function freshSave(): SaveData {
     version: SAVE_VERSION,
     scrap: 0,
     totalScrap: 0,
+    chrome: 0,
+    totalChrome: 0,
+    guzzoline: 0,
+    ornament: 'none',
+    ownedOrnaments: ['none'],
+    ownedPaints: [],
+    cardsSeen: [],
     driver: 'kid',
     car: 'buggy',
     ownedCars: ['buggy'],
@@ -86,17 +104,27 @@ export function migrate(raw: unknown): SaveData {
   if (r.best && typeof r.best === 'object')
     for (const [k, v] of Object.entries(r.best)) if (typeof v === 'number' && v >= 1 && v <= 4) best[k] = Math.floor(v);
   const ownedCars = isStringArray(r.ownedCars) ? [...new Set(['buggy', ...r.ownedCars])] : base.ownedCars;
-  const ownedGadgets = isStringArray(r.ownedGadgets) ? [...new Set(['boost', ...r.ownedGadgets])] : base.ownedGadgets;
+  const ownedGadgets = isStringArray(r.ownedGadgets) ? [...new Set(['boost', ...r.ownedGadgets])] : [...base.ownedGadgets];
+  // Season 2 gives every War Rig its Thunder Sticks.
+  if (ownedCars.includes('rig') && !ownedGadgets.includes('thunder')) ownedGadgets.push('thunder');
+  const ownedOrnaments = isStringArray(r.ownedOrnaments) ? [...new Set(['none', ...r.ownedOrnaments])] : [...base.ownedOrnaments];
   const car = typeof r.car === 'string' && ownedCars.includes(r.car) ? r.car : 'buggy';
   const gadget = typeof r.gadget === 'string' && ownedGadgets.includes(r.gadget) ? r.gadget : 'boost';
   return {
     version: SAVE_VERSION,
     scrap: nat(r.scrap),
     totalScrap: Math.max(nat(r.totalScrap), nat(r.scrap)),
+    chrome: nat(r.chrome),
+    totalChrome: Math.max(nat(r.totalChrome), nat(r.chrome)),
+    guzzoline: nat(r.guzzoline),
+    ornament: typeof r.ornament === 'string' && ownedOrnaments.includes(r.ornament) ? r.ornament : 'none',
+    ownedOrnaments,
+    ownedPaints: isStringArray(r.ownedPaints) ? [...new Set(r.ownedPaints)] : [],
+    cardsSeen: isStringArray(r.cardsSeen) ? [...new Set(r.cardsSeen)] : [],
     driver: typeof r.driver === 'string' ? r.driver : base.driver,
     car,
     ownedCars,
-    upgrades: { engine: nat(up.engine, 4), tires: nat(up.tires, 4), armor: nat(up.armor, 4), gadget: nat(up.gadget, 4) },
+    upgrades: { engine: nat(up.engine, 6), tires: nat(up.tires, 6), armor: nat(up.armor, 6), gadget: nat(up.gadget, 6) },
     paint: typeof r.paint === 'string' ? r.paint : base.paint,
     decal: typeof r.decal === 'string' ? r.decal : base.decal,
     gadget,

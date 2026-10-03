@@ -4,6 +4,7 @@ import type { DriverDef } from '../data/characters';
 import { texture } from '../systems/assets';
 import { COLORS, ball, box, cyl, mesh, toon } from './materials';
 import { emojiArt } from './placeholders';
+import { buildLoreBody, buildOrnament } from './loreCars';
 
 /**
  * Chunky toy cars built from simple shapes. Each upgrade level bolts a
@@ -16,6 +17,8 @@ export interface CarLook {
   decal?: string;
   upgrades: Record<UpgradeStat, number>;
   head: DriverDef['head'];
+  /** Hood ornament id (see ORNAMENTS). */
+  ornament?: string;
 }
 
 export interface CarModel {
@@ -28,9 +31,10 @@ export interface CarModel {
   flames: THREE.Group;
 }
 
-interface Frame {
+export interface Frame {
   wheelR: number;
-  wheels: [number, number][];
+  /** x, z, and an optional size multiplier (big back wheels, small bike wheels). */
+  wheels: [number, number, number?][];
   frontX: number;
   backX: number;
   halfW: number;
@@ -97,6 +101,7 @@ function buildBody(kind: BodyKind, paint: string, c: THREE.Group): Frame {
       return { wheelR: 0.6, wheels: [[1.4, 1.0], [1.4, -1.0], [-0.4, 1.0], [-0.4, -1.0], [-1.55, 1.0], [-1.55, -1.0]], frontX: 2.0, backX: -2.0, halfW: 0.95, deckY: 2.2, hoodX: 1.2, roofY: 2.2, headPos: [1.2, 2.45] };
     }
   }
+  return buildLoreBody(kind, paint, c) ?? buildBody('buggy', paint, c);
 }
 
 export function buildHead(head: DriverDef['head']): THREE.Group {
@@ -130,6 +135,44 @@ export function buildHead(head: DriverDef['head']): THREE.Group {
       }
       ball(0.31, h, -0.08, 0.1, 0, g).scale.set(1, 0.55, 1);
       break;
+    case 'max':
+      ball(0.31, s, 0, 0, 0, g);
+      ball(0.32, h, -0.04, 0.1, 0, g).scale.set(1, 0.55, 1);
+      ball(0.22, '#6b5040', 0.12, -0.15, 0, g).scale.set(1, 0.6, 1.2); // stubble
+      break;
+    case 'furiosa':
+      ball(0.3, s, 0, 0, 0, g);
+      box(0.1, 0.09, 0.5, h, 0.24, 0.07, 0, g); // grease across the forehead
+      break;
+    case 'warboy':
+      ball(0.31, s, 0, 0, 0, g);
+      for (const z of [0.12, -0.12]) ball(0.09, h, 0.26, 0.04, z, g).scale.set(0.4, 1, 1);
+      box(0.06, 0.04, 0.16, '#c9d0d8', 0.3, -0.14, 0, g); // chrome lips
+      break;
+    case 'doof':
+      ball(0.31, s, 0, 0, 0, g);
+      box(0.14, 0.22, 0.4, h, 0.24, 0, 0, g);
+      break;
+    case 'toast':
+      ball(0.3, s, 0, 0, 0, g);
+      ball(0.33, h, -0.08, 0.05, 0, g).scale.set(1, 1, 1.05);
+      break;
+    case 'joe':
+      ball(0.32, '#e8d8c8', 0, 0, 0, g);
+      ball(0.34, '#f4f1ea', -0.1, 0.05, 0, g).scale.set(1, 1, 1.1);
+      box(0.12, 0.2, 0.32, COLORS.chrome, 0.28, -0.08, 0, g);
+      break;
+    case 'dementus':
+      ball(0.3, s, 0, 0, 0, g);
+      ball(0.32, h, -0.06, 0.06, 0, g).scale.set(1, 0.8, 1.05);
+      ball(0.2, h, 0.14, -0.18, 0, g).scale.set(1, 0.8, 1.2);
+      box(0.1, 0.1, 0.55, COLORS.outline, 0.25, 0.08, 0, g);
+      break;
+    case 'rictus':
+      ball(0.38, s, 0, 0, 0, g);
+      ball(0.38, h, -0.05, 0.12, 0, g).scale.set(1, 0.45, 1);
+      cyl(0.03, 0.6, '#cfe8ef', 0.32, -0.1, 0, g).rotation.x = Math.PI / 2;
+      break;
   }
   return g;
 }
@@ -140,18 +183,21 @@ export function buildCar(look: CarLook): CarModel {
   root.add(chassis);
   const f = buildBody(look.body, look.paint, chassis);
   const u = look.upgrades;
+  // Legends keep their famous shapes: they skip the roof cage, light bar, wing and antennas.
+  const legend = !['buggy', 'hopper', 'truck', 'monster', 'rig'].includes(look.body);
 
   // Wheels: bigger and knobbier with each tire upgrade.
   const wheelR = f.wheelR * (1 + 0.07 * u.tires);
   const wheels: THREE.Object3D[] = [];
   const tireGeo = new THREE.CylinderGeometry(wheelR, wheelR, 0.5 + 0.04 * u.tires, u.tires >= 2 ? 10 : 16);
   tireGeo.rotateX(Math.PI / 2);
-  const hubColor = u.tires >= 3 ? COLORS.gold : u.tires >= 1 ? COLORS.chrome : COLORS.metal;
+  const hubColor = u.tires >= 5 ? COLORS.chrome : u.tires >= 3 ? COLORS.gold : u.tires >= 1 ? COLORS.chrome : COLORS.metal;
   const hubGeo = new THREE.CylinderGeometry(wheelR * 0.5, wheelR * 0.5, 0.56 + 0.04 * u.tires, 8);
   hubGeo.rotateX(Math.PI / 2);
-  for (const [x, z] of f.wheels) {
+  for (const [x, z, size = 1] of f.wheels) {
     const pivot = new THREE.Group();
-    pivot.position.set(x, wheelR, z * (1 + 0.04 * u.tires));
+    pivot.position.set(x, wheelR * size, z * (1 + 0.04 * u.tires));
+    pivot.scale.setScalar(size);
     mesh(tireGeo, toon(COLORS.tire), 0, 0, 0, pivot);
     mesh(hubGeo, toon(hubColor), 0, 0, 0, pivot);
     if (u.tires >= 2) for (let i = 0; i < 4; i++) {
@@ -179,8 +225,8 @@ export function buildCar(look: CarLook): CarModel {
       if (u.engine >= 3) ball(0.13, COLORS.outline, f.backX + 0.35, f.deckY + tall - 0.08, z, chassis).scale.y = 0.4;
     }
   }
-  if (u.engine >= 2) box(0.5, 0.22, 0.45, COLORS.metal, f.hoodX, f.deckY + 0.1, 0, chassis);
-  if (u.engine >= 4) {
+  if (u.engine >= 2 && !legend) box(0.5, 0.22, 0.45, COLORS.metal, f.hoodX, f.deckY + 0.1, 0, chassis);
+  if (u.engine >= 4 && !legend) {
     box(0.55, 0.4, 0.55, COLORS.chrome, f.hoodX - 0.1, f.deckY + 0.35, 0, chassis);
     box(0.3, 0.2, 0.7, COLORS.gold, f.hoodX - 0.1, f.deckY + 0.62, 0, chassis);
   }
@@ -190,11 +236,11 @@ export function buildCar(look: CarLook): CarModel {
     box(0.25, 0.3, f.halfW * 2 + 0.3, COLORS.metal, f.frontX + 0.05, 0.75, 0, chassis);
     for (const z of [-0.4, 0, 0.4]) box(0.08, 0.35, 0.08, COLORS.chrome, f.frontX + 0.2, 0.75, z, chassis);
   }
-  if (u.armor >= 2) for (const z of [f.halfW + 0.05, -(f.halfW + 0.05)]) {
+  if (u.armor >= 2 && !legend) for (const z of [f.halfW + 0.05, -(f.halfW + 0.05)]) {
     box(1.8, 0.35, 0.08, COLORS.rust, 0, 1.0, z, chassis);
     for (const x of [-0.7, 0, 0.7]) ball(0.05, COLORS.chrome, x, 1.0, z * 1.05, chassis);
   }
-  if (u.armor >= 3) {
+  if (u.armor >= 3 && !legend) {
     for (const z of [f.halfW - 0.1, -(f.halfW - 0.1)]) box(1.4, 0.07, 0.07, COLORS.metal, -0.2, f.roofY + 0.15, z, chassis);
     for (const x of [-0.8, -0.2, 0.4]) box(0.07, 0.07, f.halfW * 2 - 0.2, COLORS.metal, x, f.roofY + 0.15, 0, chassis);
   }
@@ -204,18 +250,39 @@ export function buildCar(look: CarLook): CarModel {
   }
 
   // Gadget power: antenna flag, light bar, spoiler, golden wing.
-  if (u.gadget >= 1) {
+  if (u.gadget >= 1 && !legend) {
     cyl(0.03, 1.3, COLORS.metal, f.backX + 0.3, f.deckY + 0.6, -(f.halfW - 0.1), chassis);
     const flag = box(0.4, 0.25, 0.03, '#ff8a1f', f.backX + 0.1, f.deckY + 1.1, -(f.halfW - 0.1), chassis);
     flag.name = 'flag';
   }
-  if (u.gadget >= 2) [-0.45, -0.15, 0.15, 0.45].forEach((z, i) => box(0.18, 0.14, 0.22, i % 2 ? '#ffd23f' : '#ff7a1a', 0.2, f.roofY + 0.05, z, chassis));
-  if (u.gadget >= 3) {
+  if (u.gadget >= 2 && !legend) [-0.45, -0.15, 0.15, 0.45].forEach((z, i) => box(0.18, 0.14, 0.22, i % 2 ? '#ffd23f' : '#ff7a1a', 0.2, f.roofY + 0.05, z, chassis));
+  if (u.gadget >= 3 && !legend) {
     const wingColor = u.gadget >= 4 ? COLORS.gold : look.paint;
     for (const z of [0.5, -0.5]) box(0.08, 0.45, 0.08, COLORS.metal, f.backX + 0.25, f.deckY + 0.25, z, chassis);
     box(0.5, 0.08, f.halfW * 2 + 0.3, wingColor, f.backX + 0.2, f.deckY + 0.5, 0, chassis);
   }
-  if (u.gadget >= 4) cyl(0.03, 1.3, COLORS.metal, f.backX + 0.3, f.deckY + 0.6, f.halfW - 0.1, chassis);
+  if (u.gadget >= 4 && !legend) cyl(0.03, 1.3, COLORS.metal, f.backX + 0.3, f.deckY + 0.6, f.halfW - 0.1, chassis);
+
+  // Chrome levels (5-6): everything gets shinier and wilder.
+  if (u.engine >= 5) for (const z of [0.3, -0.3]) box(0.32, 0.35, 0.32, COLORS.chrome, f.hoodX + 0.35, f.deckY + 0.2, z, chassis);
+  if (u.engine >= 6) for (const z of [f.halfW - 0.25, -(f.halfW - 0.25)]) {
+    const fire = mesh(new THREE.ConeGeometry(0.14, 0.5, 8), toon('#ff7a1a', { emissive: '#ff5a00' }), f.backX + 0.35, f.deckY + 1.2, z, chassis);
+    fire.name = 'stackfire';
+  }
+  if (u.armor >= 5) box(0.12, 0.45, f.halfW * 2, COLORS.chrome, f.frontX + 0.2, 1.0, 0, chassis);
+  if (u.armor >= 6) for (const z of [f.halfW + 0.12, -(f.halfW + 0.12)]) for (const x of [-0.8, 0, 0.8]) {
+    const s = mesh(new THREE.ConeGeometry(0.09, 0.4, 6), toon(COLORS.chrome), x, 1.0, z, chassis);
+    s.rotation.x = z > 0 ? Math.PI / 2 : -Math.PI / 2;
+  }
+  if (u.gadget >= 5 && !legend) ball(0.12, '#f4f1ea', f.backX + 0.3, f.deckY + 1.3, -(f.halfW - 0.1), chassis);
+  if (u.gadget >= 6 && !legend) box(0.4, 0.06, f.halfW * 2 + 0.5, COLORS.chrome, f.backX + 0.2, f.deckY + 0.75, 0, chassis);
+
+  // Hood ornament.
+  const orn = look.ornament ? buildOrnament(look.ornament) : undefined;
+  if (orn) {
+    orn.position.set(f.hoodX + 0.4, f.deckY, 0);
+    chassis.add(orn);
+  }
 
   // Hood sticker.
   if (look.decal) {

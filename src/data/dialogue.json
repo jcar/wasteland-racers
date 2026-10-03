@@ -194,5 +194,153 @@
   "dome-intro": {
     "speaker": "announcer",
     "text": "Welcome to the Thunder Dome! It's the biggest race of all!"
+  },
+  "witness": {
+    "speaker": "nux",
+    "text": "Witness me!"
+  },
+  "blower": {
+    "speaker": "announcer",
+    "text": "Hit the blower! Feel that V8 roar!"
+  },
+  "flame": {
+    "speaker": "announcer",
+    "text": "Guitar solo! Fire it up!"
+  },
+  "stomp": {
+    "speaker": "announcer",
+    "text": "STOMP! Big Foot shakes the ground!"
+  },
+  "thunder": {
+    "speaker": "announcer",
+    "text": "Thunder stick! KABOOM!"
+  },
+  "harpoon": {
+    "speaker": "announcer",
+    "text": "Harpooned! Reel them in!"
+  },
+  "caltrops": {
+    "speaker": "announcer",
+    "text": "Spikes on the road! Watch out!"
+  },
+  "thundershot": {
+    "speaker": "announcer",
+    "text": "The Peacemaker fires! KA-BLAM!"
+  },
+  "doublev8": {
+    "speaker": "announcer",
+    "text": "Double V8! The Gigahorse is unstoppable!"
+  },
+  "bikes": {
+    "speaker": "dementus",
+    "text": "Go, my lovely bikes! Go get them!"
+  },
+  "spikes": {
+    "speaker": "announcer",
+    "text": "Spike ram! Nobody touches the Buzzard!"
+  },
+  "wrecked-them": {
+    "speaker": "announcer",
+    "text": "Kaboom! Wrecked! Straight to Valhalla!"
+  },
+  "got-wrecked": {
+    "speaker": "announcer",
+    "text": "Wrecked! Shake it off, you're back in it!"
+  },
+  "shiny": {
+    "speaker": "nux",
+    "text": "Shiny and chrome!"
+  },
+  "new-lore-car": {
+    "speaker": "announcer",
+    "text": "A real Wasteland legend! Shiny and chrome!"
+  },
+  "chrome-upgrade": {
+    "speaker": "announcer",
+    "text": "Chrome upgrade! Now that's shiny!"
+  },
+  "not-enough-chrome": {
+    "speaker": "announcer",
+    "text": "Win more races to earn chrome for that one!"
+  },
+  "ornament": {
+    "speaker": "announcer",
+    "text": "Ooh, a hood ornament! Very fancy!"
+  },
+  "valhalla": {
+    "speaker": "announcer",
+    "text": "Welcome to the Valhalla Book! Collect them all!"
+  },
+  "card-locked": {
+    "speaker": "announcer",
+    "text": "Keep racing to unlock this card!"
+  },
+  "fury-intro": {
+    "speaker": "furiosa",
+    "text": "This is the Fury Road. Drive fast, and don't look back."
+  },
+  "slit-intro": {
+    "speaker": "slit",
+    "text": "You're on the Fury Road now. I'm coming for you!"
+  },
+  "slit-lose": {
+    "speaker": "slit",
+    "text": "Grr! You drive like a real War Boy!"
+  },
+  "rictus-intro": {
+    "speaker": "rictus",
+    "text": "Rictus wants to race! Rictus is the biggest!"
+  },
+  "rictus-lose": {
+    "speaker": "rictus",
+    "text": "Aww! Rictus lost! Can we race again?"
+  },
+  "card-max": {
+    "speaker": "max",
+    "text": "My name is Max. I drive the Interceptor."
+  },
+  "card-furiosa": {
+    "speaker": "furiosa",
+    "text": "I'm Furiosa. I'm taking the War Rig to the Green Place."
+  },
+  "card-nux": {
+    "speaker": "nux",
+    "text": "Witness me! I'm Nux, and I'm awaited in Valhalla!"
+  },
+  "card-warpup": {
+    "speaker": "warpup",
+    "text": "I'm a War Pup! Someday I'll drive a War Rig!"
+  },
+  "card-doof": {
+    "speaker": "announcer",
+    "text": "The Doof Warrior! He rocks the whole Fury Road!"
+  },
+  "card-toast": {
+    "speaker": "toast",
+    "text": "I'm Toast. I know things."
+  },
+  "card-joe": {
+    "speaker": "joe",
+    "text": "I am Immortan Joe! I am your redeemer!"
+  },
+  "card-dementus": {
+    "speaker": "dementus",
+    "text": "Do you have it in you to make this epic?"
+  },
+  "card-rictus": {
+    "speaker": "rictus",
+    "text": "Rictus! Big and strong! Rictus is the biggest!"
+  },
+  "card-slit": {
+    "speaker": "slit",
+    "text": "I'm Slit. Out of my way, I'm a lancer!"
+  },
+  "card-bulletfarmer": {
+    "speaker": "bulletfarmer",
+    "text": "I'm the Bullet Farmer! Nobody gets past my farm!"
+  },
+  "card-peopleeater": {
+    "speaker": "peopleeater",
+    "text": "The People Eater counts everything! Every drop of guzzoline!"
   }
 }

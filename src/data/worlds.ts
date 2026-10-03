@@ -57,6 +57,13 @@ export const WORLDS: WorldDef[] = [
     props: ['prop-crowd', 'prop-flag', 'prop-crowd', 'prop-tires'],
     music: 'music-dome',
   },
+  {
+    id: 'fury', name: 'Fury Road', card: 'world-fury', emoji: '🔥',
+    ground: 'ground-fury', road: 'road-fury',
+    groundColor: '#d9894a', roadColor: '#b9773f', wallColors: ['#9c4a22', '#d8dee6'], sky: '#e7b37a',
+    props: ['prop-warboys', 'prop-skullpole', 'prop-guzzoline', 'prop-wreck', 'prop-citadel', 'prop-rock'],
+    music: 'music-fury', reward: 'v8',
+  },
 ];
 
 export const worldById = (id: string) => WORLDS.find((w) => w.id === id)!;

@@ -33,10 +33,27 @@ describe('save', () => {
   it('keeps progress and repairs bad values', () => {
     const m = migrate({ scrap: 50.7, upgrades: { engine: 9, tires: -2 }, car: 'rig', ownedCars: ['hopper'], best: { 'dunes-1': 1, x: 99 }, settings: { steerHelp: 'wild' } });
     expect(m.scrap).toBe(50);
-    expect(m.upgrades).toEqual({ engine: 4, tires: 0, armor: 0, gadget: 0 });
+    expect(m.upgrades).toEqual({ engine: 6, tires: 0, armor: 0, gadget: 0 });
     expect(m.car).toBe('buggy'); // not owned, so back to the buggy
     expect(m.ownedCars).toEqual(['buggy', 'hopper']);
     expect(m.best).toEqual({ 'dunes-1': 1 });
     expect(m.settings.steerHelp).toBe('strong');
+  });
+
+  it('moves a Season 1 save to Season 2 without losing anything', () => {
+    const season1 = { version: 1, scrap: 812, totalScrap: 9000, driver: 'dog', car: 'rig', ownedCars: ['buggy', 'hopper', 'rig'], upgrades: { engine: 4, tires: 4, armor: 3, gadget: 4 }, paint: 'gold', decal: 'skull', gadget: 'boing', ownedGadgets: ['boost', 'goo', 'boing'], best: { 'dunes-1': 1, 'dome-1': 2 }, rewards: ['shark', 'gold'], pendingCelebrations: [], started: true, settings: { steerHelp: 'medium', autoGas: false, difficulty: 'normal', muted: false, voice: true } };
+    const m = migrate(season1);
+    expect(m.version).toBe(2);
+    expect(m.scrap).toBe(812);
+    expect(m.car).toBe('rig');
+    expect(m.upgrades).toEqual(season1.upgrades);
+    expect(m.best).toEqual(season1.best);
+    expect(m.rewards).toEqual(season1.rewards);
+    expect(m.settings.difficulty).toBe('normal');
+    expect(m.chrome).toBe(0);
+    expect(m.ornament).toBe('none');
+    // Every War Rig gets its Thunder Sticks in Season 2.
+    expect(m.ownedGadgets).toContain('thunder');
+    expect(m.gadget).toBe('boing');
   });
 });

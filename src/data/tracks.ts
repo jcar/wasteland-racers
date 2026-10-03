@@ -157,6 +157,36 @@ export const TRACKS: TrackDef[] = [
     pickups: [0.15, 0.4, 0.62, 0.9],
     bolts: [{ at: 0.1, lane: 0.5, count: 5 }, { at: 0.34, lane: -0.5, count: 5 }, { at: 0.6, lane: 0, count: 5 }, { at: 0.86, lane: 0.5, count: 5 }],
   },
+
+  // ---------------------------------------------------------------- Fury Road
+  {
+    id: 'fury-1', name: 'Citadel Circuit', world: 'fury', laps: 3, width: 15,
+    points: [[0, -70], [120, -60], [150, -10], [120, 40], [60, 55], [0, 40], [-60, 55], [-120, 40], [-150, -10], [-120, -60]],
+    jumps: [{ at: 0.3, len: 0.02, h: 2.4 }],
+    hills: [{ at: 0.72, len: 0.05, h: 2.5 }],
+    boosts: [{ at: 0.05, lane: 0 }, { at: 0.45, lane: -0.4 }, { at: 0.85, lane: 0.4 }],
+    pickups: [0.18, 0.55, 0.8],
+    bolts: [{ at: 0.1, lane: -0.5, count: 5 }, { at: 0.4, lane: 0, count: 5 }, { at: 0.65, lane: 0.5, count: 5 }, { at: 0.92, lane: 0, count: 5 }],
+  },
+  {
+    id: 'fury-2', name: 'Gas Town Gauntlet', world: 'fury', laps: 3, width: 14, rival: 'slit',
+    points: [[-40, -80], [30, -60], [100, -85], [150, -50], [140, 0], [119, 27], [125, 61], [100, 100], [20, 85], [-30, 110], [-100, 95], [-144, 50], [-127, 2], [-147, -35], [-130, -70]],
+    jumps: [{ at: 0.22, len: 0.02, h: 2.4 }, { at: 0.66, len: 0.02, h: 2.4 }],
+    hills: [{ at: 0.45, len: 0.05, h: 2.6 }],
+    goo: [{ at: 0.82, lane: 0.4, len: 0.03 }],
+    boosts: [{ at: 0.04, lane: 0 }, { at: 0.35, lane: 0.4 }, { at: 0.58, lane: -0.4 }, { at: 0.9, lane: 0 }],
+    pickups: [0.15, 0.4, 0.62, 0.88],
+    bolts: [{ at: 0.08, lane: 0.5, count: 5 }, { at: 0.3, lane: 0, count: 5 }, { at: 0.52, lane: -0.5, count: 5 }, { at: 0.75, lane: 0, count: 5 }],
+  },
+  {
+    id: 'fury-3', name: 'Bullet Farm Blitz', world: 'fury', laps: 3, width: 14, rival: 'rictus',
+    points: [[-50, -100], [50, -80], [150, -95], [180, -50], [155, -9], [180, 40], [150, 95], [70, 85], [20, 115], [-50, 110], [-90, 70], [-150, 95], [-187, 50], [-162, 0], [-186, -45], [-150, -90]],
+    jumps: [{ at: 0.12, len: 0.02, h: 2.6 }, { at: 0.47, len: 0.02, h: 2.6 }, { at: 0.8, len: 0.02, h: 2.6 }],
+    hills: [{ at: 0.3, len: 0.05, h: 3 }, { at: 0.64, len: 0.05, h: 3 }],
+    boosts: [{ at: 0.03, lane: 0 }, { at: 0.22, lane: -0.4 }, { at: 0.55, lane: 0.4 }, { at: 0.72, lane: 0 }, { at: 0.93, lane: 0 }],
+    pickups: [0.17, 0.38, 0.6, 0.85],
+    bolts: [{ at: 0.07, lane: 0, count: 5 }, { at: 0.33, lane: 0.5, count: 5 }, { at: 0.5, lane: 0, count: 5 }, { at: 0.76, lane: -0.5, count: 5 }],
+  },
 ];
 
 /** The order tracks unlock in. Winning one opens the next. */

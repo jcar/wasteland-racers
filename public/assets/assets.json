@@ -5,6 +5,66 @@
       "url": "assets/images/announcer.png"
     },
     {
+      "key": "car-bigfoot",
+      "url": "assets/images/car-bigfoot.png"
+    },
+    {
+      "key": "car-buzzard",
+      "url": "assets/images/car-buzzard.png"
+    },
+    {
+      "key": "car-chariot",
+      "url": "assets/images/car-chariot.png"
+    },
+    {
+      "key": "car-doof",
+      "url": "assets/images/car-doof.png"
+    },
+    {
+      "key": "car-gigahorse",
+      "url": "assets/images/car-gigahorse.png"
+    },
+    {
+      "key": "car-interceptor",
+      "url": "assets/images/car-interceptor.png"
+    },
+    {
+      "key": "car-nuxcar",
+      "url": "assets/images/car-nuxcar.png"
+    },
+    {
+      "key": "car-peacemaker",
+      "url": "assets/images/car-peacemaker.png"
+    },
+    {
+      "key": "car-rig",
+      "url": "assets/images/car-rig.png"
+    },
+    {
+      "key": "char-bulletfarmer",
+      "url": "assets/images/char-bulletfarmer.png"
+    },
+    {
+      "key": "char-dementus",
+      "url": "assets/images/char-dementus.png"
+    },
+    {
+      "key": "char-joe",
+      "url": "assets/images/char-joe.png"
+    },
+    {
+      "key": "char-peopleeater",
+      "url": "assets/images/char-peopleeater.png"
+    },
+    {
+      "key": "char-rictus",
+      "url": "assets/images/char-rictus.png"
+    },
+    {
+      "key": "char-slit",
+      "url": "assets/images/char-slit.png"
+    },
+    {
       "key": "decal-checker",
       "url": "assets/images/decal-checker.png"
     },
@@ -29,8 +89,20 @@
       "url": "assets/images/decal-star.png"
     },
     {
+      "key": "decal-v8",
+      "url": "assets/images/decal-v8.png"
+    },
+    {
       "key": "driver-dog",
       "url": "assets/images/driver-dog.png"
+    },
+    {
+      "key": "driver-doof",
+      "url": "assets/images/driver-doof.png"
+    },
+    {
+      "key": "driver-furiosa",
+      "url": "assets/images/driver-furiosa.png"
     },
     {
       "key": "driver-kid",
@@ -41,8 +113,24 @@
       "url": "assets/images/driver-lizard.png"
     },
     {
+      "key": "driver-max",
+      "url": "assets/images/driver-max.png"
+    },
+    {
+      "key": "driver-nux",
+      "url": "assets/images/driver-nux.png"
+    },
+    {
       "key": "driver-robot",
       "url": "assets/images/driver-robot.png"
+    },
+    {
+      "key": "driver-toast",
+      "url": "assets/images/driver-toast.png"
+    },
+    {
+      "key": "driver-warpup",
+      "url": "assets/images/driver-warpup.png"
     },
     {
       "key": "garage-bg",
@@ -55,6 +143,10 @@
     {
       "key": "ground-dunes",
       "url": "assets/images/ground-dunes.png"
+    },
+    {
+      "key": "ground-fury",
+      "url": "assets/images/ground-fury.png"
     },
     {
       "key": "ground-junk",
@@ -73,6 +165,14 @@
       "url": "assets/images/icon-armor.png"
     },
     {
+      "key": "icon-bikes",
+      "url": "assets/images/icon-bikes.png"
+    },
+    {
+      "key": "icon-blower",
+      "url": "assets/images/icon-blower.png"
+    },
+    {
       "key": "icon-boing",
       "url": "assets/images/icon-boing.png"
     },
@@ -81,8 +181,24 @@
       "url": "assets/images/icon-boost.png"
     },
     {
+      "key": "icon-caltrops",
+      "url": "assets/images/icon-caltrops.png"
+    },
+    {
+      "key": "icon-chrome",
+      "url": "assets/images/icon-chrome.png"
+    },
+    {
+      "key": "icon-doublev8",
+      "url": "assets/images/icon-doublev8.png"
+    },
+    {
       "key": "icon-engine",
       "url": "assets/images/icon-engine.png"
+    },
+    {
+      "key": "icon-flame",
+      "url": "assets/images/icon-flame.png"
     },
     {
       "key": "icon-gadget",
@@ -93,12 +209,36 @@
       "url": "assets/images/icon-goo.png"
     },
     {
+      "key": "icon-harpoon",
+      "url": "assets/images/icon-harpoon.png"
+    },
+    {
       "key": "icon-lock",
       "url": "assets/images/icon-lock.png"
     },
     {
+      "key": "icon-ornament",
+      "url": "assets/images/icon-ornament.png"
+    },
+    {
       "key": "icon-scrap",
       "url": "assets/images/icon-scrap.png"
+    },
+    {
+      "key": "icon-spikes",
+      "url": "assets/images/icon-spikes.png"
+    },
+    {
+      "key": "icon-stomp",
+      "url": "assets/images/icon-stomp.png"
+    },
+    {
+      "key": "icon-thunder",
+      "url": "assets/images/icon-thunder.png"
+    },
+    {
+      "key": "icon-thundershot",
+      "url": "assets/images/icon-thundershot.png"
     },
     {
       "key": "icon-tires",
@@ -107,6 +247,10 @@
     {
       "key": "icon-trophy",
       "url": "assets/images/icon-trophy.png"
+    },
+    {
+      "key": "icon-witness",
+      "url": "assets/images/icon-witness.png"
     },
     {
       "key": "map-bg",
@@ -125,6 +269,10 @@
       "url": "assets/images/prop-cactus.png"
     },
     {
+      "key": "prop-citadel",
+      "url": "assets/images/prop-citadel.png"
+    },
+    {
       "key": "prop-crowd",
       "url": "assets/images/prop-crowd.png"
     },
@@ -135,6 +283,10 @@
     {
       "key": "prop-flag",
       "url": "assets/images/prop-flag.png"
+    },
+    {
+      "key": "prop-guzzoline",
+      "url": "assets/images/prop-guzzoline.png"
     },
     {
       "key": "prop-jump-sign",
@@ -165,8 +317,20 @@
       "url": "assets/images/prop-skull.png"
     },
     {
+      "key": "prop-skullpole",
+      "url": "assets/images/prop-skullpole.png"
+    },
+    {
       "key": "prop-tires",
       "url": "assets/images/prop-tires.png"
+    },
+    {
+      "key": "prop-warboys",
+      "url": "assets/images/prop-warboys.png"
+    },
+    {
+      "key": "prop-wreck",
+      "url": "assets/images/prop-wreck.png"
     },
     {
       "key": "rival-bertha",
@@ -193,6 +357,10 @@
       "url": "assets/images/road-dome.png"
     },
     {
+      "key": "road-fury",
+      "url": "assets/images/road-fury.png"
+    },
+    {
       "key": "road-junk",
       "url": "assets/images/road-junk.png"
     },
@@ -209,12 +377,20 @@
       "url": "assets/images/title-bg.jpg"
     },
     {
+      "key": "valhalla-bg",
+      "url": "assets/images/valhalla-bg.jpg"
+    },
+    {
       "key": "world-dome",
       "url": "assets/images/world-dome.jpg"
     },
     {
       "key": "world-dunes",
       "url": "assets/images/world-dunes.jpg"
+    },
+    {
+      "key": "world-fury",
+      "url": "assets/images/world-fury.jpg"
     },
     {
       "key": "world-junkyard",
@@ -237,6 +413,10 @@
     {
       "key": "music-dunes",
       "url": "assets/audio/music-dunes.mp3"
+    },
+    {
+      "key": "music-fury",
+      "url": "assets/audio/music-fury.mp3"
     },
     {
       "key": "music-garage",
@@ -271,6 +451,14 @@
       "url": "assets/audio/vo-bertha-lose.mp3"
     },
     {
+      "key": "vo-bikes",
+      "url": "assets/audio/vo-bikes.mp3"
+    },
+    {
+      "key": "vo-blower",
+      "url": "assets/audio/vo-blower.mp3"
+    },
+    {
       "key": "vo-boing",
       "url": "assets/audio/vo-boing.mp3"
     },
@@ -279,8 +467,68 @@
       "url": "assets/audio/vo-boost.mp3"
     },
     {
+      "key": "vo-caltrops",
+      "url": "assets/audio/vo-caltrops.mp3"
+    },
+    {
+      "key": "vo-card-bulletfarmer",
+      "url": "assets/audio/vo-card-bulletfarmer.mp3"
+    },
+    {
+      "key": "vo-card-dementus",
+      "url": "assets/audio/vo-card-dementus.mp3"
+    },
+    {
+      "key": "vo-card-doof",
+      "url": "assets/audio/vo-card-doof.mp3"
+    },
+    {
+      "key": "vo-card-furiosa",
+      "url": "assets/audio/vo-card-furiosa.mp3"
+    },
+    {
+      "key": "vo-card-joe",
+      "url": "assets/audio/vo-card-joe.mp3"
+    },
+    {
+      "key": "vo-card-locked",
+      "url": "assets/audio/vo-card-locked.mp3"
+    },
+    {
+      "key": "vo-card-max",
+      "url": "assets/audio/vo-card-max.mp3"
+    },
+    {
+      "key": "vo-card-nux",
+      "url": "assets/audio/vo-card-nux.mp3"
+    },
+    {
+      "key": "vo-card-peopleeater",
+      "url": "assets/audio/vo-card-peopleeater.mp3"
+    },
+    {
+      "key": "vo-card-rictus",
+      "url": "assets/audio/vo-card-rictus.mp3"
+    },
+    {
+      "key": "vo-card-slit",
+      "url": "assets/audio/vo-card-slit.mp3"
+    },
+    {
+      "key": "vo-card-toast",
+      "url": "assets/audio/vo-card-toast.mp3"
+    },
+    {
+      "key": "vo-card-warpup",
+      "url": "assets/audio/vo-card-warpup.mp3"
+    },
+    {
       "key": "vo-champion",
       "url": "assets/audio/vo-champion.mp3"
+    },
+    {
+      "key": "vo-chrome-upgrade",
+      "url": "assets/audio/vo-chrome-upgrade.mp3"
     },
     {
       "key": "vo-decal-locked",
@@ -291,8 +539,20 @@
       "url": "assets/audio/vo-dome-intro.mp3"
     },
     {
+      "key": "vo-doublev8",
+      "url": "assets/audio/vo-doublev8.mp3"
+    },
+    {
       "key": "vo-final-lap",
       "url": "assets/audio/vo-final-lap.mp3"
+    },
+    {
+      "key": "vo-flame",
+      "url": "assets/audio/vo-flame.mp3"
+    },
+    {
+      "key": "vo-fury-intro",
+      "url": "assets/audio/vo-fury-intro.mp3"
     },
     {
       "key": "vo-gadget-hint",
@@ -313,6 +573,14 @@
     {
       "key": "vo-got-spun",
       "url": "assets/audio/vo-got-spun.mp3"
+    },
+    {
+      "key": "vo-got-wrecked",
+      "url": "assets/audio/vo-got-wrecked.mp3"
+    },
+    {
+      "key": "vo-harpoon",
+      "url": "assets/audio/vo-harpoon.mp3"
     },
     {
       "key": "vo-jump-1",
@@ -355,6 +623,10 @@
       "url": "assets/audio/vo-new-gadget.mp3"
     },
     {
+      "key": "vo-new-lore-car",
+      "url": "assets/audio/vo-new-lore-car.mp3"
+    },
+    {
       "key": "vo-new-track",
       "url": "assets/audio/vo-new-track.mp3"
     },
@@ -363,12 +635,20 @@
       "url": "assets/audio/vo-new-world.mp3"
     },
     {
+      "key": "vo-not-enough-chrome",
+      "url": "assets/audio/vo-not-enough-chrome.mp3"
+    },
+    {
       "key": "vo-not-enough",
       "url": "assets/audio/vo-not-enough.mp3"
     },
     {
       "key": "vo-one",
       "url": "assets/audio/vo-one.mp3"
+    },
+    {
+      "key": "vo-ornament",
+      "url": "assets/audio/vo-ornament.mp3"
     },
     {
       "key": "vo-paint",
@@ -407,12 +687,48 @@
       "url": "assets/audio/vo-rex-lose.mp3"
     },
     {
+      "key": "vo-rictus-intro",
+      "url": "assets/audio/vo-rictus-intro.mp3"
+    },
+    {
+      "key": "vo-rictus-lose",
+      "url": "assets/audio/vo-rictus-lose.mp3"
+    },
+    {
       "key": "vo-scrap",
       "url": "assets/audio/vo-scrap.mp3"
     },
     {
+      "key": "vo-shiny",
+      "url": "assets/audio/vo-shiny.mp3"
+    },
+    {
+      "key": "vo-slit-intro",
+      "url": "assets/audio/vo-slit-intro.mp3"
+    },
+    {
+      "key": "vo-slit-lose",
+      "url": "assets/audio/vo-slit-lose.mp3"
+    },
+    {
+      "key": "vo-spikes",
+      "url": "assets/audio/vo-spikes.mp3"
+    },
+    {
+      "key": "vo-stomp",
+      "url": "assets/audio/vo-stomp.mp3"
+    },
+    {
       "key": "vo-three",
       "url": "assets/audio/vo-three.mp3"
+    },
+    {
+      "key": "vo-thunder",
+      "url": "assets/audio/vo-thunder.mp3"
+    },
+    {
+      "key": "vo-thundershot",
+      "url": "assets/audio/vo-thundershot.mp3"
     },
     {
       "key": "vo-title",
@@ -447,6 +763,10 @@
       "url": "assets/audio/vo-upgrade-tires.mp3"
     },
     {
+      "key": "vo-valhalla",
+      "url": "assets/audio/vo-valhalla.mp3"
+    },
+    {
       "key": "vo-warlord-intro",
       "url": "assets/audio/vo-warlord-intro.mp3"
     },
@@ -457,6 +777,14 @@
     {
       "key": "vo-win",
       "url": "assets/audio/vo-win.mp3"
+    },
+    {
+      "key": "vo-witness",
+      "url": "assets/audio/vo-witness.mp3"
+    },
+    {
+      "key": "vo-wrecked-them",
+      "url": "assets/audio/vo-wrecked-them.mp3"
     }
   ]
 }

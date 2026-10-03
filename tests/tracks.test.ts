@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { RIVALS } from '../src/data/characters';
+import { LORE_RIVALS, RIVALS } from '../src/data/characters';
 import { TRACKS } from '../src/data/tracks';
 import { WORLDS } from '../src/data/worlds';
 import { TrackGeometry } from '../src/race/trackGeometry';
@@ -9,7 +9,7 @@ describe.each(TRACKS.map((t) => [t.id, t] as const))('track %s', (_id, t) => {
 
   it('belongs to a real world and rival', () => {
     expect(WORLDS.map((w) => w.id)).toContain(t.world);
-    if (t.rival) expect(RIVALS.map((r) => r.id)).toContain(t.rival);
+    if (t.rival) expect([...RIVALS, ...LORE_RIVALS].map((r) => r.id)).toContain(t.rival);
   });
 
   it('has corners wide enough for little drivers', () => {
