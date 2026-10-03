@@ -126,8 +126,13 @@ export const sfx = {
   bump() {
     noise(0.15, 'lowpass', 900, 100, 0.3);
   },
-  land() {
-    noise(0.2, 'lowpass', 400, 60, 0.3);
+  land(big = false) {
+    noise(big ? 0.4 : 0.2, 'lowpass', big ? 600 : 400, 50, big ? 0.5 : 0.3);
+    if (big) sweep(110, 45, 0.3, 'sine', 0.35);
+  },
+  /** Taking off from a jump. */
+  whoosh() {
+    noise(0.5, 'bandpass', 600, 2400, 0.2);
   },
   spin() {
     for (let i = 0; i < 4; i++) sweep(600, 300, 0.12, 'triangle', 0.06, i * 0.12);

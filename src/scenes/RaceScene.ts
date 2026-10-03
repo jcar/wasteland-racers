@@ -77,6 +77,8 @@ export class RaceScene implements Scene {
   private pause?: { update(): void };
   private introTime = 1.2;
   private dustColor: string;
+  /** Screen shake after a big landing; fades out. */
+  private shake = 0;
 
   constructor(trackId: string) {
     this.trackId = trackId;
@@ -199,7 +201,8 @@ export class RaceScene implements Scene {
     const crateMat = toon('#ffffff', { map: texture('icon-gadget', emojiArt('⚡')), emissive: '#ffb000' });
     const crateGeo = new THREE.BoxGeometry(1.6, 1.6, 1.6);
     for (const at of def.pickups ?? [])
-      for (const lat of [-hw * 0.55, 0, hw * 0.55]) {
+      // Off to the sides, never the middle: steering is how you get them.
+      for (const lat of [-hw * 0.6, hw * 0.6]) {
         const p = this.geo.pointAt(at * L, lat);
         const mesh = new THREE.Mesh(crateGeo, crateMat);
         mesh.castShadow = true;
@@ -211,7 +214,9 @@ export class RaceScene implements Scene {
     const boltMat = toon(COLORS.gold, { emissive: '#aa7a00' });
     for (const b of def.bolts ?? [])
       for (let i = 0; i < b.count; i++) {
-        const p = this.geo.pointAt(b.at * L + i * 3.5, -b.lane * (hw - 3));
+        // Lines near the middle become a swerve from one side to the other; the rest hug a side.
+        const frac = Math.abs(b.lane) < 0.3 ? -0.65 + (1.3 * i) / Math.max(1, b.count - 1) : Math.sign(b.lane) * 0.7;
+        const p = this.geo.pointAt(b.at * L + i * 3.5, -frac * (hw - 2.5));
         const mesh = new THREE.Mesh(boltGeo, boltMat);
         mesh.castShadow = true;
         this.view.scene.add(mesh);
@@ -484,10 +489,22 @@ export class RaceScene implements Scene {
           if (mine) sfx.wall(b.lastHit / 6);
           this.effects.dust(b.x, b.y, b.z, this.dustColor, 3);
           break;
-        case 'land':
-          if (mine || this.near(e)) sfx.land();
-          this.effects.dust(b.x, b.y, b.z, this.dustColor, 6);
+        case 'takeoff':
+          if (mine && this.geo.onJump(b.pos.s)) {
+            sfx.whoosh();
+            speak(['jump-1', 'jump-2', 'jump-3'][Math.floor(Math.random() * 3)], { priority: 0, cooldown: 6 });
+          }
           break;
+        case 'land': {
+          const big = b.airTime > 0.3;
+          if (mine || this.near(e)) sfx.land(big);
+          this.effects.dust(b.x, b.y, b.z, this.dustColor, big ? 18 : 6);
+          if (big && mine) {
+            this.effects.sparkle(b.x, b.y, b.z, '#ffe14d', 14);
+            this.shake = 0.7;
+          }
+          break;
+        }
         case 'tow':
           if (mine) {
             sfx.tow();
@@ -634,8 +651,14 @@ export class RaceScene implements Scene {
     const pb = this.player.body;
     const want = new THREE.Vector3(pb.x + pb.vx * 0.45, pb.y, pb.z + pb.vz * 0.45);
     this.camTarget.lerp(want, dt ? 1 - Math.exp(-4 * dt) : 1);
-    cam.position.copy(this.camTarget).addScaledVector(CAM_DIR, 150);
-    cam.lookAt(this.camTarget);
+    const look = this.camTarget.clone();
+    if (this.shake > 0) {
+      look.x += (Math.random() - 0.5) * this.shake;
+      look.y += (Math.random() - 0.5) * this.shake;
+      this.shake = Math.max(0, this.shake - dt * 1.8);
+    }
+    cam.position.copy(look).addScaledVector(CAM_DIR, 150);
+    cam.lookAt(look);
     this.sun.position.set(this.camTarget.x - 30, this.camTarget.y + 60, this.camTarget.z + 20);
     this.sun.target.position.copy(this.camTarget);
   }

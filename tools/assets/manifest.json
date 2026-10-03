@@ -67,6 +67,7 @@
     {"id": "prop-lavarock", "kind": "sprite", "w": 256, "h": 192, "prompt": "A dark volcanic rock pile with little glowing orange cracks and a puff of smoke. Side view."},
     {"id": "prop-crowd", "kind": "sprite", "w": 320, "h": 192, "prompt": "A small bleacher made of crates with five silly cheering cartoon wasteland fans waving flags and foam fingers. Side view."},
     {"id": "prop-flag", "kind": "sprite", "w": 128, "h": 256, "prompt": "A tall wooden pole with a waving orange and turquoise pennant flag on top. Side view."},
+    {"id": "prop-jump-sign", "kind": "sprite", "w": 192, "h": 240, "prompt": "A bright yellow diamond-shaped warning road sign on a wooden post, showing a black silhouette of a little car flying off a ramp with motion lines. Bold and simple, no letters. Side view."},
     {"id": "prop-sign", "kind": "sprite", "w": 192, "h": 192, "prompt": "A hand-painted wooden arrow sign on a post pointing right, painted bright yellow with a black arrow shape only. Side view."}
   ],
   "voices": {

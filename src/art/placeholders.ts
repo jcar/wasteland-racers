@@ -68,6 +68,22 @@ export const chevrons = () =>
     }
   });
 
+/** Yellow and black hazard stripes for jump ramps. */
+export const hazard = () =>
+  canvas(128, 128, (g) => {
+    g.fillStyle = '#ffcf1f';
+    g.fillRect(0, 0, 128, 128);
+    g.fillStyle = '#222';
+    for (let i = -2; i < 4; i++) {
+      g.beginPath();
+      g.moveTo(i * 64, 128);
+      g.lineTo(i * 64 + 32, 128);
+      g.lineTo(i * 64 + 160, 0);
+      g.lineTo(i * 64 + 128, 0);
+      g.fill();
+    }
+  });
+
 export const gooPuddle = () =>
   canvas(128, 128, (g) => {
     const grad = g.createRadialGradient(64, 64, 10, 64, 64, 62);
@@ -123,6 +139,6 @@ export function emojiArt(emoji: string, w = 128, h = 128) {
 const PROP_EMOJI: Record<string, string> = {
   'prop-cactus': '🌵', 'prop-rock': '🪨', 'prop-skull': '🐮', 'prop-tires': '🛞', 'prop-junkcar': '🚗',
   'prop-barrel': '🛢️', 'prop-mushroom': '🍄', 'prop-deadtree': '🌳', 'prop-lavarock': '🌋', 'prop-crowd': '🙌',
-  'prop-flag': '🚩', 'prop-sign': '➡️',
+  'prop-flag': '🚩', 'prop-sign': '➡️', 'prop-jump-sign': '⚠️',
 };
 export const propPlaceholder = (key: string) => emojiArt(PROP_EMOJI[key] ?? '🪨', 128, 128);

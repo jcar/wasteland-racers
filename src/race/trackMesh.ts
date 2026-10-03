@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import type { WorldDef } from '../data/worlds';
 import { texture } from '../systems/assets';
 import { toon } from '../art/materials';
-import { checker, chevrons, gooPuddle, propPlaceholder, speckle, stripes } from '../art/placeholders';
+import { checker, chevrons, gooPuddle, hazard, propPlaceholder, speckle, stripes } from '../art/placeholders';
 import type { TrackGeometry } from './trackGeometry';
 
 /**
@@ -13,7 +13,7 @@ import type { TrackGeometry } from './trackGeometry';
 /** Width / height of each prop picture (matches tools/assets/manifest.json). */
 const PROP_ASPECT: Record<string, number> = {
   'prop-cactus': 0.75, 'prop-rock': 1.33, 'prop-skull': 1.33, 'prop-tires': 0.75, 'prop-junkcar': 1.33, 'prop-barrel': 0.83,
-  'prop-mushroom': 0.75, 'prop-deadtree': 0.75, 'prop-lavarock': 1.33, 'prop-crowd': 1.67, 'prop-flag': 0.5, 'prop-sign': 1,
+  'prop-mushroom': 0.75, 'prop-deadtree': 0.75, 'prop-lavarock': 1.33, 'prop-crowd': 1.67, 'prop-flag': 0.5, 'prop-sign': 1, 'prop-jump-sign': 0.8,
 };
 
 type Profile = { lat: number; dy: number; abs?: boolean }[];
@@ -127,6 +127,22 @@ export function buildTrackVisuals(geo: TrackGeometry, world: WorldDef, seed: num
   for (const b of def.boosts ?? []) {
     const s = b.at * L, lat = -b.lane * (hw - 3);
     addMesh(group, sweep(geo, [{ lat: lat + 2.2, dy: 0.07 }, { lat: lat - 2.2, dy: 0.07 }], s, s + 6, 3, 0.5), padMat, false);
+  }
+
+  // Jumps: striped ramps you can see coming, with warning signs before them.
+  const rampMat = toon('#ffffff', { map: texture('hazard', hazard, { repeat: true }) });
+  rampMat.side = THREE.DoubleSide;
+  for (const j of def.jumps ?? []) {
+    const s0 = j.at * L, s1 = (j.at + j.len) * L;
+    addMesh(group, sweep(geo, [{ lat: hw - 1, dy: 0.07 }, { lat: -(hw - 1), dy: 0.07 }], s0, s1, 4, 0.5), rampMat, false);
+    for (const side of [1, -1]) {
+      const p = geo.pointAt(s0 - 16, side * (hw + 3.5));
+      const sign = new THREE.Sprite(new THREE.SpriteMaterial({ map: texture('prop-jump-sign', propPlaceholder('prop-jump-sign')), alphaTest: 0.3 }));
+      sign.scale.set(5.6, 7, 1);
+      sign.center.set(0.5, 0.06);
+      sign.position.set(p.x, p.h, p.z);
+      group.add(sign);
+    }
   }
 
   // Goo puddles (slow zones).

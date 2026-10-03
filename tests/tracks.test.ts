@@ -26,6 +26,18 @@ describe.each(TRACKS.map((t) => [t.id, t] as const))('track %s', (_id, t) => {
       }
   });
 
+  it('is mostly flat road, with hills and jumps only where they are placed', () => {
+    const planned = [...(t.hills ?? []), ...(t.jumps ?? [])].reduce((sum, f) => sum + f.len, 0);
+    const raised = g.samples.filter((p) => p.h > 0.05).length / g.samples.length;
+    expect(raised).toBeLessThanOrEqual(planned + 0.02);
+    expect(g.heightAt(0)).toBeLessThan(0.5); // the start line is on flat ground
+  });
+
+  it('knows where its jump ramps are', () => {
+    for (const j of t.jumps ?? []) expect(g.onJump((j.at + j.len / 2) * g.length)).toBe(true);
+    for (const h of t.hills ?? []) expect(g.onJump(h.at * g.length)).toBe(false);
+  });
+
   it('places everything on the lap', () => {
     const fracs = [...(t.pickups ?? []), ...(t.boosts ?? []).map((b) => b.at), ...(t.bolts ?? []).map((b) => b.at), ...(t.goo ?? []).map((b) => b.at)];
     for (const f of fracs) expect(f).toBeGreaterThanOrEqual(0), expect(f).toBeLessThan(1);

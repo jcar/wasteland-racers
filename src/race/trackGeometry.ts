@@ -103,17 +103,26 @@ export class TrackGeometry {
   heightAt(s: number): number {
     const f = this.wrap(s) / this.length;
     let h = 0;
+    // How far past `start` we are, as a fraction of the lap (wraps past the start line).
+    const since = (start: number) => f - start - Math.floor(f - start);
     for (const hill of this.def.hills ?? []) {
-      let u = (f - (hill.at - hill.len / 2)) / hill.len;
-      u -= Math.floor(u); // loops around the start line
+      const u = since(hill.at - hill.len / 2) / hill.len;
       if (u < 1) h += hill.h * 0.5 * (1 - Math.cos(u * Math.PI * 2));
     }
     for (const j of this.def.jumps ?? []) {
-      let u = (f - j.at) / j.len;
-      u -= Math.floor(u);
+      const u = since(j.at) / j.len;
       if (u < 1) h += j.h * u * u; // rises steeper and steeper, then drops off: that's the jump
     }
     return h;
+  }
+
+  /** True on (or just past the end of) a jump ramp, as opposed to a hill. */
+  onJump(s: number): boolean {
+    const f = this.wrap(s) / this.length;
+    return (this.def.jumps ?? []).some((j) => {
+      const d = f - j.at - Math.floor(f - j.at);
+      return d < j.len + 4 / this.length;
+    });
   }
 
   /** Interpolated point on the centerline, pushed sideways by `lateral`. */

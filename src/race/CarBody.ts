@@ -14,7 +14,7 @@ export interface DriveInput {
   brake: boolean;
 }
 
-export type CarEvent = 'wall' | 'land' | 'tow' | 'lap' | 'finish' | 'spin' | 'boostpad';
+export type CarEvent = 'wall' | 'takeoff' | 'land' | 'tow' | 'lap' | 'finish' | 'spin' | 'boostpad';
 
 const RADIUS = 1.25;
 const GRAVITY = 30;
@@ -30,6 +30,8 @@ export class CarBody {
   vx = 0;
   vz = 0;
   airborne = false;
+  /** Seconds in the air so far (or of the last jump, once landed). */
+  airTime = 0;
   /** Seconds of spin-out left. */
   spin = 0;
   spinDir = 1;
@@ -182,6 +184,7 @@ export class CarBody {
   private updateHeight(dt: number) {
     const ground = this.pos.h;
     if (this.airborne) {
+      this.airTime += dt;
       this.vy -= GRAVITY * dt;
       this.y += this.vy * dt;
       if (this.y <= ground) {
@@ -196,8 +199,10 @@ export class CarBody {
     const groundVy = (ground - this.y) / Math.max(dt, 1e-3);
     if (groundVy < this.vy - GRAVITY * dt * 1.5 && this.vy > 2) {
       this.airborne = true;
+      this.airTime = 0;
       this.vy = Math.min(this.vy, 12);
       this.y += this.vy * dt;
+      this.events.push('takeoff');
       return;
     }
     this.vy = groundVy;

@@ -137,6 +137,10 @@
       "url": "assets/images/prop-flag.png"
     },
     {
+      "key": "prop-jump-sign",
+      "url": "assets/images/prop-jump-sign.png"
+    },
+    {
       "key": "prop-junkcar",
       "url": "assets/images/prop-junkcar.png"
     },
@@ -309,6 +313,18 @@
     {
       "key": "vo-got-spun",
       "url": "assets/audio/vo-got-spun.mp3"
+    },
+    {
+      "key": "vo-jump-1",
+      "url": "assets/audio/vo-jump-1.mp3"
+    },
+    {
+      "key": "vo-jump-2",
+      "url": "assets/audio/vo-jump-2.mp3"
+    },
+    {
+      "key": "vo-jump-3",
+      "url": "assets/audio/vo-jump-3.mp3"
     },
     {
       "key": "vo-lead",
