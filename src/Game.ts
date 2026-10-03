@@ -19,6 +19,8 @@ class Game {
   readonly controls = new Controls();
   private current?: Scene;
   private last = performance.now();
+  /** Dev only (?fast): run the clock faster and render cheaply, for automated playthroughs. */
+  private timeScale = 1;
 
   constructor() {
     const canvas = document.getElementById('view') as HTMLCanvasElement;
@@ -27,6 +29,11 @@ class Game {
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFShadowMap;
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
+    if (import.meta.env.DEV && new URLSearchParams(location.search).has('fast')) {
+      this.timeScale = 3;
+      this.renderer.setPixelRatio(0.5);
+      this.renderer.shadowMap.enabled = false;
+    }
     this.resize();
     window.addEventListener('resize', () => this.resize());
     this.controls.onFirstInput = () => {
@@ -56,7 +63,7 @@ class Game {
 
   start() {
     const frame = (now: number) => {
-      const dt = Math.min(0.05, (now - this.last) / 1000);
+      const dt = Math.min(0.05, (now - this.last) / 1000) * this.timeScale;
       this.last = now;
       const scene = this.current;
       scene?.update(dt);

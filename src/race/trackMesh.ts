@@ -18,6 +18,9 @@ const PROP_ASPECT: Record<string, number> = {
 
 type Profile = { lat: number; dy: number; abs?: boolean }[];
 
+/** On a road, the finish line is this far before the end wall. */
+export const FINISH_GAP = 12;
+
 /**
  * Sweep a cross-section along the track between two distances. Each profile
  * point is a sideways offset and a height (above the road, or absolute).
@@ -105,21 +108,37 @@ export function buildTrackVisuals(geo: TrackGeometry, world: WorldDef, seed: num
   const checkTex = texture('checker', checker, { repeat: true });
   const startMat = toon('#ffffff', { map: checkTex, transparent: false });
   addMesh(group, sweep(geo, [{ lat: hw, dy: 0.06 }, { lat: -hw, dy: 0.06 }], -1, 1, 2 / (def.width / 2)), startMat);
-  const start = geo.pointAt(0);
-  const arch = new THREE.Group();
-  arch.position.set(start.x, start.h, start.z);
-  arch.rotation.y = -Math.atan2(start.tz, start.tx);
-  for (const side of [1, -1]) {
-    const post = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.5, 8, 8), toon('#5d6068'));
-    post.position.set(0, 4, -side * (hw + 1.8));
-    post.castShadow = true;
-    arch.add(post);
+  const arch = (s: number) => {
+    const p = geo.pointAt(s);
+    const a = new THREE.Group();
+    a.position.set(p.x, p.h, p.z);
+    a.rotation.y = -Math.atan2(p.tz, p.tx);
+    for (const side of [1, -1]) {
+      const post = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.5, 8, 8), toon('#5d6068'));
+      post.position.set(0, 4, -side * (hw + 1.8));
+      post.castShadow = true;
+      a.add(post);
+    }
+    const banner = new THREE.Mesh(new THREE.BoxGeometry(0.6, 1.8, def.width + 4.4), toon('#ffffff', { map: checkTex }));
+    banner.position.y = 7.4;
+    banner.castShadow = true;
+    a.add(banner);
+    group.add(a);
+  };
+  arch(0);
+  // Roads: a finish line near the end, and a wall across each end.
+  if (geo.open) {
+    addMesh(group, sweep(geo, [{ lat: hw, dy: 0.06 }, { lat: -hw, dy: 0.06 }], L - FINISH_GAP - 1, L - FINISH_GAP + 1, 2 / (def.width / 2)), startMat);
+    arch(L - FINISH_GAP);
+    for (const s of [0.5, L - 0.5]) {
+      const p = geo.pointAt(s);
+      const end = new THREE.Mesh(new THREE.BoxGeometry(1.2, 1.8, def.width + 2.4), wallMat);
+      end.position.set(p.x, p.h + 0.9, p.z);
+      end.rotation.y = -Math.atan2(p.tz, p.tx);
+      end.castShadow = true;
+      group.add(end);
+    }
   }
-  const banner = new THREE.Mesh(new THREE.BoxGeometry(0.6, 1.8, def.width + 4.4), toon('#ffffff', { map: checkTex }));
-  banner.position.y = 7.4;
-  banner.castShadow = true;
-  arch.add(banner);
-  group.add(arch);
 
   // Boost pads.
   const chevTex = texture('chevrons', chevrons, { repeat: true });
@@ -197,8 +216,12 @@ export function trackSvg(geo: TrackGeometry, size: number, stroke = 6): { svg: s
     const [a, b] = rot(x, z);
     return [ox + (a - rx) * scale, oy + (b - ry) * scale];
   };
-  const d = pts.map((p, i) => `${i ? 'L' : 'M'}${(ox + (p[0] - rx) * scale).toFixed(1)},${(oy + (p[1] - ry) * scale).toFixed(1)}`).join('') + 'Z';
+  // Roads aren't closed loops, and get a finish flag at the far end.
+  const d = pts.map((p, i) => `${i ? 'L' : 'M'}${(ox + (p[0] - rx) * scale).toFixed(1)},${(oy + (p[1] - ry) * scale).toFixed(1)}`).join('') + (geo.open ? '' : 'Z');
   const [sx, sy] = toSvg(geo.samples[0].x, geo.samples[0].z);
-  const svg = `<path d="${d}" fill="none" stroke="rgba(0,0,0,0.55)" stroke-width="${stroke + 3}" stroke-linejoin="round"/><path d="${d}" fill="none" stroke="#fff4dc" stroke-width="${stroke}" stroke-linejoin="round"/><rect x="${sx - 4}" y="${sy - 4}" width="8" height="8" fill="#111" stroke="#fff" stroke-width="2"/>`;
+  const end = geo.samples[geo.samples.length - 1];
+  const [fx, fy] = toSvg(end.x, end.z);
+  const flag = geo.open ? `<circle cx="${fx}" cy="${fy}" r="7" fill="#ffd23f" stroke="#111" stroke-width="3"/>` : '';
+  const svg = `<path d="${d}" fill="none" stroke="rgba(0,0,0,0.55)" stroke-width="${stroke + 3}" stroke-linejoin="round" stroke-linecap="round"/><path d="${d}" fill="none" stroke="#fff4dc" stroke-width="${stroke}" stroke-linejoin="round" stroke-linecap="round"/><rect x="${sx - 4}" y="${sy - 4}" width="8" height="8" fill="#111" stroke="#fff" stroke-width="2"/>${flag}`;
   return { svg, toSvg };
 }

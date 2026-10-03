@@ -1,10 +1,13 @@
 import type { CarStats } from '../systems/Economy';
+import type { Ground } from './ground';
 import type { TrackGeometry, TrackPos } from './trackGeometry';
 
 /**
  * Arcade car physics on the ground plane, the same for the player and the
  * AI. Built to be forgiving: rubbery walls, gentle steering help, and a tow
  * drone that puts you back on the road when you get stuck.
+ *
+ * It drives on any `Ground`: race loops, roads, arenas or the Wasteland map.
  */
 export interface DriveInput {
   /** -1 = left, +1 = right. */
@@ -122,8 +125,8 @@ export class CarBody {
     return this.vx * Math.cos(this.heading) + this.vz * Math.sin(this.heading);
   }
   /** Distance raced so far, used for positions. */
-  progress(track: TrackGeometry) {
-    return this.lap * track.length + this.pos.s;
+  progress(ground: Ground) {
+    return this.lap * ground.lapLength + this.pos.s;
   }
 
   place(track: TrackGeometry, s: number, lateral: number) {
@@ -134,6 +137,18 @@ export class CarBody {
     this.heading = Math.atan2(p.tz, p.tx);
     this.vx = this.vz = this.vy = 0;
     this.pos = track.locate(this.x, this.z);
+    this.prevS = undefined;
+  }
+
+  /** Put the car at a spot on any ground (arenas, the Wasteland). */
+  placeAt(ground: Ground, x: number, z: number, heading: number) {
+    this.x = x;
+    this.z = z;
+    this.heading = heading;
+    this.vx = this.vz = this.vy = 0;
+    this.pos = ground.locate(x, z, -1);
+    this.y = this.pos.h;
+    this.prevS = undefined;
   }
 
   startSpin(time: number) {
@@ -143,7 +158,7 @@ export class CarBody {
     this.events.push('spin');
   }
 
-  step(dt: number, input: DriveInput, track: TrackGeometry, assist: number, laps: number) {
+  step(dt: number, input: DriveInput, track: Ground, assist: number, laps: number) {
     if (this.towing > 0) return this.stepTow(dt, track);
     if (this.shield > 0) this.shield -= dt;
     if (this.star > 0) this.star -= dt;
@@ -200,8 +215,9 @@ export class CarBody {
   }
 
   /** Gently point the car down the road when nobody is steering. */
-  private applyAssist(dt: number, track: TrackGeometry, strength: number) {
-    const ahead = track.pointAt(this.pos.s + 8 + Math.abs(this.forwardSpeed) * 0.35, this.pos.lateral * 0.7);
+  private applyAssist(dt: number, track: Ground, strength: number) {
+    const ahead = track.assistTarget(this.pos, Math.abs(this.forwardSpeed), this.x, this.z);
+    if (!ahead) return;
     const want = Math.atan2(ahead.z - this.z, ahead.x - this.x);
     let diff = want - this.heading;
     diff = Math.atan2(Math.sin(diff), Math.cos(diff));
@@ -210,33 +226,33 @@ export class CarBody {
     this.heading += Math.max(-rate * dt, Math.min(rate * dt, diff));
   }
 
-  private collideWalls(track: TrackGeometry) {
+  private collideWalls(track: Ground) {
     this.pos = track.locate(this.x, this.z, this.pos.i);
-    const limit = track.halfWidth - RADIUS;
-    const over = Math.abs(this.pos.lateral) - limit;
-    if (over <= 0) return;
-    const side = Math.sign(this.pos.lateral);
-    // Left normal of the road.
-    const nx = this.pos.tz * side, nz = -this.pos.tx * side;
-    this.x -= nx * over;
-    this.z -= nz * over;
-    const vn = this.vx * nx + this.vz * nz;
-    if (vn > 0) {
-      this.vx -= (1 + WALL_BOUNCE) * vn * nx;
-      this.vz -= (1 + WALL_BOUNCE) * vn * nz;
-      this.vx *= 0.92;
-      this.vz *= 0.92;
-      // Soft rubber walls: turn the car back along the road a bit.
-      const along = Math.atan2(this.pos.tz, this.pos.tx);
-      let diff = along - this.heading;
-      diff = Math.atan2(Math.sin(diff), Math.cos(diff));
-      if (Math.abs(diff) < 2) this.heading += diff * 0.35;
-      if (vn > 4) {
-        this.lastHit = vn;
-        this.events.push('wall');
+    // Two passes, so a car squeezed between a wall and an obstacle still gets out.
+    for (let pass = 0; pass < 2; pass++) {
+      const c = track.contain(this.x, this.z, this.pos, RADIUS);
+      if (!c) return;
+      this.x -= c.nx * c.over;
+      this.z -= c.nz * c.over;
+      const vn = this.vx * c.nx + this.vz * c.nz;
+      if (vn > 0) {
+        this.vx -= (1 + WALL_BOUNCE) * vn * c.nx;
+        this.vz -= (1 + WALL_BOUNCE) * vn * c.nz;
+        this.vx *= 0.92;
+        this.vz *= 0.92;
+        // Soft rubber walls: turn the car back along the road a bit.
+        if (c.ax !== undefined && c.az !== undefined) {
+          let diff = Math.atan2(c.az, c.ax) - this.heading;
+          diff = Math.atan2(Math.sin(diff), Math.cos(diff));
+          if (Math.abs(diff) < 2) this.heading += diff * 0.35;
+        }
+        if (vn > 4) {
+          this.lastHit = vn;
+          this.events.push('wall');
+        }
       }
+      this.pos = track.locate(this.x, this.z, this.pos.i);
     }
-    this.pos = track.locate(this.x, this.z, this.pos.i);
   }
 
   private updateHeight(dt: number) {
@@ -267,33 +283,35 @@ export class CarBody {
     this.y = ground;
   }
 
-  private updateLap(track: TrackGeometry, laps: number) {
+  private updateLap(track: Ground, laps: number) {
+    const L = track.lapLength;
+    if (!L) return;
     const prev = this.prevS;
     const s = this.pos.s;
     if (prev !== undefined) {
-      if (s - prev < -track.length / 2) {
+      if (s - prev < -L / 2) {
         this.lap++;
         this.events.push('lap');
         if (this.lap >= laps && !this.finished) {
           this.finished = true;
           this.events.push('finish');
         }
-      } else if (s - prev > track.length / 2) this.lap--;
+      } else if (s - prev > L / 2) this.lap--;
     }
     this.prevS = s;
   }
   private prevS: number | undefined;
 
-  private checkStuck(dt: number, gas: number, track: TrackGeometry) {
+  private checkStuck(dt: number, gas: number, track: Ground) {
     const fwd = this.forwardSpeed;
     const facing = Math.cos(this.heading) * this.pos.tx + Math.sin(this.heading) * this.pos.tz;
     this.stuck = gas > 0 && Math.abs(fwd) < 2.5 && this.spin <= 0 ? this.stuck + dt : 0;
-    this.wrongWay = facing < -0.3 && this.spin <= 0 ? this.wrongWay + dt : 0;
+    this.wrongWay = track.directional && facing < -0.3 && this.spin <= 0 ? this.wrongWay + dt : 0;
     if (this.stuck > 2 || this.wrongWay > 2.5) this.startTow(track);
   }
 
   /** Tumbling after a wreck, then back on the road with a shield. */
-  private stepWreck(dt: number, track: TrackGeometry, laps: number) {
+  private stepWreck(dt: number, track: Ground, laps: number) {
     this.wrecked -= dt;
     this.vx *= 1 - 2 * dt;
     this.vz *= 1 - 2 * dt;
@@ -304,34 +322,33 @@ export class CarBody {
     this.updateLap(track, laps);
     if (this.wrecked > 0) return;
     this.wrecked = 0;
-    const p = track.pointAt(this.pos.s, Math.max(-2, Math.min(2, this.pos.lateral)));
+    const p = track.safeSpot(this.pos, 0, true, this.x, this.z, this.heading);
     this.x = p.x;
     this.z = p.z;
     this.y = p.h;
     this.vy = 0;
     this.airborne = false;
-    this.heading = Math.atan2(p.tz, p.tx);
-    this.vx = p.tx * 6;
-    this.vz = p.tz * 6;
+    this.heading = p.heading;
+    this.vx = Math.cos(p.heading) * 6;
+    this.vz = Math.sin(p.heading) * 6;
     this.hp = this.stats.maxHp;
     this.shield = SHIELD_TIME;
     this.pos = track.locate(this.x, this.z, this.pos.i);
     this.events.push('respawn');
   }
 
-  startTow(track: TrackGeometry) {
+  startTow(track: Ground) {
     this.stuck = this.wrongWay = 0;
     this.towing = TOW_TIME;
     this.spin = 0;
     this.airborne = false;
-    const s = this.pos.s + 4;
-    const p = track.pointAt(s, 0);
+    const p = track.safeSpot(this.pos, 4, false, this.x, this.z, this.heading);
     this.towFrom = { x: this.x, z: this.z, h: this.y };
-    this.towTo = { x: p.x, z: p.z, h: p.h, heading: Math.atan2(p.tz, p.tx) };
+    this.towTo = { x: p.x, z: p.z, h: p.h, heading: p.heading };
     this.events.push('tow');
   }
 
-  private stepTow(dt: number, track: TrackGeometry) {
+  private stepTow(dt: number, track: Ground) {
     this.towing -= dt;
     const t = 1 - Math.max(0, this.towing) / TOW_TIME;
     const ease = t * t * (3 - 2 * t);

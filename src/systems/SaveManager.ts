@@ -1,7 +1,7 @@
 import type { UpgradeStat } from '../data/cars';
 
 export const SAVE_KEY = 'wasteland-racers-save';
-export const SAVE_VERSION = 2;
+export const SAVE_VERSION = 3;
 
 export type SteerHelp = 'strong' | 'medium' | 'off';
 export type Difficulty = 'chill' | 'normal' | 'tough';
@@ -31,6 +31,16 @@ export interface SaveData {
   ownedPaints: string[];
   /** Valhalla Book cards already looked at (new ones get a badge). */
   cardsSeen: string[];
+  /** Season 2 story events: won yet, and best stars. */
+  story: Record<string, { won: boolean; stars: number }>;
+  /** Chapter comics already shown (6 = the finale). */
+  comicsSeen: number[];
+  /** Wasteland pickups already found (they stay found). */
+  collected: string[];
+  /** Crew hired, who's riding along (at most 2), and their levels. */
+  crew: string[];
+  crewRiding: string[];
+  crewLevel: Record<string, number>;
   driver: string;
   car: string;
   ownedCars: string[];
@@ -62,6 +72,12 @@ export function freshSave(): SaveData {
     ownedOrnaments: ['none'],
     ownedPaints: [],
     cardsSeen: [],
+    story: {},
+    comicsSeen: [],
+    collected: [],
+    crew: [],
+    crewRiding: [],
+    crewLevel: {},
     driver: 'kid',
     car: 'buggy',
     ownedCars: ['buggy'],
@@ -93,6 +109,17 @@ const nat = (v: unknown, max = Infinity) => (typeof v === 'number' && v >= 0 ? M
 const pick = <T extends string>(v: unknown, options: readonly T[], fallback: T): T =>
   options.includes(v as T) ? (v as T) : fallback;
 
+function migrateStory(v: unknown): SaveData['story'] {
+  const out: SaveData['story'] = {};
+  if (!v || typeof v !== 'object') return out;
+  for (const [k, e] of Object.entries(v as Record<string, unknown>)) {
+    if (!e || typeof e !== 'object') continue;
+    const r = e as Record<string, unknown>;
+    out[k] = { won: r.won === true, stars: typeof r.stars === 'number' ? Math.max(0, Math.min(3, Math.floor(r.stars))) : 0 };
+  }
+  return out;
+}
+
 /** Upgrade older saves and repair anything missing, keeping all progress we can. */
 export function migrate(raw: unknown): SaveData {
   const base = freshSave();
@@ -121,6 +148,12 @@ export function migrate(raw: unknown): SaveData {
     ownedOrnaments,
     ownedPaints: isStringArray(r.ownedPaints) ? [...new Set(r.ownedPaints)] : [],
     cardsSeen: isStringArray(r.cardsSeen) ? [...new Set(r.cardsSeen)] : [],
+    story: migrateStory(r.story),
+    comicsSeen: Array.isArray(r.comicsSeen) ? [...new Set(r.comicsSeen.filter((n): n is number => typeof n === 'number'))] : [],
+    collected: isStringArray(r.collected) ? [...new Set(r.collected)] : [],
+    crew: isStringArray(r.crew) ? [...new Set(r.crew)] : [],
+    crewRiding: isStringArray(r.crewRiding) ? [...new Set(r.crewRiding)].filter((id) => isStringArray(r.crew) && r.crew.includes(id)).slice(0, 2) : [],
+    crewLevel: Object.fromEntries(Object.entries((r.crewLevel && typeof r.crewLevel === 'object' ? r.crewLevel : {}) as Record<string, unknown>).filter(([, v]) => typeof v === 'number').map(([k, v]) => [k, Math.max(1, Math.min(3, Math.floor(v as number)))])),
     driver: typeof r.driver === 'string' ? r.driver : base.driver,
     car,
     ownedCars,

@@ -1,8 +1,12 @@
 import { gadgetById } from '../data/cars';
 import { artHtml } from '../systems/assets';
-import { trackSvg } from '../race/trackMesh';
-import type { TrackGeometry } from '../race/trackGeometry';
 import { html } from './nav';
+
+/** The minimap picture and how to turn world positions into it. */
+export interface MiniMap {
+  svg: string;
+  toSvg: (x: number, z: number) => [number, number];
+}
 
 export interface HudRacer {
   id: string;
@@ -29,19 +33,20 @@ export class Hud {
   private dots = new Map<string, SVGCircleElement>();
   private toSvg: (x: number, z: number) => [number, number];
   private hp: HTMLElement;
-  private last = { order: '', lap: '', charges: -1, bolts: -1, hp: '' };
+  private bar: HTMLElement;
+  private svg: SVGSVGElement;
+  private last = { order: '', lap: '', charges: -1, bolts: -1, hp: '', bar: '' };
   private bannerTimer = 0;
-  private racers: HudRacer[];
+  private racers: HudRacer[] = [];
 
-  constructor(geo: TrackGeometry, racers: HudRacer[], gadget: string) {
-    this.racers = racers;
-    const map = trackSvg(geo, 190, 7);
+  constructor(map: MiniMap, racers: HudRacer[], gadget: string) {
     this.toSvg = map.toSvg;
     const g = gadgetById(gadget);
     this.el = html(`
       <div class="hud">
         <div class="order"></div>
         <div class="lap outlined"></div>
+        <div class="bossbar"><span class="label"></span><div class="track"><i></i></div></div>
         <svg class="minimap" viewBox="0 0 190 190">${map.svg}</svg>
         <div class="hp"></div>
         <div class="gadget empty">${artHtml(g.icon, g.emoji)}<div class="count">0</div><div class="key">SPACE</div></div>
@@ -59,17 +64,57 @@ export class Hud {
     this.callout = this.el.querySelector('.callout')!;
     this.tip = this.el.querySelector('.tip')!;
     this.tip.style.display = 'none';
-    const svg = this.el.querySelector('svg')!;
+    this.bar = this.el.querySelector('.bossbar')!;
+    this.bar.style.display = 'none';
+    this.svg = this.el.querySelector('svg')!;
     // Player dot last so it's drawn on top.
-    for (const r of [...racers].sort((a, b) => Number(a.isPlayer) - Number(b.isPlayer))) {
-      const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-      c.setAttribute('r', r.isPlayer ? '8' : '6');
-      c.setAttribute('fill', r.color);
-      c.setAttribute('stroke', r.isPlayer ? '#fff' : '#222');
-      c.setAttribute('stroke-width', r.isPlayer ? '3' : '2');
-      svg.appendChild(c);
-      this.dots.set(r.id, c);
-    }
+    for (const r of [...racers].sort((a, b) => Number(a.isPlayer) - Number(b.isPlayer))) this.addRacer(r);
+  }
+
+  /** Add a car to the minimap (and the race order), e.g. raiders joining an escort. */
+  addRacer(r: HudRacer) {
+    if (this.dots.has(r.id)) return;
+    this.racers.push(r);
+    const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    c.setAttribute('r', r.isPlayer ? '8' : '6');
+    c.setAttribute('fill', r.color);
+    c.setAttribute('stroke', r.isPlayer ? '#fff' : '#222');
+    c.setAttribute('stroke-width', r.isPlayer ? '3' : '2');
+    // Keep the player's dot on top.
+    const player = this.racers.find((x) => x.isPlayer && x.id !== r.id);
+    const playerDot = player && this.dots.get(player.id);
+    if (playerDot && !r.isPlayer) this.svg.insertBefore(c, playerDot);
+    else this.svg.appendChild(c);
+    this.dots.set(r.id, c);
+  }
+
+  removeRacer(id: string) {
+    this.dots.get(id)?.remove();
+    this.dots.delete(id);
+    this.racers = this.racers.filter((r) => r.id !== id);
+  }
+
+  /** Hide the race-order list (modes without places). */
+  showOrder(on: boolean) {
+    this.order.style.display = on ? '' : 'none';
+  }
+
+  /** Top-right status text, for modes that don't count laps. */
+  setStatus(text: string) {
+    if (text !== this.last.lap) this.lap.innerHTML = this.last.lap = text;
+  }
+
+  /** A big bar across the top: a boss's health or the War Rig's armor. Pass undefined to hide. */
+  setBar(label: string | undefined, frac = 0, color = '#e8322a') {
+    const key = `${label}|${frac.toFixed(3)}|${color}`;
+    if (key === this.last.bar) return;
+    this.last.bar = key;
+    this.bar.style.display = label ? '' : 'none';
+    if (!label) return;
+    this.bar.querySelector('.label')!.textContent = label;
+    const fill = this.bar.querySelector('i')!;
+    fill.style.width = `${Math.max(0, Math.min(1, frac)) * 100}%`;
+    fill.style.background = color;
   }
 
   setOrder(ids: string[]) {
@@ -78,7 +123,8 @@ export class Hud {
     this.last.order = key;
     this.order.innerHTML = '';
     ids.forEach((id, i) => {
-      const r = this.racers.find((x) => x.id === id)!;
+      const r = this.racers.find((x) => x.id === id);
+      if (!r) return;
       this.order.appendChild(
         html(`<div class="racer ${r.isPlayer ? 'me' : ''}"><span>${i + 1}</span><div class="face" style="border:3px solid ${r.color}">${artHtml(r.portrait, r.emoji)}</div></div>`),
       );

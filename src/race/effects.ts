@@ -103,6 +103,17 @@ export class Effects {
     }
   }
 
+  /** Blowing sand for storms. */
+  wind(x: number, y: number, z: number, vx: number, vz: number, color = '#e8c08a') {
+    if (this.live.length > 420) return;
+    this.spawn(x, y, z, color, { size: 1.2 + Math.random(), vx, vz, vy: (Math.random() - 0.5) * 2, life: 1.2, grow: 1.5 });
+  }
+
+  /** Fire jet blast going up. */
+  jet(x: number, y: number, z: number) {
+    this.spawn(x + (Math.random() - 0.5) * 1.5, y + 0.5, z + (Math.random() - 0.5) * 1.5, Math.random() < 0.5 ? '#ff7a1a' : '#ffd23f', { size: 1.4, vy: 9 + Math.random() * 5, life: 0.45, grow: 4 });
+  }
+
   /** Silver sparkles for chrome spray and star power. */
   chrome(x: number, y: number, z: number, count = 3) {
     for (let i = 0; i < count; i++) {

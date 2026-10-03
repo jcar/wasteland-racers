@@ -183,3 +183,53 @@ img.art { object-fit: contain; }
 .hud .hp i { width: 22px; height: 22px; border-radius: 6px; border: 3px solid var(--ink); background: #3a2d25; }
 .hud .hp i.on { background: #e8322a; }
 .hud .hp.shield i.on { background: #c9d0d8; }
+.hud .bossbar { position: absolute; top: 14px; left: 50%; transform: translateX(-50%); width: min(520px, 50vw); text-align: center; }
+.hud .bossbar .label { font-size: clamp(16px, 2vw, 24px); color: var(--gold); -webkit-text-stroke: 2px var(--ink); paint-order: stroke fill; }
+.hud .bossbar .track { height: 22px; border: 4px solid var(--ink); border-radius: 12px; background: #3a2d25; overflow: hidden; }
+.hud .bossbar i { display: block; height: 100%; width: 100%; transition: width 0.25s; }
+.stars { display: flex; gap: 10px; font-size: clamp(40px, 8vh, 72px); line-height: 1; }
+.stars .star { color: #3a2d25; -webkit-text-stroke: 3px var(--ink); opacity: 0; }
+.stars .star.shown { opacity: 1; }
+.stars .star.on { color: var(--gold); text-shadow: 0 0 18px rgba(255, 201, 60, 0.8); }
+
+/* ---------- comics ---------- */
+.comic { background: #120c08; justify-content: flex-end; }
+.comic .panel-img { position: absolute; inset: 0; background: #2a1d16 center / cover no-repeat; }
+.comic .panel-img.pan { animation: kenburns 9s ease-out forwards; }
+.comic .panel-img.pan2 { animation: kenburns2 9s ease-out forwards; }
+@keyframes kenburns { from { transform: scale(1.02); } to { transform: scale(1.14) translate(-2%, -1%); } }
+@keyframes kenburns2 { from { transform: scale(1.14) translate(2%, 1%); } to { transform: scale(1.03); } }
+.comic .caption { position: relative; display: flex; align-items: center; gap: 14px; margin-bottom: 9vh; max-width: min(900px, 92vw); }
+.comic .caption .face { width: clamp(80px, 14vh, 130px); height: clamp(80px, 14vh, 130px); flex-shrink: 0; }
+.comic .caption .face .art, .comic .caption .face .emoji { width: 100%; height: 100%; font-size: 80px; }
+.comic .caption .bubble { background: var(--sand); color: var(--ink); font-weight: 800; font-size: clamp(20px, 3.2vh, 32px); padding: 12px 20px; border: 5px solid var(--ink); border-radius: 22px; }
+.comic .dots { position: absolute; top: 18px; left: 0; right: 0; display: flex; justify-content: center; gap: 8px; }
+.comic .dots i { width: 16px; height: 16px; border-radius: 50%; border: 3px solid var(--ink); background: #3a2d25; }
+.comic .dots i.on { background: var(--gold); }
+
+/* ---------- wasteland ---------- */
+.hud.wasteland .bolts, .hud.wasteland .lap { display: none; }
+.wasteland-hud { position: absolute; top: 12px; left: 14px; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+.wasteland-hud .wallet { display: flex; gap: 14px; font-family: 'Bungee', sans-serif; font-size: clamp(18px, 2.2vw, 28px); color: var(--gold); -webkit-text-stroke: 2px var(--ink); paint-order: stroke fill; }
+.wasteland-hud .wallet span { display: inline-flex; align-items: center; gap: 4px; }
+.wasteland-hud .wallet .art, .wasteland-hud .wallet .emoji { width: 1.4em; height: 1.4em; font-size: 1em; }
+.wasteland-hud .objective { background: rgba(30, 18, 10, 0.78); border: 3px solid var(--ink); border-radius: 14px; padding: 6px 12px; font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: clamp(14px, 1.6vw, 19px); color: var(--sand); max-width: 340px; }
+.wasteland-hud .objective b { color: var(--gold); font-size: 1.15em; }
+.obj-arrow { position: absolute; left: 0; top: 0; width: 48px; height: 48px; font-size: 44px; line-height: 48px; text-align: center; color: var(--gold); -webkit-text-stroke: 3px var(--ink); paint-order: stroke fill; pointer-events: none; animation: pulse 0.9s infinite; }
+.event-card { position: absolute; left: 50%; bottom: 24px; transform: translateX(-50%); display: flex; align-items: center; gap: 14px; min-width: min(560px, 90vw); pointer-events: none; }
+.event-card .icon { width: 74px; height: 74px; font-size: 54px; display: flex; align-items: center; justify-content: center; }
+.event-card .icon .art { width: 100%; height: 100%; }
+.event-card .kind { font-family: 'Bungee', sans-serif; font-size: 16px; }
+.event-card .name { font-family: 'Bungee', sans-serif; font-size: clamp(20px, 2.4vw, 30px); color: var(--sand); }
+.event-card .go { margin-left: auto; font-weight: 800; font-size: 20px; }
+.stars-row span { color: #3a2d25; font-size: 22px; -webkit-text-stroke: 1.5px var(--ink); }
+.stars-row span.on { color: var(--gold); }
+.travel { width: min(760px, 94vw); }
+.travel .list { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 8px; max-height: 46vh; overflow-y: auto; padding: 4px; }
+.travel-item { justify-content: flex-start; font-size: 14px; padding: 6px 10px; }
+.travel-item .art, .travel-item .emoji { width: 34px; height: 34px; font-size: 24px; }
+.travel-item .mini-stars { margin-left: auto; color: var(--ink); }
+.travel .row-btns { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.travel .row-btns .btn { font-size: 15px; padding: 8px 14px; }
+.row .btn { font-size: clamp(13px, 1.5vw, 18px); padding: 8px 12px; flex-shrink: 0; }
+.row .name { min-width: 0; }

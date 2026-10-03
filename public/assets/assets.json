@@ -65,6 +65,78 @@
       "url": "assets/images/char-slit.png"
     },
     {
+      "key": "comic-c1-1",
+      "url": "assets/images/comic-c1-1.jpg"
+    },
+    {
+      "key": "comic-c1-2",
+      "url": "assets/images/comic-c1-2.jpg"
+    },
+    {
+      "key": "comic-c1-3",
+      "url": "assets/images/comic-c1-3.jpg"
+    },
+    {
+      "key": "comic-c2-1",
+      "url": "assets/images/comic-c2-1.jpg"
+    },
+    {
+      "key": "comic-c2-2",
+      "url": "assets/images/comic-c2-2.jpg"
+    },
+    {
+      "key": "comic-c2-3",
+      "url": "assets/images/comic-c2-3.jpg"
+    },
+    {
+      "key": "comic-c3-1",
+      "url": "assets/images/comic-c3-1.jpg"
+    },
+    {
+      "key": "comic-c3-2",
+      "url": "assets/images/comic-c3-2.jpg"
+    },
+    {
+      "key": "comic-c3-3",
+      "url": "assets/images/comic-c3-3.jpg"
+    },
+    {
+      "key": "comic-c4-1",
+      "url": "assets/images/comic-c4-1.jpg"
+    },
+    {
+      "key": "comic-c4-2",
+      "url": "assets/images/comic-c4-2.jpg"
+    },
+    {
+      "key": "comic-c4-3",
+      "url": "assets/images/comic-c4-3.jpg"
+    },
+    {
+      "key": "comic-c5-1",
+      "url": "assets/images/comic-c5-1.jpg"
+    },
+    {
+      "key": "comic-c5-2",
+      "url": "assets/images/comic-c5-2.jpg"
+    },
+    {
+      "key": "comic-c5-3",
+      "url": "assets/images/comic-c5-3.jpg"
+    },
+    {
+      "key": "comic-end-1",
+      "url": "assets/images/comic-end-1.jpg"
+    },
+    {
+      "key": "comic-end-2",
+      "url": "assets/images/comic-end-2.jpg"
+    },
+    {
+      "key": "comic-end-3",
+      "url": "assets/images/comic-end-3.jpg"
+    },
+    {
       "key": "decal-checker",
       "url": "assets/images/decal-checker.png"
     },
@@ -137,6 +209,10 @@
       "url": "assets/images/garage-bg.jpg"
     },
     {
+      "key": "ground-canyon",
+      "url": "assets/images/ground-canyon.png"
+    },
+    {
       "key": "ground-dome",
       "url": "assets/images/ground-dome.png"
     },
@@ -153,12 +229,28 @@
       "url": "assets/images/ground-junk.png"
     },
     {
+      "key": "ground-mine",
+      "url": "assets/images/ground-mine.png"
+    },
+    {
+      "key": "ground-refinery",
+      "url": "assets/images/ground-refinery.png"
+    },
+    {
+      "key": "ground-salt",
+      "url": "assets/images/ground-salt.png"
+    },
+    {
       "key": "ground-swamp",
       "url": "assets/images/ground-swamp.png"
     },
     {
       "key": "ground-volcano",
       "url": "assets/images/ground-volcano.png"
+    },
+    {
+      "key": "ground-wasteland",
+      "url": "assets/images/ground-wasteland.png"
     },
     {
       "key": "icon-armor",
@@ -185,6 +277,10 @@
       "url": "assets/images/icon-caltrops.png"
     },
     {
+      "key": "icon-card",
+      "url": "assets/images/icon-card.png"
+    },
+    {
       "key": "icon-chrome",
       "url": "assets/images/icon-chrome.png"
     },
@@ -207,6 +303,10 @@
     {
       "key": "icon-goo",
       "url": "assets/images/icon-goo.png"
+    },
+    {
+      "key": "icon-guzzoline",
+      "url": "assets/images/icon-guzzoline.png"
     },
     {
       "key": "icon-harpoon",
@@ -253,8 +353,56 @@
       "url": "assets/images/icon-witness.png"
     },
     {
+      "key": "lm-bulletfarm",
+      "url": "assets/images/lm-bulletfarm.png"
+    },
+    {
+      "key": "lm-citadel",
+      "url": "assets/images/lm-citadel.png"
+    },
+    {
+      "key": "lm-dome",
+      "url": "assets/images/lm-dome.png"
+    },
+    {
+      "key": "lm-gastown",
+      "url": "assets/images/lm-gastown.png"
+    },
+    {
+      "key": "lm-greenplace",
+      "url": "assets/images/lm-greenplace.png"
+    },
+    {
       "key": "map-bg",
       "url": "assets/images/map-bg.jpg"
+    },
+    {
+      "key": "mk-arena",
+      "url": "assets/images/mk-arena.png"
+    },
+    {
+      "key": "mk-boss",
+      "url": "assets/images/mk-boss.png"
+    },
+    {
+      "key": "mk-chase",
+      "url": "assets/images/mk-chase.png"
+    },
+    {
+      "key": "mk-dome",
+      "url": "assets/images/mk-dome.png"
+    },
+    {
+      "key": "mk-escort",
+      "url": "assets/images/mk-escort.png"
+    },
+    {
+      "key": "mk-garage",
+      "url": "assets/images/mk-garage.png"
+    },
+    {
+      "key": "mk-race",
+      "url": "assets/images/mk-race.png"
     },
     {
       "key": "podium-bg",
@@ -269,8 +417,16 @@
       "url": "assets/images/prop-cactus.png"
     },
     {
+      "key": "prop-canyonrock",
+      "url": "assets/images/prop-canyonrock.png"
+    },
+    {
       "key": "prop-citadel",
       "url": "assets/images/prop-citadel.png"
+    },
+    {
+      "key": "prop-crow",
+      "url": "assets/images/prop-crow.png"
     },
     {
       "key": "prop-crowd",
@@ -279,6 +435,10 @@
     {
       "key": "prop-deadtree",
       "url": "assets/images/prop-deadtree.png"
+    },
+    {
+      "key": "prop-firepipe",
+      "url": "assets/images/prop-firepipe.png"
     },
     {
       "key": "prop-flag",
@@ -301,12 +461,28 @@
       "url": "assets/images/prop-lavarock.png"
     },
     {
+      "key": "prop-minecart",
+      "url": "assets/images/prop-minecart.png"
+    },
+    {
       "key": "prop-mushroom",
       "url": "assets/images/prop-mushroom.png"
     },
     {
+      "key": "prop-refinery",
+      "url": "assets/images/prop-refinery.png"
+    },
+    {
       "key": "prop-rock",
       "url": "assets/images/prop-rock.png"
+    },
+    {
+      "key": "prop-saltrock",
+      "url": "assets/images/prop-saltrock.png"
+    },
+    {
+      "key": "prop-searchlight",
+      "url": "assets/images/prop-searchlight.png"
     },
     {
       "key": "prop-sign",
@@ -323,6 +499,10 @@
     {
       "key": "prop-tires",
       "url": "assets/images/prop-tires.png"
+    },
+    {
+      "key": "prop-vuvalini",
+      "url": "assets/images/prop-vuvalini.png"
     },
     {
       "key": "prop-warboys",
@@ -407,12 +587,24 @@
   ],
   "audio": [
     {
+      "key": "music-boss",
+      "url": "assets/audio/music-boss.mp3"
+    },
+    {
+      "key": "music-chase",
+      "url": "assets/audio/music-chase.mp3"
+    },
+    {
       "key": "music-dome",
       "url": "assets/audio/music-dome.mp3"
     },
     {
       "key": "music-dunes",
       "url": "assets/audio/music-dunes.mp3"
+    },
+    {
+      "key": "music-finale",
+      "url": "assets/audio/music-finale.mp3"
     },
     {
       "key": "music-fury",
@@ -443,6 +635,22 @@
       "url": "assets/audio/music-volcano.mp3"
     },
     {
+      "key": "music-wasteland",
+      "url": "assets/audio/music-wasteland.mp3"
+    },
+    {
+      "key": "vo-arena-drop",
+      "url": "assets/audio/vo-arena-drop.mp3"
+    },
+    {
+      "key": "vo-arena-start",
+      "url": "assets/audio/vo-arena-start.mp3"
+    },
+    {
+      "key": "vo-arena-win",
+      "url": "assets/audio/vo-arena-win.mp3"
+    },
+    {
       "key": "vo-bertha-intro",
       "url": "assets/audio/vo-bertha-intro.mp3"
     },
@@ -465,6 +673,98 @@
     {
       "key": "vo-boost",
       "url": "assets/audio/vo-boost.mp3"
+    },
+    {
+      "key": "vo-boss-bike",
+      "url": "assets/audio/vo-boss-bike.mp3"
+    },
+    {
+      "key": "vo-boss-bulletfarmer-down",
+      "url": "assets/audio/vo-boss-bulletfarmer-down.mp3"
+    },
+    {
+      "key": "vo-boss-bulletfarmer-hurt",
+      "url": "assets/audio/vo-boss-bulletfarmer-hurt.mp3"
+    },
+    {
+      "key": "vo-boss-bulletfarmer-intro",
+      "url": "assets/audio/vo-boss-bulletfarmer-intro.mp3"
+    },
+    {
+      "key": "vo-boss-dementus-down",
+      "url": "assets/audio/vo-boss-dementus-down.mp3"
+    },
+    {
+      "key": "vo-boss-dementus-hurt",
+      "url": "assets/audio/vo-boss-dementus-hurt.mp3"
+    },
+    {
+      "key": "vo-boss-dementus-intro",
+      "url": "assets/audio/vo-boss-dementus-intro.mp3"
+    },
+    {
+      "key": "vo-boss-fire",
+      "url": "assets/audio/vo-boss-fire.mp3"
+    },
+    {
+      "key": "vo-boss-hit",
+      "url": "assets/audio/vo-boss-hit.mp3"
+    },
+    {
+      "key": "vo-boss-incoming",
+      "url": "assets/audio/vo-boss-incoming.mp3"
+    },
+    {
+      "key": "vo-boss-joe-down",
+      "url": "assets/audio/vo-boss-joe-down.mp3"
+    },
+    {
+      "key": "vo-boss-joe-hurt",
+      "url": "assets/audio/vo-boss-joe-hurt.mp3"
+    },
+    {
+      "key": "vo-boss-joe-intro",
+      "url": "assets/audio/vo-boss-joe-intro.mp3"
+    },
+    {
+      "key": "vo-boss-now",
+      "url": "assets/audio/vo-boss-now.mp3"
+    },
+    {
+      "key": "vo-boss-peopleeater-down",
+      "url": "assets/audio/vo-boss-peopleeater-down.mp3"
+    },
+    {
+      "key": "vo-boss-peopleeater-hurt",
+      "url": "assets/audio/vo-boss-peopleeater-hurt.mp3"
+    },
+    {
+      "key": "vo-boss-peopleeater-intro",
+      "url": "assets/audio/vo-boss-peopleeater-intro.mp3"
+    },
+    {
+      "key": "vo-boss-ready",
+      "url": "assets/audio/vo-boss-ready.mp3"
+    },
+    {
+      "key": "vo-boss-rictus-dazed",
+      "url": "assets/audio/vo-boss-rictus-dazed.mp3"
+    },
+    {
+      "key": "vo-boss-rictus-down",
+      "url": "assets/audio/vo-boss-rictus-down.mp3"
+    },
+    {
+      "key": "vo-boss-rictus-hurt",
+      "url": "assets/audio/vo-boss-rictus-hurt.mp3"
+    },
+    {
+      "key": "vo-boss-rictus-intro",
+      "url": "assets/audio/vo-boss-rictus-intro.mp3"
+    },
+    {
+      "key": "vo-boss-wheel",
+      "url": "assets/audio/vo-boss-wheel.mp3"
     },
     {
       "key": "vo-caltrops",
@@ -527,8 +827,92 @@
       "url": "assets/audio/vo-champion.mp3"
     },
     {
+      "key": "vo-chapter-open",
+      "url": "assets/audio/vo-chapter-open.mp3"
+    },
+    {
+      "key": "vo-chase-escaped",
+      "url": "assets/audio/vo-chase-escaped.mp3"
+    },
+    {
+      "key": "vo-chase-start",
+      "url": "assets/audio/vo-chase-start.mp3"
+    },
+    {
       "key": "vo-chrome-upgrade",
       "url": "assets/audio/vo-chrome-upgrade.mp3"
+    },
+    {
+      "key": "vo-comic-c1-1",
+      "url": "assets/audio/vo-comic-c1-1.mp3"
+    },
+    {
+      "key": "vo-comic-c1-2",
+      "url": "assets/audio/vo-comic-c1-2.mp3"
+    },
+    {
+      "key": "vo-comic-c1-3",
+      "url": "assets/audio/vo-comic-c1-3.mp3"
+    },
+    {
+      "key": "vo-comic-c2-1",
+      "url": "assets/audio/vo-comic-c2-1.mp3"
+    },
+    {
+      "key": "vo-comic-c2-2",
+      "url": "assets/audio/vo-comic-c2-2.mp3"
+    },
+    {
+      "key": "vo-comic-c2-3",
+      "url": "assets/audio/vo-comic-c2-3.mp3"
+    },
+    {
+      "key": "vo-comic-c3-1",
+      "url": "assets/audio/vo-comic-c3-1.mp3"
+    },
+    {
+      "key": "vo-comic-c3-2",
+      "url": "assets/audio/vo-comic-c3-2.mp3"
+    },
+    {
+      "key": "vo-comic-c3-3",
+      "url": "assets/audio/vo-comic-c3-3.mp3"
+    },
+    {
+      "key": "vo-comic-c4-1",
+      "url": "assets/audio/vo-comic-c4-1.mp3"
+    },
+    {
+      "key": "vo-comic-c4-2",
+      "url": "assets/audio/vo-comic-c4-2.mp3"
+    },
+    {
+      "key": "vo-comic-c4-3",
+      "url": "assets/audio/vo-comic-c4-3.mp3"
+    },
+    {
+      "key": "vo-comic-c5-1",
+      "url": "assets/audio/vo-comic-c5-1.mp3"
+    },
+    {
+      "key": "vo-comic-c5-2",
+      "url": "assets/audio/vo-comic-c5-2.mp3"
+    },
+    {
+      "key": "vo-comic-c5-3",
+      "url": "assets/audio/vo-comic-c5-3.mp3"
+    },
+    {
+      "key": "vo-comic-end-1",
+      "url": "assets/audio/vo-comic-end-1.mp3"
+    },
+    {
+      "key": "vo-comic-end-2",
+      "url": "assets/audio/vo-comic-end-2.mp3"
+    },
+    {
+      "key": "vo-comic-end-3",
+      "url": "assets/audio/vo-comic-end-3.mp3"
     },
     {
       "key": "vo-decal-locked",
@@ -541,6 +925,82 @@
     {
       "key": "vo-doublev8",
       "url": "assets/audio/vo-doublev8.mp3"
+    },
+    {
+      "key": "vo-escort-done",
+      "url": "assets/audio/vo-escort-done.mp3"
+    },
+    {
+      "key": "vo-escort-hit",
+      "url": "assets/audio/vo-escort-hit.mp3"
+    },
+    {
+      "key": "vo-escort-start",
+      "url": "assets/audio/vo-escort-start.mp3"
+    },
+    {
+      "key": "vo-ev-c1-arena",
+      "url": "assets/audio/vo-ev-c1-arena.mp3"
+    },
+    {
+      "key": "vo-ev-c1-chase",
+      "url": "assets/audio/vo-ev-c1-chase.mp3"
+    },
+    {
+      "key": "vo-ev-c1-race",
+      "url": "assets/audio/vo-ev-c1-race.mp3"
+    },
+    {
+      "key": "vo-ev-c2-doof",
+      "url": "assets/audio/vo-ev-c2-doof.mp3"
+    },
+    {
+      "key": "vo-ev-c2-escort",
+      "url": "assets/audio/vo-ev-c2-escort.mp3"
+    },
+    {
+      "key": "vo-ev-c2-race",
+      "url": "assets/audio/vo-ev-c2-race.mp3"
+    },
+    {
+      "key": "vo-ev-c3-arena",
+      "url": "assets/audio/vo-ev-c3-arena.mp3"
+    },
+    {
+      "key": "vo-ev-c3-chase",
+      "url": "assets/audio/vo-ev-c3-chase.mp3"
+    },
+    {
+      "key": "vo-ev-c3-race",
+      "url": "assets/audio/vo-ev-c3-race.mp3"
+    },
+    {
+      "key": "vo-ev-c4-bog",
+      "url": "assets/audio/vo-ev-c4-bog.mp3"
+    },
+    {
+      "key": "vo-ev-c4-chase",
+      "url": "assets/audio/vo-ev-c4-chase.mp3"
+    },
+    {
+      "key": "vo-ev-c4-escort",
+      "url": "assets/audio/vo-ev-c4-escort.mp3"
+    },
+    {
+      "key": "vo-ev-c4-storm",
+      "url": "assets/audio/vo-ev-c4-storm.mp3"
+    },
+    {
+      "key": "vo-ev-c5-arena",
+      "url": "assets/audio/vo-ev-c5-arena.mp3"
+    },
+    {
+      "key": "vo-ev-c5-chase",
+      "url": "assets/audio/vo-ev-c5-chase.mp3"
+    },
+    {
+      "key": "vo-ev-c5-race",
+      "url": "assets/audio/vo-ev-c5-race.mp3"
     },
     {
       "key": "vo-final-lap",
@@ -715,6 +1175,10 @@
       "url": "assets/audio/vo-spikes.mp3"
     },
     {
+      "key": "vo-stars3",
+      "url": "assets/audio/vo-stars3.mp3"
+    },
+    {
       "key": "vo-stomp",
       "url": "assets/audio/vo-stomp.mp3"
     },
@@ -781,6 +1245,26 @@
     {
       "key": "vo-witness",
       "url": "assets/audio/vo-witness.mp3"
+    },
+    {
+      "key": "vo-world-card",
+      "url": "assets/audio/vo-world-card.mp3"
+    },
+    {
+      "key": "vo-world-guzzoline",
+      "url": "assets/audio/vo-world-guzzoline.mp3"
+    },
+    {
+      "key": "vo-world-hello",
+      "url": "assets/audio/vo-world-hello.mp3"
+    },
+    {
+      "key": "vo-world-locked",
+      "url": "assets/audio/vo-world-locked.mp3"
+    },
+    {
+      "key": "vo-world-patrol",
+      "url": "assets/audio/vo-world-patrol.mp3"
     },
     {
       "key": "vo-wrecked-them",

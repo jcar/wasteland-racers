@@ -342,5 +342,293 @@
   "card-peopleeater": {
     "speaker": "peopleeater",
     "text": "The People Eater counts everything! Every drop of guzzoline!"
+  },
+  "comic-c1-1": {
+    "speaker": "joe",
+    "text": "I am Immortan Joe! Only the fastest drivers may ride in my War Party!"
+  },
+  "comic-c1-2": {
+    "speaker": "announcer",
+    "text": "The War Boys have spotted a new racer. That's you!"
+  },
+  "comic-c1-3": {
+    "speaker": "nux",
+    "text": "You drive like a War Boy! Let's ride to Valhalla!"
+  },
+  "comic-c2-1": {
+    "speaker": "peopleeater",
+    "text": "Every drop of guzzoline belongs to Gas Town! Want some? Race for it!"
+  },
+  "comic-c2-2": {
+    "speaker": "furiosa",
+    "text": "We need that guzzoline. Stay close and keep the raiders off my Rig."
+  },
+  "comic-c2-3": {
+    "speaker": "announcer",
+    "text": "Here comes the Doof Wagon! Turn it up!"
+  },
+  "comic-c3-1": {
+    "speaker": "bulletfarmer",
+    "text": "Nobody gets past my farm! Not tonight!"
+  },
+  "comic-c3-2": {
+    "speaker": "announcer",
+    "text": "The Peacemaker is coming! Watch for the red circles!"
+  },
+  "comic-c3-3": {
+    "speaker": "max",
+    "text": "Drive fast. Don't stop."
+  },
+  "comic-c4-1": {
+    "speaker": "furiosa",
+    "text": "We're going to the Green Place. Out past the storm."
+  },
+  "comic-c4-2": {
+    "speaker": "joe",
+    "text": "She took my War Rig! Bring it back! War Party, ride!"
+  },
+  "comic-c4-3": {
+    "speaker": "nux",
+    "text": "Oh what a day! What a lovely day!"
+  },
+  "comic-c5-1": {
+    "speaker": "dementus",
+    "text": "My horde rides! Gas Town is mine now!"
+  },
+  "comic-c5-2": {
+    "speaker": "dementus",
+    "text": "Do you have it in you to make this epic?"
+  },
+  "comic-c5-3": {
+    "speaker": "furiosa",
+    "text": "Then let's finish this. Together."
+  },
+  "comic-end-1": {
+    "speaker": "announcer",
+    "text": "The Wasteland is free! Water for everybody!"
+  },
+  "comic-end-2": {
+    "speaker": "nux",
+    "text": "Shiny and chrome! Shiny and chrome!"
+  },
+  "comic-end-3": {
+    "speaker": "announcer",
+    "text": "You are the Road Warrior of the whole Wasteland!"
+  },
+  "ev-c1-race": {
+    "speaker": "nux",
+    "text": "Race me around the Citadel! Witness me!"
+  },
+  "ev-c1-chase": {
+    "speaker": "slit",
+    "text": "You'll never outrun the War Party!"
+  },
+  "ev-c1-arena": {
+    "speaker": "announcer",
+    "text": "Citadel Pit Smash! Grab the most guzzoline!"
+  },
+  "ev-c2-race": {
+    "speaker": "slit",
+    "text": "Back for more? This is my town now!"
+  },
+  "ev-c2-escort": {
+    "speaker": "furiosa",
+    "text": "The Rig is full of guzzoline. Keep the raiders away."
+  },
+  "ev-c2-doof": {
+    "speaker": "announcer",
+    "text": "Doof Run! Hit the boost pads on the beat of the drums!"
+  },
+  "ev-c3-race": {
+    "speaker": "rictus",
+    "text": "Rictus wants a rematch! In the dark!"
+  },
+  "ev-c3-arena": {
+    "speaker": "announcer",
+    "text": "Mine Pit Smash, in the dark! Follow your headlights!"
+  },
+  "ev-c3-chase": {
+    "speaker": "max",
+    "text": "Night raid. Drive fast. Don't stop."
+  },
+  "ev-c4-escort": {
+    "speaker": "furiosa",
+    "text": "This is it. The Fury Road. Keep the War Party off the Rig."
+  },
+  "ev-c4-storm": {
+    "speaker": "nux",
+    "text": "Into the storm! Oh what a day!"
+  },
+  "ev-c4-bog": {
+    "speaker": "max",
+    "text": "The Bog. Watch out for the crow people on stilts."
+  },
+  "ev-c4-chase": {
+    "speaker": "furiosa",
+    "text": "Buzzards in the canyon! Go, go, go!"
+  },
+  "ev-c5-chase": {
+    "speaker": "dementus",
+    "text": "My horde will catch you! Ride, my lovelies!"
+  },
+  "ev-c5-arena": {
+    "speaker": "dementus",
+    "text": "Gas Town is mine! Come and take it!"
+  },
+  "ev-c5-race": {
+    "speaker": "max",
+    "text": "One more race. Let's go."
+  },
+  "boss-rictus-intro": {
+    "speaker": "rictus",
+    "text": "Rictus! Rictus wants to SMASH you with Big Foot!"
+  },
+  "boss-rictus-dazed": {
+    "speaker": "announcer",
+    "text": "He hit the tires! Now's your chance, hit him!"
+  },
+  "boss-rictus-hurt": {
+    "speaker": "rictus",
+    "text": "Owwie! Rictus is mad now!"
+  },
+  "boss-rictus-down": {
+    "speaker": "rictus",
+    "text": "Rictus is tired. You win, little racer."
+  },
+  "boss-peopleeater-intro": {
+    "speaker": "peopleeater",
+    "text": "Welcome to my refinery! Mind the fire, it's very expensive!"
+  },
+  "boss-fire": {
+    "speaker": "announcer",
+    "text": "Fire jets! Watch out for the glowing stripes!"
+  },
+  "boss-peopleeater-hurt": {
+    "speaker": "peopleeater",
+    "text": "My tanker! Do you know what that costs?"
+  },
+  "boss-peopleeater-down": {
+    "speaker": "peopleeater",
+    "text": "Fine! Take the guzzoline! Take it all!"
+  },
+  "boss-bulletfarmer-intro": {
+    "speaker": "bulletfarmer",
+    "text": "I can't see you, but I can hear you! Here comes the thunder!"
+  },
+  "boss-incoming": {
+    "speaker": "announcer",
+    "text": "Red circles! Steer out of the circles!"
+  },
+  "boss-now": {
+    "speaker": "announcer",
+    "text": "He's reloading! Hit him NOW!"
+  },
+  "boss-bulletfarmer-hurt": {
+    "speaker": "bulletfarmer",
+    "text": "Argh! Lucky shot!"
+  },
+  "boss-bulletfarmer-down": {
+    "speaker": "bulletfarmer",
+    "text": "My farm! My beautiful farm!"
+  },
+  "boss-joe-intro": {
+    "speaker": "joe",
+    "text": "Bring back my War Rig! War Party, attack!"
+  },
+  "boss-wheel": {
+    "speaker": "announcer",
+    "text": "A wheel is glowing! Ram it!"
+  },
+  "boss-joe-hurt": {
+    "speaker": "joe",
+    "text": "My Gigahorse! Fix it, War Boys!"
+  },
+  "boss-joe-down": {
+    "speaker": "joe",
+    "text": "Nooo! My Gigahorse!"
+  },
+  "boss-dementus-intro": {
+    "speaker": "dementus",
+    "text": "Behold my chariot! Catch me if you can, little racer!"
+  },
+  "boss-bike": {
+    "speaker": "announcer",
+    "text": "That bike is glowing! Knock it loose!"
+  },
+  "boss-dementus-hurt": {
+    "speaker": "dementus",
+    "text": "Not my lovely bikes!"
+  },
+  "boss-dementus-down": {
+    "speaker": "dementus",
+    "text": "Well... that was epic. You win."
+  },
+  "boss-hit": {
+    "speaker": "announcer",
+    "text": "Direct hit! Keep it up!"
+  },
+  "chase-start": {
+    "speaker": "announcer",
+    "text": "The War Party is right behind you! Get to the finish!"
+  },
+  "chase-escaped": {
+    "speaker": "announcer",
+    "text": "You escaped! They'll never catch you now!"
+  },
+  "escort-start": {
+    "speaker": "furiosa",
+    "text": "Stay close to the Rig. Keep the raiders off!"
+  },
+  "escort-hit": {
+    "speaker": "furiosa",
+    "text": "They're hitting the Rig! Get them off!"
+  },
+  "escort-done": {
+    "speaker": "furiosa",
+    "text": "We made it. Good driving."
+  },
+  "arena-start": {
+    "speaker": "announcer",
+    "text": "Grab the guzzoline cans! Most cans wins!"
+  },
+  "arena-drop": {
+    "speaker": "announcer",
+    "text": "Oops! You dropped some cans!"
+  },
+  "arena-win": {
+    "speaker": "announcer",
+    "text": "Guzzoline champion!"
+  },
+  "stars3": {
+    "speaker": "announcer",
+    "text": "Three stars! Perfect!"
+  },
+  "world-hello": {
+    "speaker": "announcer",
+    "text": "Welcome to the Wasteland! Follow the arrow to your next adventure!"
+  },
+  "world-patrol": {
+    "speaker": "announcer",
+    "text": "War Boys spotted you! Wreck them or drive away!"
+  },
+  "world-guzzoline": {
+    "speaker": "announcer",
+    "text": "Guzzoline!"
+  },
+  "world-card": {
+    "speaker": "announcer",
+    "text": "You found a secret Valhalla card!"
+  },
+  "world-locked": {
+    "speaker": "announcer",
+    "text": "Finish the chapter before this one to open it!"
+  },
+  "chapter-open": {
+    "speaker": "announcer",
+    "text": "A new chapter of the Wasteland is open!"
+  },
+  "boss-ready": {
+    "speaker": "announcer",
+    "text": "The boss is waiting for you! Drive to the skull!"
   }
 }

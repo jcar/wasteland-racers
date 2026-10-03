@@ -8,7 +8,9 @@
  */
 export type BodyKind =
   | 'buggy' | 'hopper' | 'truck' | 'monster' | 'rig'
-  | 'interceptor' | 'nuxcar' | 'buzzard' | 'bigfoot' | 'doof' | 'peacemaker' | 'chariot' | 'gigahorse';
+  | 'interceptor' | 'nuxcar' | 'buzzard' | 'bigfoot' | 'doof' | 'peacemaker' | 'chariot' | 'gigahorse'
+  /** The People Eater's tanker limo (a boss car, not for sale). */
+  | 'limo';
 
 export interface CarDef {
   id: string;

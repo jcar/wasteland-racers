@@ -8,13 +8,14 @@ import type { TrackGeometry } from './trackGeometry';
  */
 export class AIDriver {
   private t = Math.random() * 100;
-  private lane: number;
+  /** Which part of the road to hold: -1 left edge .. 1 right edge. Modes can steer this. */
+  lane: number;
   gadgetCooldown = 4 + Math.random() * 4;
 
   constructor(
     private readonly car: CarBody,
     /** Top speed before rubber-banding. */
-    private readonly baseSpeed: number,
+    public baseSpeed: number,
     lane: number,
   ) {
     this.lane = lane;

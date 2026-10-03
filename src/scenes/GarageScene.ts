@@ -8,24 +8,28 @@ import { playMusic } from '../audio/music';
 import { sfx } from '../audio/sfx';
 import { speak } from '../audio/voice';
 import { artHtml, assetUrl } from '../systems/assets';
-import { buyCar, buyGadget, buyOrnament, buyPaint, buyUpgrade, carPrice, raceGadget, upgradeCost, type Price } from '../systems/Economy';
+import { buyCar, buyGadget, buyOrnament, buyPaint, buyUpgrade, carPrice, crewLevel, hireCrew, raceGadget, toggleRiding, trainCrew, upgradeCost, type Price } from '../systems/Economy';
+import { CREW, CREW_LEVEL_COST, MAX_CREW_LEVEL } from '../data/crew';
 import { state } from '../systems/GameState';
 import { Nav, confetti, html, shake } from '../ui/nav';
 import { TitleScene } from './TitleScene';
 import { TrackSelectScene } from './TrackSelectScene';
 import { ValhallaScene } from './ValhallaScene';
+import { season2Open } from '../systems/Story';
+import { wastelandHub } from './WastelandScene';
 
-type Tab = 'upgrades' | 'cars' | 'paint' | 'gadgets' | 'driver';
+type Tab = 'upgrades' | 'cars' | 'paint' | 'gadgets' | 'driver' | 'crew';
 const TABS: { id: Tab; label: string; icon: string; emoji: string }[] = [
   { id: 'upgrades', label: 'Fix Up', icon: 'icon-engine', emoji: '🔧' },
   { id: 'cars', label: 'Cars', icon: '', emoji: '🚙' },
   { id: 'paint', label: 'Paint', icon: '', emoji: '🎨' },
   { id: 'gadgets', label: 'Weapons', icon: 'icon-thunder', emoji: '⚡' },
   { id: 'driver', label: 'Driver', icon: '', emoji: '🙂' },
+  { id: 'crew', label: 'Crew', icon: 'icon-guzzoline', emoji: '⛽' },
 ];
 
-const price = (p: Price) =>
-  `<span class="price">${p.currency === 'chrome' ? artHtml('icon-chrome', '💎', 'coin') : artHtml('icon-scrap', '🔩', 'coin')} ${p.amount}</span>`;
+const price = (p: Price | { amount: number; currency: 'guzzoline' }) =>
+  `<span class="price">${p.currency === 'chrome' ? artHtml('icon-chrome', '💎', 'coin') : p.currency === 'guzzoline' ? artHtml('icon-guzzoline', '⛽', 'coin') : artHtml('icon-scrap', '🔩', 'coin')} ${p.amount}</span>`;
 
 /** The hub: spend scrap on upgrades, cars, paint and gadgets, then RACE! */
 export class GarageScene implements Scene {
@@ -65,9 +69,10 @@ export class GarageScene implements Scene {
     if (bg) game.root.style.backgroundImage = `url(${bg})`;
     this.el = html(`<div class="screen garage">
       <div class="left">
-        <div><div class="wallet"><span class="scrap outlined"></span><span class="scrap chrome-count outlined"></span></div><div class="carname outlined"></div></div>
+        <div><div class="wallet"><span class="scrap outlined"></span><span class="scrap chrome-count outlined"></span><span class="scrap guzz-count outlined"></span></div><div class="carname outlined"></div></div>
         <div class="left-actions">
           <button class="btn teal book-btn" data-nav data-id="book">📖 Valhalla Book</button>
+          ${season2Open(state.data) ? '<button class="btn chrome book-btn" data-nav data-id="wasteland">🗺️ The Wasteland</button>' : ''}
           <button class="btn green race-btn" data-nav data-id="race">🏁 RACE!</button>
         </div>
       </div>
@@ -75,7 +80,7 @@ export class GarageScene implements Scene {
         <div class="tabs"></div>
         <div class="panel shop"></div>
       </div>
-      <div class="hint passthrough"><span class="keycap">←↑↓→</span> choose · <span class="keycap">SPACE</span> pick · <span class="keycap">ESC</span> title screen</div>
+      <div class="hint passthrough"><span class="keycap">←↑↓→</span> choose · <span class="keycap">SPACE</span> pick · <span class="keycap">ESC</span> back</div>
     </div>`);
     game.ui.appendChild(this.el);
     this.nav = new Nav(this.el);
@@ -83,6 +88,11 @@ export class GarageScene implements Scene {
     this.el.querySelector<HTMLElement>('[data-id="race"]')!.onclick = () => {
       sfx.confirm();
       game.go(new TrackSelectScene());
+    };
+    const toMap = this.el.querySelector<HTMLElement>('[data-id="wasteland"]');
+    if (toMap) toMap.onclick = () => {
+      sfx.confirm();
+      game.go(wastelandHub());
     };
     this.el.querySelector<HTMLElement>('[data-id="book"]')!.onclick = () => {
       sfx.confirm();
@@ -149,11 +159,13 @@ export class GarageScene implements Scene {
     const s = state.data;
     this.el.querySelector('.scrap')!.innerHTML = `${artHtml('icon-scrap', '🔩')} ${s.scrap}`;
     this.el.querySelector('.chrome-count')!.innerHTML = `${artHtml('icon-chrome', '💎')} ${s.chrome}`;
+    this.el.querySelector('.guzz-count')!.innerHTML = season2Open(s) ? `${artHtml('icon-guzzoline', '⛽')} ${s.guzzoline}` : '';
     this.el.querySelector('.carname')!.textContent = carById(s.car).name;
 
     const tabs = this.el.querySelector('.tabs')!;
     tabs.innerHTML = '';
     for (const t of TABS) {
+      if (t.id === 'crew' && !season2Open(s)) continue;
       const b = html(`<button class="btn ${t.id === this.tab ? 'active' : ''}" data-nav data-id="tab:${t.id}">${artHtml(t.icon, t.emoji)}${t.label}</button>`);
       b.onclick = () => {
         this.tab = t.id;
@@ -287,6 +299,39 @@ export class GarageScene implements Scene {
           );
         }
       }
+    } else if (this.tab === 'crew') {
+      shop.appendChild(html(`<p style="margin:0;font-weight:800">Hire drivers with guzzoline. Two can ride with you in chases, escorts, boss fights and around the Wasteland.</p>`));
+      for (const c of CREW) {
+        const hired = s.crew.includes(c.id), riding = s.crewRiding.includes(c.id);
+        const lvl = crewLevel(s, c.id);
+        const row = html(`<div class="row"><div class="icon">${artHtml(c.portrait, c.emoji)}</div><div class="name">${c.name}${hired ? `<div class="pips">${Array.from({ length: MAX_CREW_LEVEL }, (_, i) => `<i class="${i < lvl ? 'on' : ''}"></i>`).join('')}</div>` : ''}</div></div>`);
+        if (!hired) {
+          add(`<button class="btn ${c.cost > s.guzzoline ? 'cant' : 'green'}" data-nav data-id="crew:${c.id}">Hire ${price({ amount: c.cost, currency: 'guzzoline' })}</button>`, (el) => {
+            const r = hireCrew(s, c.id);
+            if (r === 'broke') return this.nope(el, 'not-enough');
+            sfx.buy();
+            speak(c.line, { priority: 2 });
+            confetti(game.ui, 40);
+            this.saved(undefined, `crew:${c.id}`);
+          }, row);
+        } else {
+          add(`<button class="btn ${riding ? 'teal' : ''}" data-nav data-id="ride:${c.id}">${riding ? 'RIDING' : 'REST'}</button>`, () => {
+            if (toggleRiding(s, c.id)) speak(c.line, { priority: 1 });
+            sfx.confirm();
+            this.saved(undefined, `ride:${c.id}`);
+          }, row);
+          const cost = CREW_LEVEL_COST[lvl - 1];
+          add(`<button class="btn ${lvl >= MAX_CREW_LEVEL ? 'gray' : cost > s.guzzoline ? 'cant' : 'green'}" data-nav data-id="train:${c.id}">${lvl >= MAX_CREW_LEVEL ? 'TOP!' : `Train ${price({ amount: cost, currency: 'guzzoline' })}`}</button>`, (el) => {
+            const r = trainCrew(s, c.id);
+            if (r === 'broke') return this.nope(el, 'not-enough');
+            if (r === 'maxed') return speak('maxed', { priority: 1, cooldown: 4 });
+            sfx.buy();
+            sfx.wrench();
+            this.saved(undefined, `train:${c.id}`);
+          }, row);
+        }
+        shop.appendChild(row);
+      }
     } else if (this.tab === 'driver') {
       const grid = html(`<div class="grid"></div>`);
       shop.appendChild(grid);
@@ -367,7 +412,7 @@ export class GarageScene implements Scene {
       this.car.scale.setScalar(s * (this.car.userData.fit ?? 1));
       this.car.position.y = Math.sin(t * Math.PI) * 0.8;
     }
-    if (game.controls.back()) return game.go(new TitleScene());
+    if (game.controls.back()) return game.go(season2Open(state.data) ? wastelandHub() : new TitleScene());
     this.nav.update(game.controls);
   }
 

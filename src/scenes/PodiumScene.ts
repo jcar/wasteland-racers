@@ -13,6 +13,8 @@ import { ordinal, type HudRacer } from '../ui/hud';
 import { Nav, confetti, html } from '../ui/nav';
 import { GarageScene } from './GarageScene';
 import { RaceScene } from './RaceScene';
+import { season2Open } from '../systems/Story';
+import { wastelandHub } from './WastelandScene';
 
 export interface RaceResult {
   trackId: string;
@@ -130,7 +132,7 @@ export class PodiumScene implements Scene {
       const decal = DECALS.find((d) => d.unlock === id);
       content = decal ? `${artHtml(decal.image, decal.emoji)}<span>New sticker: ${decal.name}!</span>` : `<span class="emoji">🏆</span><span>Champion Gold paint!</span>`;
     } else if (kind === 'champion') {
-      content = `${artHtml('icon-trophy', '🏆')}<span>WASTELAND CHAMPION!</span>`;
+      content = `${artHtml('icon-trophy', '🏆')}<span>CHAMPION! The Wasteland is open!</span>`;
       speak('champion', { priority: 2 });
       confetti(game.ui, 200);
     }
@@ -146,6 +148,7 @@ export class PodiumScene implements Scene {
     const next = TRACK_ORDER[trackIndex(this.result.trackId) + 1];
     const canNext = next && isTrackUnlocked(state.data, next) && this.result.place === 1;
     actions.innerHTML = `
+      ${season2Open(state.data) ? '<button class="btn chrome" data-nav data-a="map">🗺️ Wasteland</button>' : ''}
       <button class="btn" data-nav data-a="garage">🔧 Garage</button>
       <button class="btn teal" data-nav data-a="again">🔁 Race Again</button>
       ${canNext ? `<button class="btn green" data-nav data-a="next">➡️ Next Race</button>` : ''}`;
@@ -154,11 +157,13 @@ export class PodiumScene implements Scene {
         sfx.confirm();
         const a = b.dataset.a;
         if (a === 'garage') game.go(new GarageScene());
+        else if (a === 'map') game.go(wastelandHub());
         else if (a === 'again') game.go(new RaceScene(this.result.trackId));
         else if (a === 'next') game.go(new RaceScene(next));
       };
     });
-    this.nav.refocus('[data-a="garage"]');
+    // Just beat the Thunder Dome? Point straight at the new Wasteland.
+    this.nav.refocus(this.outcome.unlocked.includes('champion') ? '[data-a="map"]' : '[data-a="garage"]');
   }
 
   update(dt: number) {

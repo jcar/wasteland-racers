@@ -137,6 +137,16 @@ export function buildLoreBody(kind: BodyKind, P: string, c: THREE.Group): Frame 
       cape.rotation.z = 0.55;
       return { wheelR: 0.5, wheels: [[1.85, -1.1, 0.8], [0.75, -1.1, 0.8], [1.85, 0, 0.8], [0.75, 0, 0.8], [1.85, 1.1, 0.8], [0.75, 1.1, 0.8], [-0.9, 0.95, 1.4], [-0.9, -0.95, 1.4]], frontX: 2.3, backX: -1.6, halfW: 0.75, deckY: 1.68, hoodX: -0.9, roofY: 1.7, headPos: [-0.9, 2.0] };
     }
+    case 'limo': {
+      box(4.4, 0.5, 1.8, P, 0, 0.75, 0, c);
+      box(1.6, 0.45, 1.6, P, 0.6, 1.2, 0, c);
+      box(1.62, 0.25, 1.4, GL, 0.6, 1.25, 0, c);
+      const tank = mesh(new THREE.CylinderGeometry(0.75, 0.75, 1.9, 14), toon(COLORS.chrome), -1.2, 1.55, 0, c);
+      tank.rotation.z = Math.PI / 2;
+      for (const x of [-1.9, -0.5]) box(0.12, 1.6, 1.6, COLORS.gold, x, 1.55, 0, c);
+      box(0.2, 0.4, 1.6, COLORS.gold, 2.2, 0.85, 0, c);
+      return { wheelR: 0.5, wheels: [[1.55, 0.9], [1.55, -0.9], [-1.55, 0.9], [-1.55, -0.9]], frontX: 2.25, backX: -2.2, halfW: 0.9, deckY: 1.0, hoodX: 1.7, roofY: 1.45, headPos: [0.6, 1.7] };
+    }
   }
   return undefined;
 }

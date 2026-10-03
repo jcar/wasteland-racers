@@ -756,6 +756,366 @@
    "h": 256,
    "style": "lore",
    "prompt": "A flat vinyl car hood decal seen straight on: a chrome steering wheel shaped like a skull with flames, the V8 symbol of the War Boys. Flat graphic, no car."
+  },
+  {
+   "id": "comic-c1-1",
+   "kind": "backdrop",
+   "w": 1280,
+   "h": 720,
+   "style": "lore",
+   "prompt": "Comic book panel, wide shot, dramatic and fun: the Citadel, three giant desert rock towers with green gardens on top and cranes on the sides; Immortan Joe (white hair, clear armor chest plate, horse-teeth breathing mask) stands on a high balcony raising his arms over a cheering crowd of white-painted War Boys far below."
+  },
+  {
+   "id": "comic-c1-2",
+   "kind": "backdrop",
+   "w": 1280,
+   "h": 720,
+   "style": "lore",
+   "prompt": "Comic book panel, wide shot, dramatic and fun: a small scrappy race car racing across orange desert, surrounded by a pack of spiky War Boy cars with white-painted War Boys hanging off them, dust everywhere."
+  },
+  {
+   "id": "comic-c1-3",
+   "kind": "backdrop",
+   "w": 1280,
+   "h": 720,
+   "style": "lore",
+   "prompt": "Comic book panel, wide shot, dramatic and fun: Nux, a bald white-painted War Boy with chrome-sprayed lips, leaning out of his hot rod with a giant exposed engine, grinning and giving a thumbs up, chrome spray can in hand."
+  },
+  {
+   "id": "comic-c2-1",
+   "kind": "backdrop",
+   "w": 1280,
+   "h": 720,
+   "style": "lore",
+   "prompt": "Comic book panel, wide shot, dramatic and fun: Gas Town: a huge rusty oil refinery with towers and flames on top at dusk; the People Eater, a big round man in a fancy pinstripe vest with a monocle, counts on an abacus in front."
+  },
+  {
+   "id": "comic-c2-2",
+   "kind": "backdrop",
+   "w": 1280,
+   "h": 720,
+   "style": "lore",
+   "prompt": "Comic book panel, wide shot, dramatic and fun: Imperator Furiosa (shaved head, black grease on forehead, metal arm) driving a huge War Rig truck with a round tanker full of guzzoline, looking determined through the windshield."
+  },
+  {
+   "id": "comic-c2-3",
+   "kind": "backdrop",
+   "w": 1280,
+   "h": 720,
+   "style": "lore",
+   "prompt": "Comic book panel, wide shot, dramatic and fun: the Doof Wagon, a truck covered in giant speakers and war drums, with a masked guitarist in a red suit on the front shooting a jet of fire from his guitar, leading a convoy of cars."
+  },
+  {
+   "id": "comic-c3-1",
+   "kind": "backdrop",
+   "w": 1280,
+   "h": 720,
+   "style": "lore",
+   "prompt": "Comic book panel, wide shot, dramatic and fun: the Bullet Farm at night: a mine pit with searchlights sweeping the sky; the Bullet Farmer with wild hair and huge round sunglasses and bullet belts shouting from a tower."
+  },
+  {
+   "id": "comic-c3-2",
+   "kind": "backdrop",
+   "w": 1280,
+   "h": 720,
+   "style": "lore",
+   "prompt": "Comic book panel, wide shot, dramatic and fun: the Peacemaker, a huge armored tank-car on treads with a big turret, rolling through the night with red target circles glowing on the ground ahead."
+  },
+  {
+   "id": "comic-c3-3",
+   "kind": "backdrop",
+   "w": 1280,
+   "h": 720,
+   "style": "lore",
+   "prompt": "Comic book panel, wide shot, dramatic and fun: Mad Max in his black Interceptor at night, headlights blazing, a determined squint, dust trailing behind."
+  },
+  {
+   "id": "comic-c4-1",
+   "kind": "backdrop",
+   "w": 1280,
+   "h": 720,
+   "style": "lore",
+   "prompt": "Comic book panel, wide shot, dramatic and fun: the War Rig racing out into a vast orange desert under a teal sky, Furiosa at the wheel, a gigantic dust storm towering on the horizon."
+  },
+  {
+   "id": "comic-c4-2",
+   "kind": "backdrop",
+   "w": 1280,
+   "h": 720,
+   "style": "lore",
+   "prompt": "Comic book panel, wide shot, dramatic and fun: Immortan Joe riding the Gigahorse (two classic cars stacked on giant wheels) leading a massive War Party convoy across the desert, the Doof Wagon with its flame guitar beside him."
+  },
+  {
+   "id": "comic-c4-3",
+   "kind": "backdrop",
+   "w": 1280,
+   "h": 720,
+   "style": "lore",
+   "prompt": "Comic book panel, wide shot, dramatic and fun: a giant swirling sandstorm with orange lightning, cars and wheels tumbling in the wind, and Nux in his car shouting with joy."
+  },
+  {
+   "id": "comic-c5-1",
+   "kind": "backdrop",
+   "w": 1280,
+   "h": 720,
+   "style": "lore",
+   "prompt": "Comic book panel, wide shot, dramatic and fun: Dementus in a flowing white cape riding his chariot pulled by three motorcycles, a huge biker horde roaring behind him across the plains."
+  },
+  {
+   "id": "comic-c5-2",
+   "kind": "backdrop",
+   "w": 1280,
+   "h": 720,
+   "style": "lore",
+   "prompt": "Comic book panel, wide shot, dramatic and fun: close-up of Dementus grinning theatrically, goggles on his forehead, a little teddy bear tied to his shoulder, pointing at the viewer."
+  },
+  {
+   "id": "comic-c5-3",
+   "kind": "backdrop",
+   "w": 1280,
+   "h": 720,
+   "style": "lore",
+   "prompt": "Comic book panel, wide shot, dramatic and fun: Furiosa in the War Rig and Max in the Interceptor side by side on the road, ready to race, sunset behind them."
+  },
+  {
+   "id": "comic-end-1",
+   "kind": "backdrop",
+   "w": 1280,
+   "h": 720,
+   "style": "lore",
+   "prompt": "Comic book panel, wide shot, dramatic and fun: the Citadel opening its huge water pipes, water pouring down to a cheering crowd of happy people splashing, cars parked around."
+  },
+  {
+   "id": "comic-end-2",
+   "kind": "backdrop",
+   "w": 1280,
+   "h": 720,
+   "style": "lore",
+   "prompt": "Comic book panel, wide shot, dramatic and fun: a crowd of War Boys cheering and holding chrome steering wheels up high, chrome spray clouds sparkling in the air."
+  },
+  {
+   "id": "comic-end-3",
+   "kind": "backdrop",
+   "w": 1280,
+   "h": 720,
+   "style": "lore",
+   "prompt": "Comic book panel, wide shot, dramatic and fun: a small heroic race car parked on top of a desert rock at sunset with a golden trophy on its hood, the Citadel towers in the distance."
+  },
+  {
+   "id": "lm-citadel",
+   "kind": "sprite",
+   "w": 420,
+   "h": 480,
+   "style": "lore",
+   "prompt": "The Citadel: three giant tall desert rock towers close together with green gardens on top, cranes, pulleys and big water pipes on the sides. Side view."
+  },
+  {
+   "id": "lm-gastown",
+   "kind": "sprite",
+   "w": 420,
+   "h": 360,
+   "style": "lore",
+   "prompt": "Gas Town: a rusty oil refinery with tall towers, pipes, tanks and small flames on top. Side view."
+  },
+  {
+   "id": "lm-bulletfarm",
+   "kind": "sprite",
+   "w": 420,
+   "h": 360,
+   "style": "lore",
+   "prompt": "The Bullet Farm: a rocky hill with a mine tunnel entrance, wooden scaffolding, a crane, two searchlights and stacked ammo crates. Just the building and hill, nothing in the sky. Side view."
+  },
+  {
+   "id": "lm-greenplace",
+   "kind": "sprite",
+   "w": 360,
+   "h": 300,
+   "style": "lore",
+   "prompt": "A small green oasis in the desert: a pond of blue water, palm-like trees and green bushes, and three tall wooden stilt towers. A place, no people, no characters. Side view."
+  },
+  {
+   "id": "lm-dome",
+   "kind": "sprite",
+   "w": 360,
+   "h": 300,
+   "style": "lore",
+   "prompt": "The Thunder Dome: a round arena dome made of a scrap-metal lattice with flags on top. Side view."
+  },
+  {
+   "id": "mk-race",
+   "kind": "sprite",
+   "w": 128,
+   "h": 128,
+   "style": "lore",
+   "prompt": "Game map marker icon: a checkered racing flag on a pole."
+  },
+  {
+   "id": "mk-chase",
+   "kind": "sprite",
+   "w": 128,
+   "h": 128,
+   "style": "lore",
+   "prompt": "Game map marker icon: a speeding car with War Boy cars chasing behind it, motion lines."
+  },
+  {
+   "id": "mk-escort",
+   "kind": "sprite",
+   "w": 128,
+   "h": 128,
+   "style": "lore",
+   "prompt": "Game map marker icon: a big War Rig truck with a shield symbol."
+  },
+  {
+   "id": "mk-arena",
+   "kind": "sprite",
+   "w": 128,
+   "h": 128,
+   "style": "lore",
+   "prompt": "Game map marker icon: a red guzzoline jerry can with a star burst."
+  },
+  {
+   "id": "mk-boss",
+   "kind": "sprite",
+   "w": 128,
+   "h": 128,
+   "style": "lore",
+   "prompt": "Game map marker icon: a big chrome skull with flames around it."
+  },
+  {
+   "id": "mk-garage",
+   "kind": "sprite",
+   "w": 128,
+   "h": 128,
+   "style": "lore",
+   "prompt": "Game map marker icon: a big crossed wrench and spanner."
+  },
+  {
+   "id": "mk-dome",
+   "kind": "sprite",
+   "w": 128,
+   "h": 128,
+   "style": "lore",
+   "prompt": "Game map marker icon: a little round lattice dome arena with a flag."
+  },
+  {
+   "id": "icon-guzzoline",
+   "kind": "sprite",
+   "w": 128,
+   "h": 128,
+   "style": "lore",
+   "prompt": "Game icon: a shiny red guzzoline jerry can with a fuel drop symbol."
+  },
+  {
+   "id": "icon-card",
+   "kind": "sprite",
+   "w": 128,
+   "h": 128,
+   "style": "lore",
+   "prompt": "Game icon: a glowing golden collectible trading card with a skull steering wheel on it."
+  },
+  {
+   "id": "prop-refinery",
+   "kind": "sprite",
+   "w": 256,
+   "h": 320,
+   "style": "lore",
+   "prompt": "A tall rusty refinery tower with pipes and a small flame on top. Side view."
+  },
+  {
+   "id": "prop-firepipe",
+   "kind": "sprite",
+   "w": 192,
+   "h": 192,
+   "style": "lore",
+   "prompt": "A rusty pipe sticking out of the ground with a burst of fire coming out of it. Side view."
+  },
+  {
+   "id": "prop-searchlight",
+   "kind": "sprite",
+   "w": 160,
+   "h": 256,
+   "style": "lore",
+   "prompt": "A tall wooden searchlight tower with a big lamp shining a beam. Side view."
+  },
+  {
+   "id": "prop-minecart",
+   "kind": "sprite",
+   "w": 256,
+   "h": 192,
+   "style": "lore",
+   "prompt": "A rusty mine cart full of rocks on a short piece of rail track. Side view."
+  },
+  {
+   "id": "prop-saltrock",
+   "kind": "sprite",
+   "w": 256,
+   "h": 192,
+   "style": "lore",
+   "prompt": "A white salt crystal rock formation in the desert. Side view."
+  },
+  {
+   "id": "prop-vuvalini",
+   "kind": "sprite",
+   "w": 256,
+   "h": 192,
+   "style": "lore",
+   "prompt": "Two tough old women desert bikers on motorcycles, waving, with scarves and goggles. Side view."
+  },
+  {
+   "id": "prop-crow",
+   "kind": "sprite",
+   "w": 160,
+   "h": 320,
+   "style": "lore",
+   "prompt": "A tall spooky-silly figure in a black feathered crow cloak and a beaked mask, walking on two very long wooden stilts, filling the whole height of the picture. Side view."
+  },
+  {
+   "id": "prop-canyonrock",
+   "kind": "sprite",
+   "w": 256,
+   "h": 320,
+   "style": "lore",
+   "prompt": "A tall red canyon rock pillar. Side view."
+  },
+  {
+   "id": "ground-wasteland",
+   "kind": "texture",
+   "w": 512,
+   "h": 512,
+   "style": "lore",
+   "prompt": "Rolling orange desert sand with wind ripples, small pebbles and a few dry bushes."
+  },
+  {
+   "id": "ground-refinery",
+   "kind": "texture",
+   "w": 512,
+   "h": 512,
+   "style": "lore",
+   "prompt": "Dark oily refinery ground: black dirt with oil puddles, rusty metal plates and gravel."
+  },
+  {
+   "id": "ground-mine",
+   "kind": "texture",
+   "w": 512,
+   "h": 512,
+   "style": "lore",
+   "prompt": "Dark brown rocky mine ground with gravel, small rocks and wooden plank bits."
+  },
+  {
+   "id": "ground-salt",
+   "kind": "texture",
+   "w": 512,
+   "h": 512,
+   "style": "lore",
+   "prompt": "Bright white cracked salt flat with hexagon cracks and faint orange dust."
+  },
+  {
+   "id": "ground-canyon",
+   "kind": "texture",
+   "w": 512,
+   "h": 512,
+   "style": "lore",
+   "prompt": "Red canyon dirt with cracks, pebbles and small dark rocks."
   }
  ],
  "voices": {
@@ -860,6 +1220,22 @@
   {
    "id": "music-fury",
    "prompt": "Thundering war-drum rock for a kids' desert racing game: pounding taiko drums, a screaming distorted electric guitar riff, driving and epic, 160 bpm, D minor, instrumental, no vocals."
+  },
+  {
+   "id": "music-wasteland",
+   "prompt": "Adventurous open-road rock for driving around a desert map in a kids' game: steady drums, twangy baritone guitar, a hint of war drums, cool and exploring, 120 bpm, A minor, instrumental, no vocals."
+  },
+  {
+   "id": "music-chase",
+   "prompt": "Frantic chase music for a kids' racing game: pounding war drums, fast distorted guitar riff, urgent and exciting, 170 bpm, E minor, instrumental, no vocals."
+  },
+  {
+   "id": "music-boss",
+   "prompt": "Huge boss battle rock for a kids' game: heavy drums, big chunky guitar, dramatic brass hits, exciting not scary, 150 bpm, C minor, instrumental, no vocals."
+  },
+  {
+   "id": "music-finale",
+   "prompt": "Triumphant victory anthem for the end of a kids' racing game: soaring guitar melody, big drums, celebratory brass, 130 bpm, D major, instrumental, no vocals."
   }
  ],
  "styles": {

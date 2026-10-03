@@ -66,4 +66,53 @@ export const WORLDS: WorldDef[] = [
   },
 ];
 
-export const worldById = (id: string) => WORLDS.find((w) => w.id === id)!;
+/**
+ * Season 2 story locations. They dress story tracks, roads and arenas,
+ * but aren't race worlds of their own (no track list or Valhalla card).
+ */
+export const THEMES: WorldDef[] = [
+  {
+    id: 'wasteland', name: 'The Wasteland', card: 'world-fury', emoji: '🏜️',
+    ground: 'ground-wasteland', road: 'road-fury',
+    groundColor: '#d99a5a', roadColor: '#b9773f', wallColors: ['#9c4a22', '#d8dee6'], sky: '#e7b37a',
+    props: ['prop-rock', 'prop-wreck', 'prop-canyonrock', 'prop-skullpole', 'prop-guzzoline'],
+    music: 'music-chase',
+  },
+  {
+    id: 'gastown', name: 'Gas Town', card: 'comic-c2-1', emoji: '⛽',
+    ground: 'ground-refinery', road: 'road-junk',
+    groundColor: '#5a4a40', roadColor: '#6d6662', wallColors: ['#ff7a1a', '#2b2b2b'], sky: '#3a2a24',
+    props: ['prop-refinery', 'prop-firepipe', 'prop-guzzoline', 'prop-warboys', 'prop-barrel'],
+    music: 'music-junkyard',
+  },
+  {
+    id: 'bulletfarm', name: 'The Bullet Farm', card: 'comic-c3-1', emoji: '⛏️',
+    ground: 'ground-mine', road: 'road-dirt',
+    groundColor: '#6b4a32', roadColor: '#8a6a4a', wallColors: ['#c9a227', '#2b2b2b'], sky: '#2a1d16',
+    props: ['prop-searchlight', 'prop-minecart', 'prop-wreck', 'prop-rock', 'prop-guzzoline'],
+    music: 'music-volcano',
+  },
+  {
+    id: 'saltflats', name: 'The Salt Flats', card: 'comic-c4-1', emoji: '🧂',
+    ground: 'ground-salt', road: 'road-fury',
+    groundColor: '#e8e2d6', roadColor: '#c9a07a', wallColors: ['#9c4a22', '#f4f1ea'], sky: '#f0d8b0',
+    props: ['prop-saltrock', 'prop-wreck', 'prop-skullpole', 'prop-vuvalini'],
+    music: 'music-fury',
+  },
+  {
+    id: 'bog', name: 'The Bog', card: 'comic-c4-3', emoji: '🐦‍⬛',
+    ground: 'ground-swamp', road: 'road-swamp',
+    groundColor: '#3a4a3a', roadColor: '#6b5a45', wallColors: ['#5a6a5a', '#1c1c1c'], sky: '#1c2a2a',
+    props: ['prop-crow', 'prop-deadtree', 'prop-crow', 'prop-wreck'],
+    music: 'music-swamp',
+  },
+  {
+    id: 'canyon', name: 'Canyon Pass', card: 'world-fury', emoji: '🪨',
+    ground: 'ground-canyon', road: 'road-fury',
+    groundColor: '#b5562e', roadColor: '#b9773f', wallColors: ['#7a3b1e', '#d8dee6'], sky: '#e59a6a',
+    props: ['prop-canyonrock', 'prop-canyonrock', 'prop-rock', 'prop-wreck'],
+    music: 'music-chase',
+  },
+];
+
+export const worldById = (id: string) => WORLDS.find((w) => w.id === id) ?? THEMES.find((w) => w.id === id)!;

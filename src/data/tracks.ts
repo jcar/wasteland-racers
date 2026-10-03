@@ -1,3 +1,5 @@
+import { STORY_TRACKS } from './storyTracks';
+
 /**
  * Every race track. A track is a closed loop through `points` (x, z), smoothed
  * into a curve. Everything else is placed by `at`, a fraction of the way
@@ -27,9 +29,13 @@ export interface TrackDef {
   /** Goo puddles that slow you down. */
   goo?: { at: number; lane: number; len: number }[];
   rival?: string;
+  /** A point-to-point road (start → finish) instead of a loop. Used by chases and escorts. */
+  open?: boolean;
+  /** Only used by story events, not part of the race-to-unlock order. */
+  event?: boolean;
 }
 
-export const TRACKS: TrackDef[] = [
+const SEASON_TRACKS: TrackDef[] = [
   // ---------------------------------------------------------------- Dusty Dunes
   {
     id: 'dunes-1', name: 'Sandy Loop', world: 'dunes', laps: 3, width: 16,
@@ -189,9 +195,12 @@ export const TRACKS: TrackDef[] = [
   },
 ];
 
-/** The order tracks unlock in. Winning one opens the next. */
-export const TRACK_ORDER = TRACKS.map((t) => t.id);
+export const TRACKS: TrackDef[] = [...SEASON_TRACKS, ...STORY_TRACKS];
+
+/** The order tracks unlock in. Winning one opens the next. Story tracks unlock through chapters instead. */
+export const TRACK_ORDER = SEASON_TRACKS.map((t) => t.id);
 
 export const trackById = (id: string) => TRACKS.find((t) => t.id === id)!;
 export const trackIndex = (id: string) => TRACK_ORDER.indexOf(id);
-export const tracksInWorld = (world: string) => TRACKS.filter((t) => t.world === world);
+/** A world's race tracks, in unlock order (story-only tracks aren't listed). */
+export const tracksInWorld = (world: string) => SEASON_TRACKS.filter((t) => t.world === world);

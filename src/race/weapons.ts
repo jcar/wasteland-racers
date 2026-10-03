@@ -6,6 +6,7 @@ import { speak } from '../audio/voice';
 import { texture } from '../systems/assets';
 import type { CarBody } from './CarBody';
 import type { Effects } from './effects';
+import type { Ground } from './ground';
 import type { TrackGeometry } from './trackGeometry';
 
 /**
@@ -18,6 +19,8 @@ export interface Fighter {
   body: CarBody;
   gadget: string;
   isPlayer: boolean;
+  /** The player and their crew share a team; weapons never hurt teammates. No team = free-for-all. */
+  team?: 'player' | 'enemy';
   /** Seconds until an AI driver may fire again. */
   cooldown: number;
 }
@@ -27,7 +30,9 @@ export interface Arena {
   readonly player: Fighter;
   readonly scene: THREE.Scene;
   readonly effects: Effects;
-  readonly geo: TrackGeometry;
+  readonly ground: Ground;
+  /** Set when racing on a track (for "is the road straight ahead?"). */
+  readonly track?: TrackGeometry;
   /** Close enough to the player to be worth a sound. */
   near(f: Fighter): boolean;
   /** A lore hit: damage, spin, wreck effects and announcer lines. */
@@ -52,6 +57,12 @@ interface Flame { owner: Fighter; age: number; length: number; cone: number; hit
 interface Cable { line: THREE.Line; owner: Fighter; target: Fighter; age: number; done: boolean }
 
 const SHELL_TIME = 0.9;
+
+/**
+ * Can `a`'s weapons hurt `b`? Never yourself, and never your own team. Cars
+ * without a team (ordinary racers) are fair game for everyone.
+ */
+export const foes = (a: Fighter, b: Fighter) => a !== b && !(a.team && a.team === b.team);
 
 export class Weapons {
   private arena: Arena;
@@ -118,7 +129,7 @@ export class Weapons {
         if (loud) sfx.stomp();
         if (mine) { a.shake(0.8); speak('stomp', { priority: 0, cooldown: 12 }); }
         for (const o of a.fighters) {
-          if (o === f) continue;
+          if (!foes(f, o)) continue;
           const dx = o.body.x - b.x, dz = o.body.z - b.z, d = Math.hypot(dx, dz);
           if (d > 10 || d === 0) continue;
           o.body.vx += (dx / d) * 16;
@@ -160,20 +171,26 @@ export class Weapons {
       }
       case 'thundershot': {
         const target = this.targetAhead(f, 60, 0.6) ?? this.fighterOrder(f)[0];
-        const to = target ? new THREE.Vector3(target.body.x + target.body.vx * SHELL_TIME, 0, target.body.z + target.body.vz * SHELL_TIME) : new THREE.Vector3(b.x + fx * 30, 0, b.z + fz * 30);
-        to.y = a.geo.locate(to.x, to.z).h;
-        const mesh = ball(0.55, '#2b2b2b', b.x, b.y + 2, b.z);
-        const marker = new THREE.Mesh(new THREE.RingGeometry(4, 5, 32), new THREE.MeshBasicMaterial({ color: '#ff3b1f', transparent: true, opacity: 0.7, side: THREE.DoubleSide }));
-        marker.rotation.x = -Math.PI / 2;
-        marker.position.set(to.x, to.y + 0.15, to.z);
-        a.scene.add(mesh, marker);
-        this.shells.push({ mesh, marker, from: new THREE.Vector3(b.x, b.y + 2, b.z), to, owner: f, age: 0 });
-        if (loud) { sfx.explosion(false); sfx.whistle(); }
+        const to = target ? { x: target.body.x + target.body.vx * SHELL_TIME, z: target.body.z + target.body.vz * SHELL_TIME } : { x: b.x + fx * 30, z: b.z + fz * 30 };
+        this.lob(f, to);
         if (mine) speak('thundershot', { priority: 0, cooldown: 12 });
         break;
       }
     }
     return true;
+  }
+
+  /** Lob a shell that lands at `to` a moment later, with a red warning ring where it'll hit. */
+  lob(f: Fighter, to: { x: number; z: number }) {
+    const a = this.arena, b = f.body;
+    const land = new THREE.Vector3(to.x, a.ground.locate(to.x, to.z, -1).h, to.z);
+    const mesh = ball(0.55, '#2b2b2b', b.x, b.y + 2, b.z);
+    const marker = new THREE.Mesh(new THREE.RingGeometry(4, 5, 32), new THREE.MeshBasicMaterial({ color: '#ff3b1f', transparent: true, opacity: 0.7, side: THREE.DoubleSide }));
+    marker.rotation.x = -Math.PI / 2;
+    marker.position.set(land.x, land.y + 0.15, land.z);
+    a.scene.add(mesh, marker);
+    this.shells.push({ mesh, marker, from: new THREE.Vector3(b.x, b.y + 2, b.z), to: land, owner: f, age: 0 });
+    if (f === a.player || a.near(f)) { sfx.explosion(false); sfx.whistle(); }
   }
 
   /** Should this AI fighter fire now? Uses the same rules for every weapon of a kind. */
@@ -187,7 +204,7 @@ export class Weapons {
     const dist = Math.hypot(p.body.x - b.x, p.body.z - b.z);
     let want = false;
     switch (AIM[f.gadget] ?? 'self') {
-      case 'self': want = a.geo.maxCurveAhead(b.pos.s, 40) < 0.025 && gap < 30; break;
+      case 'self': want = (a.track ? a.track.maxCurveAhead(b.pos.s, 40) < 0.025 : true) && gap < 30; break;
       case 'ahead': want = !!this.targetAhead(f, 40, 0.6); break;
       case 'behind': want = gap > 4 && gap < 22; break;
       case 'near': want = f.gadget === 'boing' ? gap < -1 && gap > -7 && Math.abs(b.pos.lateral - p.body.pos.lateral) < 4 : dist < 9; break;
@@ -199,6 +216,7 @@ export class Weapons {
 
   /** Two cars touching: boing bumpers, spiked rams and chrome star power. */
   contact(a: Fighter, b: Fighter) {
+    if (!foes(a, b)) return;
     for (const [hitter, target] of [[a, b], [b, a]] as const) {
       const hb = hitter.body, tb = target.body;
       const dx = tb.x - hb.x, dz = tb.z - hb.z, d = Math.hypot(dx, dz);
@@ -236,11 +254,11 @@ export class Weapons {
       }
       m.x += Math.cos(m.heading) * speed * dt;
       m.z += Math.sin(m.heading) * speed * dt;
-      m.y = a.geo.locate(m.x, m.z).h + (m.kind === 'thunder' ? 1.4 : 0.4);
+      m.y = a.ground.locate(m.x, m.z, -1).h + (m.kind === 'thunder' ? 1.4 : 0.4);
       m.mesh.position.set(m.x, m.y, m.z);
       m.mesh.rotation.y = -m.heading;
       let hit: Fighter | undefined;
-      for (const f of a.fighters) if (f !== m.owner && Math.hypot(f.body.x - m.x, f.body.z - m.z) < 2.2 && f.body.wrecked <= 0) hit = f;
+      for (const f of a.fighters) if (foes(m.owner, f) && Math.hypot(f.body.x - m.x, f.body.z - m.z) < 2.2 && f.body.wrecked <= 0) hit = f;
       const done = hit || m.age > (m.kind === 'thunder' ? 1.6 : 3);
       if (!done) continue;
       if (m.kind === 'thunder') {
@@ -262,7 +280,7 @@ export class Weapons {
       if (t < 1) continue;
       a.effects.explosion(sh.to.x, sh.to.y, sh.to.z, true);
       sfx.explosion(true);
-      for (const f of a.fighters) if (f !== sh.owner && Math.hypot(f.body.x - sh.to.x, f.body.z - sh.to.z) < 5) a.hurt(f, sh.owner, 2, 1);
+      for (const f of a.fighters) if (foes(sh.owner, f) && Math.hypot(f.body.x - sh.to.x, f.body.z - sh.to.z) < 5) a.hurt(f, sh.owner, 2, 1);
       if (Math.hypot(a.player.body.x - sh.to.x, a.player.body.z - sh.to.z) < 25) a.shake(0.6);
       a.scene.remove(sh.mesh, sh.marker);
       this.shells.splice(i, 1);
@@ -274,7 +292,7 @@ export class Weapons {
       const b = fl.owner.body;
       a.effects.flame(b.x + Math.cos(b.heading) * 2.2, b.y, b.z + Math.sin(b.heading) * 2.2, b.heading, fl.length / 6);
       for (const f of a.fighters) {
-        if (f === fl.owner || fl.hit.has(f)) continue;
+        if (!foes(fl.owner, f) || fl.hit.has(f)) continue;
         const dx = f.body.x - b.x, dz = f.body.z - b.z, d = Math.hypot(dx, dz);
         if (d > fl.length || d === 0) continue;
         if ((dx * Math.cos(b.heading) + dz * Math.sin(b.heading)) / d < Math.cos(fl.cone)) continue;
@@ -335,7 +353,7 @@ export class Weapons {
     const fx = Math.cos(b.heading), fz = Math.sin(b.heading);
     let best: Fighter | undefined, bestD = range;
     for (const o of this.arena.fighters) {
-      if (o === f || o.body.safe) continue;
+      if (!foes(f, o) || o.body.safe) continue;
       const dx = o.body.x - b.x, dz = o.body.z - b.z, d = Math.hypot(dx, dz);
       if (d < bestD && d > 0 && (dx * fx + dz * fz) / d > cosCone) { best = o; bestD = d; }
     }
@@ -346,7 +364,7 @@ export class Weapons {
   private fighterOrder(f: Fighter): Fighter[] {
     const a = this.arena;
     const me = a.progress(f);
-    return a.fighters.filter((o) => o !== f && a.progress(o) > me).sort((x, y) => a.progress(x) - a.progress(y));
+    return a.fighters.filter((o) => foes(f, o) && a.progress(o) > me).sort((x, y) => a.progress(x) - a.progress(y));
   }
 
   private launch(f: Fighter, kind: Missile['kind'], target: Fighter | undefined, spread = 0) {
@@ -372,7 +390,7 @@ export class Weapons {
   private dropHazard(f: Fighter, kind: Hazard['kind']) {
     const b = f.body;
     const x = b.x - Math.cos(b.heading) * 3.4, z = b.z - Math.sin(b.heading) * 3.4;
-    const h = this.arena.geo.locate(x, z, b.pos.i).h;
+    const h = this.arena.ground.locate(x, z, b.pos.i).h;
     let mesh: THREE.Object3D;
     if (kind === 'goo') {
       const m = new THREE.Mesh(new THREE.CircleGeometry(2.3, 20), toon('#ffffff', { map: texture('goo-puddle', gooPuddle), transparent: true }));
@@ -401,7 +419,8 @@ export class Weapons {
       hz.age += dt;
       let hit: Fighter | undefined;
       for (const f of a.fighters) {
-        if (f === hz.owner && hz.age < 1.5) continue;
+        // Your own team's goo and spikes don't get you (Season 1 goo gets everyone else).
+        if (f === hz.owner ? hz.age < 1.5 : !foes(hz.owner, f)) continue;
         const b = f.body;
         if (!b.airborne && b.towing <= 0 && b.wrecked <= 0 && Math.hypot(b.x - hz.x, b.z - hz.z) < 2.6) hit = f;
       }

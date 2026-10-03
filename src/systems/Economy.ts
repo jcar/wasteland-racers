@@ -1,6 +1,7 @@
 import { CARS, GADGETS, MAX_LEVEL, ORNAMENTS, PAINTS, SCRAP_LEVELS, carById, type UpgradeStat } from '../data/cars';
-import { TRACKS, TRACK_ORDER, trackById, trackIndex, tracksInWorld } from '../data/tracks';
+import { TRACK_ORDER, trackById, trackIndex, tracksInWorld } from '../data/tracks';
 import { WORLDS } from '../data/worlds';
+import { CREW, CREW_LEVEL_COST, MAX_CREW_LEVEL, MAX_RIDING } from '../data/crew';
 import type { Difficulty, SaveData } from './SaveManager';
 
 /**
@@ -55,6 +56,11 @@ export function aiSpeed(trackId: string, difficulty: Difficulty): number {
   // After the Thunder Dome the pack only gets a little faster: Fury Road's challenge is the War Boys' weapons.
   const step = i <= dome ? i * 1.15 : dome * 1.15 + (i - dome) * 0.6;
   return 18.5 + step + DIFFICULTY_SPEED[difficulty];
+}
+
+/** Top speed of ordinary AI cars in a Season 2 story chapter. */
+export function storyAiSpeed(chapter: number, difficulty: Difficulty): number {
+  return aiSpeed('fury-1', difficulty) + 0.7 * (chapter - 1);
 }
 
 export type Currency = 'scrap' | 'chrome';
@@ -173,7 +179,7 @@ export function isWorldUnlocked(save: Pick<SaveData, 'best'>, worldId: string): 
 
 /** The first unlocked track you haven't won yet, or the last one. */
 export function suggestedTrack(save: Pick<SaveData, 'best'>): string {
-  return TRACKS.find((t) => isTrackUnlocked(save, t.id) && save.best[t.id] !== 1)?.id ?? TRACK_ORDER[TRACK_ORDER.length - 1];
+  return TRACK_ORDER.find((id) => isTrackUnlocked(save, id) && save.best[id] !== 1) ?? TRACK_ORDER[TRACK_ORDER.length - 1];
 }
 
 export interface RaceOutcome {
@@ -228,4 +234,43 @@ export function recordResult(save: SaveData, trackId: string, place: number, bol
     save.pendingCelebrations.push(...out.unlocked);
   }
   return out;
+}
+
+// ------------------------------------------------------------------ crew
+
+export const crewLevel = (save: Pick<SaveData, 'crewLevel'>, id: string) => save.crewLevel[id] ?? 1;
+
+/** Hire a crew member with guzzoline. They start riding along if there's room. */
+export function hireCrew(save: SaveData, id: string): BuyResult {
+  const c = CREW.find((x) => x.id === id);
+  if (!c) return 'locked';
+  if (save.crew.includes(id)) return 'owned';
+  if (save.guzzoline < c.cost) return 'broke';
+  save.guzzoline -= c.cost;
+  save.crew.push(id);
+  save.crewLevel[id] = 1;
+  if (save.crewRiding.length < MAX_RIDING) save.crewRiding.push(id);
+  return 'ok';
+}
+
+/** Swap a hired crew member in or out of the convoy (the oldest rider steps out if it's full). */
+export function toggleRiding(save: SaveData, id: string): boolean {
+  if (!save.crew.includes(id)) return false;
+  if (save.crewRiding.includes(id)) save.crewRiding = save.crewRiding.filter((x) => x !== id);
+  else {
+    save.crewRiding.push(id);
+    if (save.crewRiding.length > MAX_RIDING) save.crewRiding.shift();
+  }
+  return save.crewRiding.includes(id);
+}
+
+export function trainCrew(save: SaveData, id: string): BuyResult {
+  if (!save.crew.includes(id)) return 'locked';
+  const lvl = crewLevel(save, id);
+  if (lvl >= MAX_CREW_LEVEL) return 'maxed';
+  const cost = CREW_LEVEL_COST[lvl - 1];
+  if (save.guzzoline < cost) return 'broke';
+  save.guzzoline -= cost;
+  save.crewLevel[id] = lvl + 1;
+  return 'ok';
 }

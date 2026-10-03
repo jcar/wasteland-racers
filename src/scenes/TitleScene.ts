@@ -7,6 +7,8 @@ import { html } from '../ui/nav';
 import { openSettings } from '../ui/settings';
 import { DriverPickScene } from './DriverPickScene';
 import { GarageScene } from './GarageScene';
+import { season2Open } from '../systems/Story';
+import { wastelandHub } from './WastelandScene';
 
 /** Press Space to start. Grown-up keys live here too. */
 export class TitleScene implements Scene {
@@ -38,6 +40,7 @@ export class TitleScene implements Scene {
   private start() {
     if (this.settings) return;
     sfx.confirm();
+    if (season2Open(state.data)) return game.go(wastelandHub());
     game.go(state.data.started ? new GarageScene() : new DriverPickScene());
   }
 

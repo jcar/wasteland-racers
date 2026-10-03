@@ -3,7 +3,7 @@ import { CARS, UPGRADE_STATS } from '../src/data/cars';
 import { TRACKS, TRACK_ORDER } from '../src/data/tracks';
 import { WORLDS } from '../src/data/worlds';
 import { freshSave, type SaveData } from '../src/systems/SaveManager';
-import { aiSpeed, buyCar, buyGadget, buyOrnament, buyPaint, buyUpgrade, carStats, isTrackUnlocked, raceGadget, recordResult, upgradeCost, PLACE_REWARD } from '../src/systems/Economy';
+import { aiSpeed, hireCrew, toggleRiding, trainCrew, crewLevel, buyCar, buyGadget, buyOrnament, buyPaint, buyUpgrade, carStats, isTrackUnlocked, raceGadget, recordResult, upgradeCost, PLACE_REWARD } from '../src/systems/Economy';
 
 /** Spend like a kid who always wants to go faster: cheapest speed gain first. */
 function shopForSpeed(s: SaveData) {
@@ -56,7 +56,7 @@ describe('economy', () => {
   it('a kid who always comes last can still afford a car fast enough for every track', () => {
     const s = freshSave();
     let races = 0;
-    for (const t of TRACKS) {
+    for (const t of TRACK_ORDER.map((id) => TRACKS.find((x) => x.id === id)!)) {
       let here = 0;
       // Rubber-banding lets a car slightly slower than the pack still win.
       while (carStats(s).maxSpeed < aiSpeed(t.id, 'normal') - 0.5) {
@@ -144,5 +144,23 @@ describe('economy', () => {
     expect(out.unlocked).toContain('champion');
     expect(out.unlocked).toContain('world:fury');
     expect(isTrackUnlocked(s, 'fury-1')).toBe(true);
+  });
+
+  it('crew are hired and trained with guzzoline, and at most two ride along', () => {
+    const s = freshSave();
+    expect(hireCrew(s, 'warpup')).toBe('broke');
+    s.guzzoline = 1000;
+    for (const id of ['warpup', 'nux', 'toast']) expect(hireCrew(s, id)).toBe('ok');
+    expect(s.crewRiding).toEqual(['warpup', 'nux']);
+    expect(hireCrew(s, 'nux')).toBe('owned');
+    expect(toggleRiding(s, 'toast')).toBe(true);
+    expect(s.crewRiding).toEqual(['nux', 'toast']);
+    expect(toggleRiding(s, 'nux')).toBe(false);
+    expect(s.crewRiding).toEqual(['toast']);
+    expect(trainCrew(s, 'toast')).toBe('ok');
+    expect(trainCrew(s, 'toast')).toBe('ok');
+    expect(trainCrew(s, 'toast')).toBe('maxed');
+    expect(crewLevel(s, 'toast')).toBe(3);
+    expect(trainCrew(s, 'doof')).toBe('locked');
   });
 });

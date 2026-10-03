@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { SaveManager, freshSave, migrate, SAVE_KEY } from '../src/systems/SaveManager';
+import { SaveManager, freshSave, migrate, SAVE_KEY, SAVE_VERSION } from '../src/systems/SaveManager';
 
 class MemoryStorage {
   data = new Map<string, string>();
@@ -43,7 +43,7 @@ describe('save', () => {
   it('moves a Season 1 save to Season 2 without losing anything', () => {
     const season1 = { version: 1, scrap: 812, totalScrap: 9000, driver: 'dog', car: 'rig', ownedCars: ['buggy', 'hopper', 'rig'], upgrades: { engine: 4, tires: 4, armor: 3, gadget: 4 }, paint: 'gold', decal: 'skull', gadget: 'boing', ownedGadgets: ['boost', 'goo', 'boing'], best: { 'dunes-1': 1, 'dome-1': 2 }, rewards: ['shark', 'gold'], pendingCelebrations: [], started: true, settings: { steerHelp: 'medium', autoGas: false, difficulty: 'normal', muted: false, voice: true } };
     const m = migrate(season1);
-    expect(m.version).toBe(2);
+    expect(m.version).toBe(SAVE_VERSION);
     expect(m.scrap).toBe(812);
     expect(m.car).toBe('rig');
     expect(m.upgrades).toEqual(season1.upgrades);

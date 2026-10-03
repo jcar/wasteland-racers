@@ -43,30 +43,44 @@ Start on Strong + Chill and move up as he gets the hang of it.
 - **Kid-proofing:** the walls are rubbery and bounce you back. If you're stuck or facing the wrong way for 2 seconds, the **tow drone** lifts you back onto the road. The pack rubber-bands so races stay close.
 - Progress saves automatically in the browser (localStorage).
 
-## Season 2: Fury Road (in progress)
+## Season 2: Fury Road
 
-Phase 1, the **Lore Garage**, is in:
-- **Chrome** is a second currency, earned by winning: 2 for a win, 1 for second place, and 3 more the first time you win a track. It buys:
-  - the **Wasteland Legends**: the Buzzard, Nux Car, Interceptor, Big Foot, Doof Wagon, Peacemaker, Dementus's Chariot and the Gigahorse
-  - **chrome upgrade levels 5–6**
-  - **Shiny Chrome** paint
-  - **hood ornaments** (Immortan's skull, the V8 wheel shrine, Dementus's teddy, bull horns)
-- **Special moves:** each legend has its own, on Space:
-  - the Interceptor's Blower
-  - Nux's "Witness Me!" chrome star power
-  - Big Foot's Stomp
-  - the Doof Wagon's Flame Guitar
-  - the Peacemaker's Thunder Shot
-  - the Gigahorse's Double V8
-  - the Chariot's Bike Swarm
-  - the Buzzard's Spike Ram
-- **War Boy weapons** for any car, bought with scrap: Thunder Sticks, Caltrops, Harpoon and Flamethrower. The War Rig comes with Thunder Sticks.
-- **Wrecks:** lore weapons do damage. A car that takes enough hits explodes, tumbles and respawns 2 s later with a short shield. Armor adds hit points, shown as red pips above the gadget button. Season 1 gadgets (boost, goo, boing) still just spin cars out.
-- **The Fury Road world:** opens after the Thunder Dome. It has three tracks: Citadel Circuit, Gas Town Gauntlet (rival: Slit) and Bullet Farm Blitz (rival: Rictus in Big Foot). War Boy racers fill out the grid.
-- **New drivers:** Max, Furiosa, Nux, War Pup, the Doof Warrior and Toast.
-- **The Valhalla Book** (from the garage): a card album of every character, car and place. Locked cards show a silhouette and how to get them. Opening a new card plays its voice line.
+Season 2 opens when you beat the Thunder Dome. From then on, the title screen takes you to **the Wasteland**.
 
-Coming next (see the plan): the drive-around Wasteland, Chase/Escort/Arena modes, boss battles, and the Fury Road and Dementus chapters.
+**The Wasteland** is a big map you drive around.
+- **Story events** are colored beams of light: drive into one and press Space.
+- **Steer help** points you at your next adventure, and an arrow shows the way when it's off screen.
+- War Boy **patrols** chase you (wreck them for guzzoline), and **guzzoline and chrome** are hidden around the map.
+- The **garage** and the **Thunder Dome Classics** (all the Season 1 tracks) are doors on the map.
+- **Esc** opens fast travel.
+
+**Five chapters**, each opening with a comic and ending in a boss. Beating a boss gives you their car:
+
+| # | Chapter | Events | Boss |
+|---|---|---|---|
+| 1 | The Citadel | Citadel Circuit, War Boy Ambush (chase), Citadel Pit Smash | Rictus in Big Foot: dodge his charges; when he slams into a wall he's dazed, so hit him |
+| 2 | Gas Town | Gas Town Gauntlet, Guzzoline Run (escort), Doof Run (boost on the drumbeat) | The People Eater: a race through fire jets; hit his glowing tanker or beat him to the line |
+| 3 | The Bullet Farm | Bullet Farm Blitz (night), Mine Pit Smash (night), Night Raid (chase) | The Bullet Farmer in the Peacemaker: dodge the red rings, hit him while he reloads |
+| 4 | Fury Road | The Fury Road (escort), Into the Storm (sandstorm), The Bog at Night (crow people on stilts), Canyon Chase | Immortan Joe in the Gigahorse: protect the War Rig and knock off his glowing wheels |
+| 5 | Dementus's Horde | Horde Chase, Gas Town Showdown, Wasteland Rally | Dementus's chariot: knock his three bikes loose while they glow |
+
+Beat them all for the "Shiny and Chrome" finale.
+
+**The event types:**
+- **Race:** lap race. Win to complete it.
+- **Chase:** get down the road ahead of the War Party.
+- **Escort:** keep raiders off Furiosa's War Rig. Damage only slows it, and it waits for you.
+- **Smash:** grab the most fuel cans in a walled pit. Getting hit spills them.
+- **Boss:** each boss glows when it can be hurt, and touching it then counts as a hit.
+
+Every finish pays scrap and earns 1–3 stars. The first win also pays chrome and guzzoline.
+
+**Lore Garage (Phase 1):**
+- **Chrome** buys the 8 Wasteland Legends, each with a special move on Space (Interceptor, Nux Car, Buzzard, Big Foot, Doof Wagon, Peacemaker, Dementus's Chariot, Gigahorse).
+- Chrome also buys upgrade levels 5–6, Shiny Chrome paint and hood ornaments.
+- **War Boy weapons** (Thunder Sticks, Caltrops, Harpoon, Flamethrower) cost scrap.
+- **Wrecks:** lore weapons do damage, and a wrecked car explodes and respawns.
+- New drivers, the Fury Road world, and the **Valhalla Book** card album.
 
 ## Art, voice and music (Gemini)
 
@@ -93,9 +107,10 @@ npm run assets -- --list-models  # which models your key can use
 ## Code map
 
 ```
-src/data/        tracks, worlds, cars/upgrades/paint, characters, dialogue  ← most changes happen here
-src/race/        trackGeometry (the math), CarBody (physics), AIDriver, trackMesh (3D), effects
-src/scenes/      Title, DriverPick, Garage, TrackSelect, Race, Podium
+src/data/        tracks, storyTracks, arenas, story (chapters/events), worlds, cars, characters, cards, dialogue  ← most changes happen here
+src/race/        EventScene (shared event core), ground (tracks/arenas/terrain), CarBody (physics), weapons, AIDriver, trackMesh/arenaMesh, effects
+src/modes/       lap race, chase, escort, arena smash, bosses, variants (night, sandstorm, Doof beat, fire jets, crows)
+src/scenes/      Title, DriverPick, Garage, TrackSelect, Race, Podium, Wasteland, Comic, StoryResult, Valhalla
 src/systems/     Economy (prices, payouts, unlocks), SaveManager, Controls, assets
 src/art/         carBuilder (cars + bolt-on parts), materials, placeholders
 src/audio/       synthesized sound effects, engine hum, voice, music
@@ -110,4 +125,4 @@ npm test           # save, economy balance, track shape, and driving simulations
 npm run build      # type-check and production build into dist/
 ```
 
-Dev shortcut: `http://localhost:5173/?race=swamp-2` jumps straight into a race.
+Dev shortcuts: `?race=swamp-2` jumps into a race, `?event=c1-boss` into a story event, `?scene=wasteland` onto the map. Add `&fast` for a cheap, sped-up run (used by automated playthroughs).
