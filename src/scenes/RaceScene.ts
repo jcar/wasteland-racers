@@ -201,8 +201,8 @@ export class RaceScene implements Scene {
     const crateMat = toon('#ffffff', { map: texture('icon-gadget', emojiArt('⚡')), emissive: '#ffb000' });
     const crateGeo = new THREE.BoxGeometry(1.6, 1.6, 1.6);
     for (const at of def.pickups ?? [])
-      // Off to the sides, never the middle: steering is how you get them.
-      for (const lat of [-hw * 0.6, hw * 0.6]) {
+      // One in the middle so holding straight still gets one; the sides are for steerers.
+      for (const lat of [-hw * 0.6, 0, hw * 0.6]) {
         const p = this.geo.pointAt(at * L, lat);
         const mesh = new THREE.Mesh(crateGeo, crateMat);
         mesh.castShadow = true;
